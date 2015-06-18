@@ -4,6 +4,8 @@ import sys
 import os
 from custodian.vasp.jobs import *
 from custodian.vasp.handlers import *
+from custodian.custodian import *
+
 
 digits = 3
 prefix = 'rep_'
@@ -38,7 +40,7 @@ with open(script,'w+') as f:
     f.write(
 """#!/bin/bash"
 #SBATCH -J """ + jobname + """
-#SBATCH --time= + """ + runtime + """:00:00
+#SBATCH --time= + """ + str(runtime) + """:00:00
 #SBATCH -N """ + str(nodes_per_image) + """
 #SBATCH --ntasks-per-node 12
 #SBATCH -o """ + logname + """-%j.out
@@ -53,4 +55,5 @@ mpirun -np """ + nodes_per_image + """ /export/home/tester/VASP/vasp.5.3/vasp -d
 exit 0""")
  
 vaspjob = VaspJob(['sbatch',script],script,auto_gamma=False)
-handlers = WalltimeHandler(runtime*60*60,15*60)
+handlers = [WalltimeHandler(runtime*60*60,15*60)]
+c = Custodian(handlers, vaspjob, max_errors=10)
