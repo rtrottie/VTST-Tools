@@ -9,7 +9,6 @@ from custodian.custodian import *
 import pymatgen
 from pymatgen.io.vaspio.vasp_input import *
 
-sys.argv = ['', 1, 'test']
 digits = 3
 prefix = 'rep_'
 runtime = 8
