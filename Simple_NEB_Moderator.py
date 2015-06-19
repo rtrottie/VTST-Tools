@@ -20,23 +20,6 @@ script = jobname + '.log.sh'
 
 # Determine which folder to run from
 
-def find_last_dir(accum_value,x):
-    if len(x) != (len(prefix)+digits):
-        return accum_value
-    elif x[:len(prefix)] != prefix:
-        return accum_value
-    elif int(x[len(prefix):len(prefix)+digits]) < accum_value[1]:
-        return accum_value
-    else:
-        return (x[len(prefix):len(prefix)+digits],int(x[len(prefix):len(prefix)+digits]))
-
-current_dir_tup = reduce(find_last_dir, next(os.walk('.'))[1],('',-1))
-current_dir = prefix + current_dir_tup[0]
-
-os.chdir(os.path.join(os.path.abspath(os.curdir), current_dir))
-print os.path.abspath('.')
-
-print current_dir
 
 with open(script,'w+') as f:
     f.write(
@@ -55,7 +38,7 @@ module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib
 
 mpirun -np """ + nodes_per_image + """ /export/home/tester/VASP/vasp.5.3/vasp -d > """ + logname + """
 exit 0""")
- 
+
 vaspjob = VaspJob(['sbatch',script],script,auto_gamma=False)
 handlers = [WalltimeHandler(runtime*60*60,15*60)]
 c = Custodian(handlers, vaspjob, max_errors=10)
