@@ -36,7 +36,7 @@ module load intel/intel-12.1.6
 module load openmpi/openmpi-1.4.5_intel-12.1.6_ib
 module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib
 
-mpirun -np """ + nodes_per_image + """ /export/home/tester/VASP/vasp.5.3/vasp -d > """ + logname + """
+mpirun -np """ + nodes_per_image + """ /projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp -d > """ + logname + """
 exit 0""")
 
 vaspjob = VaspJob(['sbatch',script],script,auto_gamma=False)
