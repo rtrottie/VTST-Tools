@@ -19,7 +19,6 @@ jobname = sys.argv[2]
 logname = jobname + '.log'
 script = jobname + '.log.sh'
 
-os.chdir('/home/ryan/PycharmProjects')
 incar = Incar.from_file('INCAR')
 
 images = incar['IMAGES']
