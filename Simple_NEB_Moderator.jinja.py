@@ -23,8 +23,7 @@ module load openmpi/openmpi-1.4.5_intel-12.1.6_ib;
 module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib'''
 os.system(modules)
 
-vaspjob = [NEBJob(['mpirun', '-np', '{{ tasks }}', '-d' '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'],
-                  {{ logname }}, gamma_vasp_cmd='/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp',auto_npar=False)]
+vaspjob = [NEBJob(['mpirun', '-np', '{{ tasks }}', '-d' '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'], {{ logname }}, gamma_vasp_cmd='/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp',auto_npar=False)]
 handlers = [WalltimeHandler({{ hours }}*60*60,15*60)]
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()
