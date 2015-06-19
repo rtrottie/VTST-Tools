@@ -7,8 +7,9 @@ from custodian.vasp.jobs import *
 from custodian.vasp.handlers import *
 from custodian.custodian import *
 import pymatgen
+from pymatgen.io.vaspio.vasp_input import *
 
-
+sys.argv = ['', 1, 'test']
 digits = 3
 prefix = 'rep_'
 runtime = 8
@@ -18,15 +19,16 @@ jobname = sys.argv[2]
 logname = jobname + '.log'
 script = jobname + '.log.sh'
 
-# Determine which folder to run from
+os.chdir('/home/ryan/PycharmProjects')
+incar = Incar.from_file('INCAR')
 
-
+images = incar['IMAGES']
 with open(script,'w+') as f:
     f.write(
-"""#!/bin/bash"
+"""#!/bin/bash
 #SBATCH -J """ + jobname + """
 #SBATCH --time= + """ + str(runtime) + """:00:00
-#SBATCH -N """ + str(nodes_per_image) + """
+#SBATCH -N """ + str(nodes_per_image*images) + """
 #SBATCH --ntasks-per-node 12
 #SBATCH -o """ + logname + """-%j.out
 #SBATCH -e """ + logname + """-%j.err
@@ -36,7 +38,7 @@ module load intel/intel-12.1.6
 module load openmpi/openmpi-1.4.5_intel-12.1.6_ib
 module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib
 
-mpirun -np """ + nodes_per_image + """ /projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp -d > """ + logname + """
+mpirun -np """ + str(nodes_per_image*images*12) + """ /projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp -d > """ + logname + """
 exit 0""")
 
 vaspjob = VaspJob(['sbatch',script],script,auto_gamma=False)
