@@ -1,3 +1,4 @@
+import os
 from custodian.vasp.jobs import *
 from pymatgen.io.vaspio_set import MITNEBVaspInputSet
 from pymatgen.io.vaspio.vasp_input import Incar, Kpoints
@@ -36,4 +37,10 @@ class NEBJob(VaspJob):
         files = os.listdir(".")
         num_structures = 0
         if not set(files).issuperset(['KPOINTS','INCAR','POTCAR']):
-            raise RuntimeError("Necessary files missing need: KPOINTS, INCAR, and POTCAR.  Unable to continue")
+            raise RuntimeError("Necessary files missing.  Need: KPOINTS, INCAR, and POTCAR.  Unable to continue.")
+        incar = Incar.from_file('INCAR')
+        self._images = incar["IMAGES"]
+        for i in xrange(self._images):
+            if not os.path.isfile(os.path.join(str(i).zfill(2),'POSCAR')):
+                raise RuntimeError("Expected file at : " + os.path.join(str(i).zfill(2),'POSCAR'))
+
