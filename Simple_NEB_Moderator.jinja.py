@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 #SBATCH -J {{ J }}
-#SBATCH --time={{ time }}
+#SBATCH --time={{ hours }}:00:00
 #SBATCH -N {{ nodes }}
-#SBATCH --ntasks-per-node {{ nntasks-per-node }}
+#SBATCH --ntasks-per-node {{ nntasks_per_node }}
 #SBATCH -o {{ logname }}-%j.out
 #SBATCH -e {{ logname }}-%j.err
 #SBATCH --qos=normal
@@ -18,31 +18,13 @@ from pymatgen.io.vaspio.vasp_input import *
 from pymatgen.io.vaspio_set import *
 from Classes import *
 
-digits = 3
-prefix = 'rep_'
-runtime = 8
+modules = '''module load intel/intel-12.1.6;
+module load openmpi/openmpi-1.4.5_intel-12.1.6_ib;
+module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib'''
+os.system(modules)
 
-nodes_per_image = sys.argv[1]
-jobname = sys.argv[2]
-logname = jobname + '.log'
-script = jobname + '.log.sh'
-
-incar = Incar.from_file('INCAR')
-
-images = incar['IMAGES']
-with open(script,'w+') as f:
-    f.write(
-"""#!/bin/bash
-
-
-module load intel/intel-12.1.6
-module load openmpi/openmpi-1.4.5_intel-12.1.6_ib
-module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib
-
-mpirun -np """ + str(nodes_per_image*images*12) + """ /projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp -d > """ + logname + """
-exit 0""")
-
-vaspjob = [NEBJob(['sbatch',script],script,auto_gamma=False)]
-handlers = [WalltimeHandler(runtime*60*60,15*60)]
+vaspjob = [NEBJob(['mpirun', '-np', '{{ tasks }}', '-d' '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'],
+                  {{ logname }}, gamma_vasp_cmd='/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp',auto_npar=False)]
+handlers = [WalltimeHandler({{ hours }}*60*60,15*60)]
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()
