@@ -8,6 +8,11 @@ from custodian.vasp.handlers import *
 from custodian.custodian import *
 import pymatgen
 from pymatgen.io.vaspio.vasp_input import *
+from pymatgen.io.vaspio_set import *
+from Classes import *
+
+os.chdir('/home/ryan/PycharmProjects')
+sys.argv = ['',2,'test']
 
 digits = 3
 prefix = 'rep_'
@@ -39,7 +44,7 @@ module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib
 mpirun -np """ + str(nodes_per_image*images*12) + """ /projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp -d > """ + logname + """
 exit 0""")
 
-vaspjob = [VaspJob(['sbatch',script],script,auto_gamma=False)]
+vaspjob = [NEBJob(['sbatch',script],script,auto_gamma=False)]
 handlers = [WalltimeHandler(runtime*60*60,15*60)]
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()
