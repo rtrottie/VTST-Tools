@@ -27,7 +27,7 @@ from pymatgen.io.vaspio_set import *
 from Classes import *
 
 
-vaspjob = [NEBJob(['mpirun', '-np', '{{ tasks }}', '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'], '{{ logname }}', gamma_vasp_cmd='/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp',auto_npar=False)]
+vaspjob = [NEBJob(['mpirun', '-np', '{{ tasks }}', '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'], '{{ logname }}', gamma_vasp_cmd='/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp',auto_npar=False)]
 handlers = [WalltimeHandler({{ hours }}*60*60)]
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()"

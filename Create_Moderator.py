@@ -21,14 +21,17 @@ jobname = sys.argv[2]
 time = int(sys.argv[3])
 incar = Incar.from_file('INCAR')
 images = int(incar['IMAGES'])
+script = jobname + '.py'
 
 keywords = {'J' : jobname,
             'hours' : time,
             'nodes' : images*nodes_per_image,
             'nntasks_per_node' : 12,
-            'logname' : jobname + '.log',
+            'logname' : jobname,
             'tasks' : images*nodes_per_image*12,
             'user' : os.environ['USER']}
 
-with open(keywords['logname']+'.py', 'w+') as f:
+with open(script, 'w+') as f:
     f.write(template.render(keywords))
+
+os.system('sbatch ' + script) 
