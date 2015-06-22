@@ -1,10 +1,16 @@
 import os
+import subprocess
+import shutil
+import math
+import logging
 from custodian.vasp.jobs import *
 from pymatgen.io.vaspio_set import MITNEBVaspInputSet
 from pymatgen.io.vaspio.vasp_input import Incar, Kpoints
 from pymatgen.io.vaspio.vasp_output import Outcar
 from pymatgen.io.smartio import read_structure
 from pymatgen.io.vaspio_set import MITVaspInputSet
+from monty.json import MontyDecoder
+from monty.os.path import which
 
 class NEBJob(VaspJob):
     def run(self):
@@ -16,7 +22,6 @@ class NEBJob(VaspJob):
         """
         cmd = list(self.vasp_cmd)
         if self.auto_gamma:
-            vi = VaspInput.from_directory(".")
             kpts = Kpoints.from_file("KPOINTS")
             if kpts.style == "Gamma" and tuple(kpts.kpts[0]) == (1, 1, 1):
                 if self.gamma_vasp_cmd is not None and which(

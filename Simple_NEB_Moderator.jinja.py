@@ -18,13 +18,14 @@ from pymatgen.io.vaspio.vasp_input import *
 from pymatgen.io.vaspio_set import *
 from Classes import *
 
-modules = '''module load intel/intel-12.1.6;
+modules = '''module load python/anaconda-2.0.1
+module load intel/intel-12.1.6;
 module load openmpi/openmpi-1.4.5_intel-12.1.6_ib;
 module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib'''
 os.system(modules)
 os.environ["PYTHONPATH"]=os.environ["PYTHONPATH"] + ":/home/rytr1806/NEB-Tools"
 
-vaspjob = [NEBJob(['mpirun', '-np', '{{ tasks }}', '-d' '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'], '{{ logname }}', gamma_vasp_cmd='/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp',auto_npar=False)]
+vaspjob = [NEBJob(['mpirun -np {{ tasks }} /projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp -t /lustre/janus_scratch/{{ user }} -d'], '{{ logname }}', gamma_vasp_cmd='mpirun -np {{ tasks }} /projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp -t /lustre/janus_scratch/{{ user }} -d',auto_npar=False)]
 handlers = [WalltimeHandler({{ hours }}*60*60)]
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()

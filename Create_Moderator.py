@@ -27,7 +27,8 @@ keywords = {'J' : jobname,
             'nodes' : images*nodes_per_image,
             'nntasks_per_node' : 12,
             'logname' : jobname + '.log',
-            'tasks' : images*nodes_per_image*12}
+            'tasks' : images*nodes_per_image*12,
+            'user' : os.environ['USER']}
 
 with open(keywords['logname']+'.py', 'w+') as f:
     f.write(template.render(keywords))
