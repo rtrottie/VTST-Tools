@@ -24,14 +24,14 @@ class NEBJob(VaspJob):
         if self.auto_gamma:
             kpts = Kpoints.from_file("KPOINTS")
             if kpts.style == "Gamma" and tuple(kpts.kpts[0]) == (1, 1, 1):
-                if self.gamma_vasp_cmd is not None and which(
-                        self.gamma_vasp_cmd[-1]):
+                if self.gamma_vasp_cmd is not None:
                     cmd = self.gamma_vasp_cmd
                 elif which(cmd[-1] + ".gamma"):
                     cmd[-1] += ".gamma"
         logging.info("Running {}".format(" ".join(cmd)))
-        with open(self.output_file, 'w') as f:
-            p = subprocess.Popen(cmd, stdout=f)
+        #with open(self.output_file, 'w') as f:
+        #    p = subprocess.Popen(cmd, stdout=f)
+        os.system(" ".join(cmd) + " > " + self.output_file)
         return p
 
     def setup(self):
