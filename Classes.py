@@ -29,9 +29,9 @@ class NEBJob(VaspJob):
                 elif which(cmd[-1] + ".gamma"):
                     cmd[-1] += ".gamma"
         logging.info("Running {}".format(" ".join(cmd)))
-        #with open(self.output_file, 'w') as f:
-        #    p = subprocess.Popen(cmd, stdout=f)
-        os.system(" ".join(cmd) + " > " + self.output_file)
+        with open(self.output_file, 'w') as f:
+            p = subprocess.Popen(cmd, stdout=f)
+        #os.system(" ".join(cmd) + " > " + self.output_file)
         return p
 
     def setup(self):
