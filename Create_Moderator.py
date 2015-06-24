@@ -6,7 +6,6 @@ import os
 import shutil
 
 #Backup Previous Run
-os.system('nebmovie.pl; nebbarrier.pl')
 backup_dir = "backup"
 if os.path.isdir(backup_dir):
     last_run = -1
@@ -18,8 +17,9 @@ if os.path.isdir(backup_dir):
         except:
             pass
     if last_run == -1:
-        raise "backup setup is invalid"
+        raise Exception("backup setup is invalid")
     this_run = last_run+1
+    os.system('nebbarrier.pl')
 else:
     this_run = 0
 
@@ -28,11 +28,11 @@ for dir in os.listdir('.'):
         os.makedirs(os.path.join(backup_dir, str(this_run), dir))
         shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
         shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
+os.system('nebmovie.pl; rm *.out *.err *.sh *.py')
 shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
 shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
 shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
 
-os.system('nebmovie.pl; rm *.out *.err *.sh *.py')
 
 template_location = ('/home/rytr1806/NEB-Tools')
 template = 'Simple_NEB_Moderator.jinja.py'
