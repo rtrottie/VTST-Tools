@@ -4,6 +4,7 @@ from pymatgen.io.vaspio.vasp_input import Incar
 import sys
 import os
 import shutil
+import fnmatch
 
 #Backup Previous Run
 backup_dir = "backup"
@@ -22,16 +23,19 @@ if os.path.isdir(backup_dir):
     os.system('nebbarrier.pl')
 else:
     this_run = 0
-
+os.makedirs(os.path.join(backup_dir, str(this_run)))
 for dir in os.listdir('.'):
     if os.path.exists(os.path.join(dir,'CONTCAR')):
         os.makedirs(os.path.join(backup_dir, str(this_run), dir))
         shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
         shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
-os.system('nebmovie.pl; rm *.out *.err *.sh *.py')
+os.system('nebmovie.pl; rm *.out *.err *.sh *.py STOPCAR')
 shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
 shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
-shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
+try:
+    shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
+except:
+    pass
 
 
 template_location = ('/home/rytr1806/NEB-Tools')
@@ -43,11 +47,16 @@ template = env.get_template(template)
 
 
 if len(sys.argv) < 2:
-    sys.argv.append(2)
+    sys.argv.append(1)
 if len(sys.argv) < 3:
     sys.argv.append('NEB_' + os.path.basename(os.getcwd()))
+    for file in os.listdir('.'):
+        if fnmatch.fnmatch(file, '*.log'):
+            sys.argv[2] = file
+            break
+
 if len(sys.argv) < 4:
-    sys.argv.append(4)
+    sys.argv.append(12)
 nodes_per_image = int(sys.argv[1])
 jobname = sys.argv[2]
 time = int(sys.argv[3])
