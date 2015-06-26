@@ -11,7 +11,7 @@ from pymatgen.io.vaspio.vasp_input import *
 from pymatgen.io.vaspio_set import *
 from Classes import *
 
-os.chdir('/home/ryan/PycharmProjects')
+os.chdir('/home/ryan/PycharmProjects', shell=True)
 sys.argv = ['',2,'test']
 
 digits = 3
