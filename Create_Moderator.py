@@ -25,7 +25,7 @@ else:
     this_run = 0
 os.makedirs(os.path.join(backup_dir, str(this_run)))
 for dir in os.listdir('.'):
-    if os.path.exists(os.path.join(dir,'CONTCAR')):
+    if os.path.exists(os.path.join(dir,'CONTCAR')) and os.path.getsize(os.path.join(dir,'CONTCAR')) > 0:
         os.makedirs(os.path.join(backup_dir, str(this_run), dir))
         shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
         shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
