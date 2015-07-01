@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/bin/bash
 #SBATCH -J {{ J }}
 #SBATCH --time={{ hours }}:00:00
 #SBATCH -N {{ nodes }}
