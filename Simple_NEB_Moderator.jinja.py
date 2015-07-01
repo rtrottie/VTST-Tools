@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env python
 #SBATCH -J {{ J }}
 #SBATCH --time={{ hours }}:00:00
 #SBATCH -N {{ nodes }}
@@ -7,12 +7,16 @@
 #SBATCH -e {{ logname }}-%j.err
 #SBATCH --qos=normal
 
+# Load important modules and ensure environemnt variables are correctly set up
+
 module load python/anaconda-2.0.1
 module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib
 module load intel/intel-12.1.6;
 module load openmpi/openmpi-1.4.5_intel-12.1.6_ib;
 PYTHONPATH=$PYTHONPATH:/home/rytr1806/NEB-Tools
 export OMP_NUM_THREADS=1
+
+# Execute python commands, could be separated into a separate file, but 1 file is easier to template.
 
 python -c "
 
