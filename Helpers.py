@@ -10,6 +10,19 @@ def getImageDistance(POSCAR_1, POSCAR_2):
     distance = full_distance_string.split('\n')[-4].split(' ')[-1] # Stripping rest of the file away
     return distance
 
-a = getImageDistance('/home/ryan/PycharmProjects/00/POSCAR','/home/ryan/PycharmProjects/06/POSCAR')
-
-print('done')
+def getJobType(dir):
+    if os.path.basename(dir) == 'INCAR':
+        incar = Incar.from_file(dir)
+    else:
+        incar = Incar.from_file(os.path.join(dir,'INCAR'))
+    if 'ICHAIN' in incar:
+        if incar['ICHAIN'] == 0:
+            return 'NEB'
+        elif incar['ICHAIN'] == 2:
+            return 'dimer'
+        else:
+            raise Exception('Not yet Implemented')
+    elif 'IMAGES' in incar:
+            return 'NEB'
+    else:
+        return 'standard'

@@ -84,6 +84,7 @@ class VaspNEBInput(VaspInput):
                     ftype.from_file(os.path.join(input_dir, fname))
         return VaspNEBInput(**sub_d)
 
+
 class PoscarNEB(Poscar):
 
     def __init__(self, structure, comment=None, selective_dynamics=None,
@@ -358,6 +359,20 @@ class PoscarNEB(Poscar):
         return self.get_string(significant_figures=20)
 
 
+class Modecar(str, PMGSONable):
+
+    @staticmethod
+    def from_file(modecar_file):
+        with open(modecar_file, "r") as f:
+            Modecar(f.read())
+
+    def as_dict(self):
+        d = {'contents': self}
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        return (d['contents'])
 
 class NEBJob(VaspJob):
     def run(self):
