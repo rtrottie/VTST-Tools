@@ -359,12 +359,18 @@ class PoscarNEB(Poscar):
         return self.get_string(significant_figures=20)
 
 
-class Modecar(str, PMGSONable):
+class Modecar(PMGSONable):
+
+    def __init__(self, contents):
+        self.contents = contents
+
+    def __str__(self):
+        return unicode(self.contents)
 
     @staticmethod
     def from_file(modecar_file):
         with open(modecar_file, "r") as f:
-            Modecar(f.read())
+            return Modecar(f.read())
 
     def as_dict(self):
         d = {'contents': self}

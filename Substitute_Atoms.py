@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 from pymatgen.io.vaspio.vasp_input import *
 from pymatgen.transformations.site_transformations import ReplaceSiteSpeciesTransformation
 from Classes import *
@@ -9,13 +9,13 @@ import cfg
 
 
 def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
-    vasp = VaspInput.from_directory(prev_dir,optional_files)
+    vasp = VaspInput.from_directory(prev_dir, optional_files)
     atom_mapping = {k:new_atom for k in atom_nums}
     transformation = ReplaceSiteSpeciesTransformation(atom_mapping)
 
     # Modifying POSCAR
     sd = vasp['POSCAR'].selective_dynamics
-    vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCARs'].structure)
+    vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCAR'].structure)
     vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
     vasp['POSCAR'].selective_dynamics = sd
 
@@ -42,7 +42,7 @@ def replace_atom_NEB(prev_NEB_dir, this_NEB_dir, atom_nums, new_atom):
         NEB['POSCARs'][i].comment = ' '.join(NEB['POSCARs'][i].site_symbols)
         NEB['POSCARs'][i].selective_dynamics = sd
 
-    NEB['POTCAR'] = Potcar(NEB['POSCARs'][i].site_symbols)
+    NEB['POTCAR'] = Potcar(NEB['POSCAR'][i].site_symbols)
 
     for k in NEB['INCAR'].keys():
         if k in cfg.INCAR:
@@ -54,11 +54,11 @@ def replace_atom_NEB(prev_NEB_dir, this_NEB_dir, atom_nums, new_atom):
 
 def replace_atom_arbitrary(prev_dir, this_dir, atom_nums, new_atom):
     job = getJobType(prev_dir)
-    print('Creating new ' + str(job) + 'Job at ' + this_dir)
+    print('Creating new ' + str(job) + ' Job at ' + this_dir)
     if job == 'NEB':
         replace_atom_NEB(prev_dir, this_dir, atom_nums, new_atom)
-    elif job == 'dim':
-        replace_atom(prev_dir, this_dir, atom_nums, new_atom, {'MODECAR', Modecar})
+    elif job == 'dimer':
+        replace_atom(prev_dir, this_dir, atom_nums, new_atom, {'MODECAR': Modecar})
     elif job == 'standard':
         replace_atom(prev_dir, this_dir, atom_nums, new_atom)
     else:
