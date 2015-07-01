@@ -33,9 +33,9 @@ if os.path.basename(sys.argv[0]) == 'Substitute_Atoms.py':
     prev_NEB_dir = sys.argv[1]
     try:
         this_NEB_dir = os.getcwd()
-        atom_nums = map(lambda x: int(x), sys.argv[2:len(sys.argv)-2])
+        atom_nums = map(lambda x: int(x), sys.argv[2:len(sys.argv)-1])
     except:
         this_NEB_dir = sys.argv[2]
-        atom_nums = map(lambda x: int(x), sys.argv[3:len(sys.argv)-2])
+        atom_nums = map(lambda x: int(x), sys.argv[3:len(sys.argv)-1])
     new_atom = sys.argv[len(sys.argv)-1]
     replace_atom_NEB(prev_NEB_dir, this_NEB_dir, atom_nums, new_atom)
