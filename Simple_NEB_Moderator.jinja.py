@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 #SBATCH -J {{ J }}
 #SBATCH --time={{ hours }}:00:00
 #SBATCH -N {{ nodes }}
@@ -29,10 +29,10 @@ from custodian.custodian import *
 import pymatgen
 from pymatgen.io.vaspio.vasp_input import *
 from pymatgen.io.vaspio_set import *
-from Classes import *
+from Classes_Custodian import *
 
 
 vaspjob = [NEBJob(['mpirun', '-np', '{{ tasks }}', '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp', '-t', '/lustre/janus_scratch/{{ user }}', '-d'], '{{ logname }}', gamma_vasp_cmd=['mpirun', '-np', '{{ tasks }}', '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp', '-t', '/lustre/janus_scratch/{{ user }}', '-d'],auto_npar=False)]
-handlers = [WalltimeHandler({{ hours }}*60*60)]
+handlers = [WalltimeHandler({{ hours }}*60*60), NEBNotTerminating('OUTCAR', 15*60)]
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()"

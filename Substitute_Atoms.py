@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from pymatgen.io.vaspio.vasp_input import *
 from pymatgen.transformations.site_transformations import ReplaceSiteSpeciesTransformation
-from Classes import *
+from Classes_Pymatgen import *
 from Helpers import *
 import sys
 import os
