@@ -10,7 +10,6 @@ class NEBNotTerminating(FrozenJobErrorHandler):
     def correct(self):
         return
 
-
 class NEBJob(VaspJob):
     def run(self):
         """
