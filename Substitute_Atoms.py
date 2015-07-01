@@ -1,3 +1,4 @@
+#!/bin/env python
 from pymatgen.io.vaspio.vasp_input import *
 from pymatgen.transformations.site_transformations import ReplaceSiteSpeciesTransformation
 from Classes import *
@@ -33,7 +34,7 @@ def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
 
 def replace_atom_NEB(prev_NEB_dir, this_NEB_dir, atom_nums, new_atom):
     NEB = VaspNEBInput.from_directory(prev_NEB_dir, True)
-    atom_mapping = {k:new_atom for k in atom_nums}
+    atom_mapping = {k-1:new_atom for k in atom_nums}
     transformation = ReplaceSiteSpeciesTransformation(atom_mapping)
     for i in range(len(NEB['POSCARs'])):
         sd = NEB['POSCARs'][i].selective_dynamics
