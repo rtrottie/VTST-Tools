@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 from jinja2 import Environment, FileSystemLoader
 from pymatgen.io.vaspio.vasp_input import Incar
+from Helpers import *
 import sys
 import os
 import shutil
 import fnmatch
 
+backup_dir = "backup"
+
 # Backup Previous Run
 
-backup_dir = "backup"
+job = getJobType(os.getcwd())
+
 if os.path.isdir(backup_dir):  # Find what directory to backup to
     last_run = -1
     backups = os.listdir(backup_dir)
@@ -21,28 +25,39 @@ if os.path.isdir(backup_dir):  # Find what directory to backup to
     if last_run == -1:
         raise Exception("backup setup is invalid")
     this_run = last_run+1
-    os.system('nebbarrier.pl') # do some post-processing only if this is not the first run
+    if job == "NEB":
+        os.system('nebbarrier.pl') # do some post-processing only if this is not the first run
 else:
     this_run = 0
 os.makedirs(os.path.join(backup_dir, str(this_run))) # make backup directory
 
-for dir in os.listdir('.'): # Move over CONTCARs from previous run, and stor POSCARs in backup folder
-    if os.path.exists(os.path.join(dir,'CONTCAR')) and os.path.getsize(os.path.join(dir,'CONTCAR')) > 0:
-        os.makedirs(os.path.join(backup_dir, str(this_run), dir))
-        shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
+if job == 'NEB':
+    for dir in os.listdir('.'): # Move over CONTCARs from previous run, and store POSCARs in backup folder
+        if os.path.exists(os.path.join(dir,'CONTCAR')) and os.path.getsize(os.path.join(dir,'CONTCAR')) > 0:
+            os.makedirs(os.path.join(backup_dir, str(this_run), dir))
+            shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
         shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
-os.system('nebmovie.pl; rm *.out *.err *.sh *.py STOPCAR') # Clean directory and do basic-postprocessing
-shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
-shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
-try:
-    shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
-except:
-    pass
+    os.system('nebmovie.pl; rm *.out *.err *.sh *.py STOPCAR') # Clean directory and do basic-postprocessing
+    shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
+    shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
+    try:
+        shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
+    except:
+        pass
+
+elif job == 'dimer':
+    if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
+        os.makedirs(os.path.join(backup_dir, str(this_run)))
+        shutil.move('CONTCAR', 'POSCAR')
+    shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
+
+else:
+    raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
 
 # Setup Templating for submit script
 
-template_location = ('/home/rytr1806/NEB-Tools')
-template = 'Simple_NEB_Moderator.jinja.py'
+template_location = ('/home/rytr1806/VTST-Tools')
+template = 'VTST_Custodian.sh.jinja2'
 env = Environment(loader=FileSystemLoader(template_location))
 template = env.get_template(template)
 

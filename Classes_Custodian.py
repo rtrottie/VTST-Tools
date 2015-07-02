@@ -47,3 +47,56 @@ class NEBJob(VaspJob):
             if not os.path.isfile(os.path.join(str(i).zfill(2),'POSCAR')):
                 raise RuntimeError("Expected file at : " + os.path.join(str(i).zfill(2),'POSCAR'))
 
+
+class DimJob(VaspJob):
+    def setup(self):
+        """
+        Performs initial setup for VaspJob, including overriding any settings
+        and backing up.
+        """
+        files = os.listdir(".")
+        num_structures = 0
+        if not set(files).issuperset({"INCAR", "POSCAR", "POTCAR", "KPOINTS", "MODECAR"}):
+            for f in files:
+                try:
+                    struct = read_structure(f)
+                    num_structures += 1
+                except:
+                    pass
+            if num_structures != 1:
+                raise RuntimeError("{} structures found. Unable to continue."
+                                   .format(num_structures))
+            else:
+                self.default_vis.write_input(struct, ".")
+
+        if self.backup:
+            for f in VASP_INPUT_FILES:
+                shutil.copy(f, "{}.orig".format(f))
+
+        if self.auto_npar:
+            try:
+                incar = Incar.from_file("INCAR")
+                #Only optimized NPAR for non-HF and non-RPA calculations.
+                if not (incar.get("LHFCALC") or incar.get("LRPA") or
+                        incar.get("LEPSILON")):
+                    if incar.get("IBRION") in [5, 6, 7, 8]:
+                        # NPAR should not be set for Hessian matrix
+                        # calculations, whether in DFPT or otherwise.
+                        del incar["NPAR"]
+                    else:
+                        import multiprocessing
+                        # try sge environment variable first
+                        # (since multiprocessing counts cores on the current machine only)
+                        ncores = os.environ.get('NSLOTS') or multiprocessing.cpu_count()
+                        ncores = int(ncores)
+                        for npar in range(int(round(math.sqrt(ncores))),
+                                          ncores):
+                            if ncores % npar == 0:
+                                incar["NPAR"] = npar
+                                break
+                    incar.write_file("INCAR")
+            except:
+                pass
+
+        if self.settings_override is not None:
+            VaspModder().apply_actions(self.settings_override)
