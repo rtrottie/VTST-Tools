@@ -6,7 +6,9 @@ import sys
 import os
 import shutil
 import fnmatch
+import cfg
 
+os.chdir('/home/ryan/PycharmProjects/SampleDim')
 backup_dir = "backup"
 
 # Backup Previous Run
@@ -59,9 +61,9 @@ else:
 
 # Setup Templating for submit script
 
-template_location = ('/home/rytr1806/VTST-Tools')
+template_dir = cfg.TEMPLATE_DIR
 template = 'VTST_Custodian.sh.jinja2'
-env = Environment(loader=FileSystemLoader(template_location))
+env = Environment(loader=FileSystemLoader(template_dir))
 template = env.get_template(template)
 
 # Use default arguments if not enough are provided

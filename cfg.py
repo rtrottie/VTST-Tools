@@ -12,3 +12,4 @@ INCAR = {
 }
 
 VTST_DIR = subprocess.check_output('echo $VTST_DIR', shell=True).strip()
+TEMPLATE_DIR = subprocess.check_output('echo $TEMPLATE_DIR', shell=True).strip()
