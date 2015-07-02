@@ -32,12 +32,8 @@ from pymatgen.io.vaspio_set import *
 from Classes_Custodian import *
 
 
-<<<<<<< HEAD:Simple_NEB_Moderator.jinja.py
-vaspjob = [NEBJob(['mpirun', '-np', '{{ tasks }}', '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp', '-t', '/lustre/janus_scratch/{{ user }}', '-d'], '{{ logname }}', gamma_vasp_cmd=['mpirun', '-np', '{{ tasks }}', '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp', '-t', '/lustre/janus_scratch/{{ user }}', '-d'],auto_npar=False)]
-handlers = [WalltimeHandler({{ hours }}*60*60), NEBNotTerminating('{{ logname }}', 15*60)]
-=======
+
 vaspjob = [{{ jobtype }}Job(['mpirun', '-np', '{{ tasks }}', '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp', '-t', '/lustre/janus_scratch/{{ user }}', '-d'], '{{ logname }}', gamma_vasp_cmd=['mpirun', '-np', '{{ tasks }}', '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp', '-t', '/lustre/janus_scratch/{{ user }}', '-d'],auto_npar=False)]
 handlers = [WalltimeHandler({{ hours }}*60*60), NEBNotTerminating('{{ logname }}', 15*60)]
->>>>>>> 6ce08faac6d57e8e66ed81ac6f035ea595dc0722:VTST_Custodian.sh.jinja2
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()"
