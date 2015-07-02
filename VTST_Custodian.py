@@ -40,8 +40,8 @@ if job == 'NEB':
             os.makedirs(os.path.join(backup_dir, str(this_run), dir))
             shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
         shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
-    os.system('nebmovie.pl; rm *.out *.err *.sh *.py STOPCAR') # Clean directory and do basic-postprocessing
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
+    os.system('nebmovie.pl') # Clean directory and do basic-postprocessing
     shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
     try:
         shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
@@ -50,7 +50,6 @@ if job == 'NEB':
 
 elif job == 'Dimer':
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
-        os.makedirs(os.path.join(backup_dir, str(this_run)))
         shutil.move('CONTCAR', 'POSCAR')
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
@@ -58,6 +57,7 @@ elif job == 'Dimer':
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
 
+os.system('rm *.out *.err *.sh *.py STOPCAR') # Clean directory and do basic-postprocessing
 # Setup Templating for submit script
 
 template_dir = cfg.TEMPLATE_DIR
@@ -90,7 +90,7 @@ elif job == 'Dimer':
     images = 2
 else:
     images = 1
-script = jobname + '.py'
+script = jobname + '.sh'
 
 keywords = {'J' : jobname,
             'hours' : time,
