@@ -13,6 +13,8 @@ backup_dir = "backup"
 
 job = getJobType(os.getcwd())
 
+print('Setting up ' + job + ' Job')
+
 if os.path.isdir(backup_dir):  # Find what directory to backup to
     last_run = -1
     backups = os.listdir(backup_dir)
@@ -95,7 +97,8 @@ keywords = {'J' : jobname,
             'nntasks_per_node' : 12,
             'logname' : jobname,
             'tasks' : images*nodes_per_image*12,
-            'user' : os.environ['USER']}
+            'user' : os.environ['USER'],
+            'jobtype' : job}
 
 with open(script, 'w+') as f:
     f.write(template.render(keywords))

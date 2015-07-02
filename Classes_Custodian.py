@@ -48,7 +48,7 @@ class NEBJob(VaspJob):
                 raise RuntimeError("Expected file at : " + os.path.join(str(i).zfill(2),'POSCAR'))
 
 
-class DimJob(VaspJob):
+class DimerJob(VaspJob):
     def setup(self):
         """
         Performs initial setup for VaspJob, including overriding any settings
