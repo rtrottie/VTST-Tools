@@ -8,7 +8,6 @@ import shutil
 import fnmatch
 import cfg
 
-os.chdir('/home/ryan/PycharmProjects/SampleDim')
 backup_dir = "backup"
 
 # Backup Previous Run
