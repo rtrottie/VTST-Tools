@@ -19,10 +19,10 @@ def getJobType(dir):
         if incar['ICHAIN'] == 0:
             return 'NEB'
         elif incar['ICHAIN'] == 2:
-            return 'dimer'
+            return 'Dimer'
         else:
             raise Exception('Not yet Implemented')
     elif 'IMAGES' in incar:
             return 'NEB'
     else:
-        return 'standard'
+        return 'Standard'

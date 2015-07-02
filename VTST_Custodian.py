@@ -45,11 +45,12 @@ if job == 'NEB':
     except:
         pass
 
-elif job == 'dimer':
+elif job == 'Dimer':
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
         os.makedirs(os.path.join(backup_dir, str(this_run)))
         shutil.move('CONTCAR', 'POSCAR')
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
+    shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
 
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
@@ -66,7 +67,7 @@ template = env.get_template(template)
 if len(sys.argv) < 2:
     sys.argv.append(1)
 if len(sys.argv) < 3:
-    sys.argv.append('NEB_' + os.path.basename(os.getcwd()))
+    sys.argv.append(job + '_' + os.path.basename(os.getcwd()))
     for file in os.listdir('.'):
         if fnmatch.fnmatch(file, '*.log'):
             sys.argv[2] = file
@@ -79,8 +80,13 @@ if len(sys.argv) < 4:
 nodes_per_image = int(sys.argv[1])
 jobname = sys.argv[2]
 time = int(sys.argv[3])
-incar = Incar.from_file('INCAR')
-images = int(incar['IMAGES'])
+if job == 'NEB':
+    incar = Incar.from_file('INCAR')
+    images = int(incar['IMAGES'])
+elif job == 'Dimer':
+    images = 2
+else:
+    images = 1
 script = jobname + '.py'
 
 keywords = {'J' : jobname,

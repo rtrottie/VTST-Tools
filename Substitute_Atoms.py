@@ -57,7 +57,7 @@ def replace_atom_arbitrary(prev_dir, this_dir, atom_nums, new_atom):
     print('Creating new ' + str(job) + ' Job at ' + this_dir)
     if job == 'NEB':
         replace_atom_NEB(prev_dir, this_dir, atom_nums, new_atom)
-    elif job == 'dimer':
+    elif job == 'Dimer':
         replace_atom(prev_dir, this_dir, atom_nums, new_atom, {'MODECAR': Modecar})
     elif job == 'standard':
         replace_atom(prev_dir, this_dir, atom_nums, new_atom)
