@@ -1,3 +1,5 @@
+import subprocess
+
 INCAR = {
 
     'LDAUL': {'default': -1,
@@ -8,3 +10,6 @@ INCAR = {
               'Fe': 3,
               'Co': 2}
 }
+
+VTST_DIR = subprocess.check_output('echo $VTST_DIR', shell=True).strip()
+TEMPLATE_DIR = subprocess.check_output('echo $TEMPLATE_DIR', shell=True).strip()
