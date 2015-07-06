@@ -40,6 +40,8 @@ if job == 'NEB':
             os.makedirs(os.path.join(backup_dir, str(this_run), dir))
             shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
+        elif os.path.exists(os.path.join(dir,'CONTCAR')):
+            shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     os.system('nebmovie.pl') # Clean directory and do basic-postprocessing
     shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
