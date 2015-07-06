@@ -8,7 +8,8 @@ class NEBNotTerminating(FrozenJobErrorHandler):
     is_terminating = True
 
     def correct(self):
-        return
+        return {"errors": ["Frozen job"], "actions": None}
+
 
 class NEBJob(VaspJob):
     def run(self):
