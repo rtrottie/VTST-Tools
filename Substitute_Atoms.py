@@ -9,6 +9,7 @@ import cfg
 
 
 def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
+    Poscar.get_string = PoscarNEB.get_string
     vasp = VaspInput.from_directory(prev_dir, optional_files)
     atom_mapping = {k:new_atom for k in atom_nums}
     transformation = ReplaceSiteSpeciesTransformation(atom_mapping)
@@ -30,7 +31,6 @@ def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
 
     vasp.write_input(this_dir)
     return
-
 
 def replace_atom_NEB(prev_NEB_dir, this_NEB_dir, atom_nums, new_atom):
     NEB = VaspNEBInput.from_directory(prev_NEB_dir, True)

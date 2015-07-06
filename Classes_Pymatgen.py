@@ -286,7 +286,6 @@ class PoscarNEB(Poscar):
                       velocities=velocities,
                       predictor_corrector=predictor_corrector)
 
-
     def get_string(self, direct=True, vasp4_compatible=False,
                    significant_figures=20):
         """
