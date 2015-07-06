@@ -1,6 +1,69 @@
 from pymatgen.io.vaspio.vasp_input import *
 import numpy as np
 
+def get_string_more_sigfig(self, direct=True, vasp4_compatible=False, significant_figures=20):
+    """
+    Returns a string to be written as a POSCAR file. By default, site
+    symbols are written, which means compatibility is for vasp >= 5.
+
+    Args:
+        direct (bool): Whether coordinates are output in direct or
+            cartesian. Defaults to True.
+        vasp4_compatible (bool): Set to True to omit site symbols on 6th
+            line to maintain backward vasp 4.x compatibility. Defaults
+            to False.
+        significant_figures (int): No. of significant figures to
+            output all quantities. Defaults to 6. Note that positions are
+            output in fixed point, while velocities are output in
+            scientific format.
+
+    Returns:
+        String representation of POSCAR.
+    """
+
+    # This corrects for VASP really annoying bug of crashing on lattices
+    # which have triple product < 0. We will just invert the lattice
+    # vectors.
+    latt = self.structure.lattice
+    if np.linalg.det(latt.matrix) < 0:
+        latt = Lattice(-latt.matrix)
+    fl = "%."+str(significant_figures)+"f"
+    str_latt = "\n".join([" ".join([fl % i for i in row])
+                          for row in latt._matrix])
+    lines = [self.comment, "1.0", str_latt]
+    if self.true_names and not vasp4_compatible:
+        lines.append(" ".join(self.site_symbols))
+    lines.append(" ".join([str(x) for x in self.natoms]))
+    if self.selective_dynamics:
+        lines.append("Selective dynamics")
+    lines.append("direct" if direct else "cartesian")
+
+    format_str = "{{:.{0}f}}".format(significant_figures)
+
+    for (i, site) in enumerate(self.structure):
+        coords = site.frac_coords if direct else site.coords
+        line = " ".join([format_str.format(c) for c in coords])
+        if self.selective_dynamics is not None:
+            sd = ["T" if j else "F" for j in self.selective_dynamics[i]]
+            line += " %s %s %s" % (sd[0], sd[1], sd[2])
+        line += " " + site.species_string
+        lines.append(line)
+
+    if self.velocities:
+        lines.append("")
+        for v in self.velocities:
+            lines.append(" ".join([format_str.format(i) for i in v]))
+
+    if self.predictor_corrector:
+        lines.append("")
+        lines.append(str(self.predictor_corrector[0][0]))
+        lines.append(str(self.predictor_corrector[1][0]))
+        for v in self.predictor_corrector[2:]:
+            lines.append(" ".join([format_str.format(i) for i in v]))
+
+    return "\n".join(lines) + "\n"
+
+
 class VaspNEBInput(VaspInput):
     def __init__(self, incar, kpoints, poscars, potcar, optional_files=None,
                  **kwargs):
@@ -288,66 +351,7 @@ class PoscarNEB(Poscar):
 
     def get_string(self, direct=True, vasp4_compatible=False,
                    significant_figures=20):
-        """
-        Returns a string to be written as a POSCAR file. By default, site
-        symbols are written, which means compatibility is for vasp >= 5.
-
-        Args:
-            direct (bool): Whether coordinates are output in direct or
-                cartesian. Defaults to True.
-            vasp4_compatible (bool): Set to True to omit site symbols on 6th
-                line to maintain backward vasp 4.x compatibility. Defaults
-                to False.
-            significant_figures (int): No. of significant figures to
-                output all quantities. Defaults to 6. Note that positions are
-                output in fixed point, while velocities are output in
-                scientific format.
-
-        Returns:
-            String representation of POSCAR.
-        """
-
-        # This corrects for VASP really annoying bug of crashing on lattices
-        # which have triple product < 0. We will just invert the lattice
-        # vectors.
-        latt = self.structure.lattice
-        if np.linalg.det(latt.matrix) < 0:
-            latt = Lattice(-latt.matrix)
-        fl = "%."+str(significant_figures)+"f"
-        str_latt = "\n".join([" ".join([fl % i for i in row])
-                              for row in latt._matrix])
-        lines = [self.comment, "1.0", str_latt]
-        if self.true_names and not vasp4_compatible:
-            lines.append(" ".join(self.site_symbols))
-        lines.append(" ".join([str(x) for x in self.natoms]))
-        if self.selective_dynamics:
-            lines.append("Selective dynamics")
-        lines.append("direct" if direct else "cartesian")
-
-        format_str = "{{:.{0}f}}".format(significant_figures)
-
-        for (i, site) in enumerate(self.structure):
-            coords = site.frac_coords if direct else site.coords
-            line = " ".join([format_str.format(c) for c in coords])
-            if self.selective_dynamics is not None:
-                sd = ["T" if j else "F" for j in self.selective_dynamics[i]]
-                line += " %s %s %s" % (sd[0], sd[1], sd[2])
-            line += " " + site.species_string
-            lines.append(line)
-
-        if self.velocities:
-            lines.append("")
-            for v in self.velocities:
-                lines.append(" ".join([format_str.format(i) for i in v]))
-
-        if self.predictor_corrector:
-            lines.append("")
-            lines.append(str(self.predictor_corrector[0][0]))
-            lines.append(str(self.predictor_corrector[1][0]))
-            for v in self.predictor_corrector[2:]:
-                lines.append(" ".join([format_str.format(i) for i in v]))
-
-        return "\n".join(lines) + "\n"
+        return get_string_more_sigfig(self, direct=True, vasp4_compatible=False,significant_figures=20)
 
     def __str__(self):
         """

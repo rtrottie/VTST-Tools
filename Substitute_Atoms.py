@@ -6,10 +6,11 @@ from Helpers import *
 import sys
 import os
 import cfg
+import mock
 
 
 def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
-    Poscar.get_string = PoscarNEB.get_string
+    Poscar.get_string = get_string_more_sigfig
     vasp = VaspInput.from_directory(prev_dir, optional_files)
     atom_mapping = {k-1:new_atom for k in atom_nums}
     transformation = ReplaceSiteSpeciesTransformation(atom_mapping)
