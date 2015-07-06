@@ -34,6 +34,6 @@ from Classes_Custodian import *
 
 
 vaspjob = [{{ jobtype }}Job(['mpirun', '-np', '{{ tasks }}', '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp', '-t', '/lustre/janus_scratch/{{ user }}', '-d'], '{{ logname }}', gamma_vasp_cmd=['mpirun', '-np', '{{ tasks }}', '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp', '-t', '/lustre/janus_scratch/{{ user }}', '-d'],auto_npar=False)]
-handlers = [WalltimeHandler({{ hours }}*60*60), NEBNotTerminating('{{ logname }}', 15*60)]
+handlers = [WalltimeHandler({{ hours }}*60*60), NEBNotTerminating('{{ logname }}', 5*60)]
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()"
