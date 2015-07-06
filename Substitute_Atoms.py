@@ -43,7 +43,7 @@ def replace_atom_NEB(prev_NEB_dir, this_NEB_dir, atom_nums, new_atom):
         NEB['POSCARs'][i].comment = ' '.join(NEB['POSCARs'][i].site_symbols)
         NEB['POSCARs'][i].selective_dynamics = sd
 
-    NEB['POTCAR'] = Potcar(NEB['POSCAR'][i].site_symbols)
+    NEB['POTCAR'] = Potcar(NEB['POSCARs'][i].site_symbols)
 
     for k in NEB['INCAR'].keys():
         if k in cfg.INCAR:
