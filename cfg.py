@@ -8,7 +8,7 @@ INCAR = {
 
     'LDAUU': {'default': 0,
               'Fe': 3,
-              'Co': 2}
+              'Co': 3}
 }
 
 VTST_DIR = subprocess.check_output('echo $VTST_DIR', shell=True).strip()
