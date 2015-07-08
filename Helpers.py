@@ -45,3 +45,12 @@ def getJobType(dir):
             return 'NEB'
     else:
         return 'Standard'
+
+def getLoopPlusTimes(outcar):
+    grep = subprocess.check_output('grep LOOP+: ' + outcar, shell=True).strip().split('\n')
+    times = map(lambda l: float(l.split()[-1]), grep)
+    return times
+
+def getMaxLoopTimes(times):
+    return sum(map(lambda x: max(x),
+                   zip(*times)))

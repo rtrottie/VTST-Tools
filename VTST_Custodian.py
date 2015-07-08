@@ -35,16 +35,19 @@ else:
 os.makedirs(os.path.join(backup_dir, str(this_run))) # make backup directory
 
 if job == 'NEB':
+    times = []
     for dir in os.listdir('.'): # Move over CONTCARs from previous run, and store POSCARs in backup folder
         if os.path.exists(os.path.join(dir,'CONTCAR')) and os.path.getsize(os.path.join(dir,'CONTCAR')) > 0:
             os.makedirs(os.path.join(backup_dir, str(this_run), dir))
             shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
+            times.append(getLoopPlusTimes(os.path.join(dir, 'OUTCAR')))
         elif os.path.exists(os.path.join(dir,'POSCAR')):
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     os.system('nebmovie.pl') # Clean directory and do basic-postprocessing
     shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
+    time = getMaxLoopTimes(times)
     try:
         shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
     except:
@@ -58,9 +61,12 @@ elif job == 'Dimer':
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('DIMCAR', os.path.join(backup_dir, str(this_run)))
-
+    time = sum(getLoopPlusTimes('OUTCAR'))
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
+
+with open(os.path.join(backup_dir, str(this_run), 'run_info'), 'w+') as f:
+    f.write('time,'+str(time))
 
 os.system('rm *.out *.err *.sh *.py STOPCAR') # Clean directory and do basic-postprocessing
 # Setup Templating for submit script
