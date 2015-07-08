@@ -53,7 +53,7 @@ if job == 'NEB':
         shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
         shutil.copy('nebef.dat', os.path.join(backup_dir, str(this_run)))
     except:
-        pass
+        time = 0
 
 elif job == 'Dimer':
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
