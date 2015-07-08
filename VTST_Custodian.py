@@ -97,8 +97,6 @@ time = int(sys.argv[3])
 if job == 'NEB':
     incar = Incar.from_file('INCAR')
     images = int(incar['IMAGES'])
-elif job == 'Dimer':
-    images = 2
 else:
     images = 1
 script = jobname + '.sh'
