@@ -57,6 +57,7 @@ elif job == 'Dimer':
         shutil.move('NEWMODECAR', 'MODECAR')
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
+    shutil.copy('DIMCAR', os.path.join(backup_dir, str(this_run)))
 
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
