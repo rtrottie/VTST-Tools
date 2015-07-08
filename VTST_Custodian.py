@@ -53,7 +53,7 @@ if job == 'NEB':
         shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
         shutil.copy('nebef.dat', os.path.join(backup_dir, str(this_run)))
     except:
-        time = 0
+        pass
 
 elif job == 'Dimer':
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
@@ -66,7 +66,7 @@ elif job == 'Dimer':
         shutil.copy('DIMCAR', os.path.join(backup_dir, str(this_run)))
         time = sum(getLoopPlusTimes('OUTCAR'))
     except:
-        pass
+        time = 0
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
 
