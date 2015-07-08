@@ -8,7 +8,7 @@ def neb2dim(neb_dir, dimer_dir):
     dimer_dir = os.path.abspath(dimer_dir)
     os.chdir(neb_dir)
     if not os.path.exists('exts.dat'):
-        os.system(os.path.join(cfg.VTST_DIR,'diffcon.pl'))
+        os.system(os.path.join(cfg.VTST_DIR,'nebspline.pl'))
     if not os.path.exists(dimer_dir):
         os.makedirs(dimer_dir)
     os.system(os.path.join(cfg.VTST_DIR,'neb2dim.pl') + ' > /dev/null')

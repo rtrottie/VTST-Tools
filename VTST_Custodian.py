@@ -29,7 +29,8 @@ if os.path.isdir(backup_dir):  # Find what directory to backup to
         raise Exception("backup setup is invalid")
     this_run = last_run+1
     if job == "NEB":
-        os.system('nebbarrier.pl') # do some post-processing only if this is not the first run
+        os.system(os.path.join(cfg.VTST_DIR, 'nebbarrier.pl') + ';'+
+                  os.path.join(cfg.VTST_DIR, 'nebef.pl > nebef.dat')) # do some post-processing only if this is not the first run
 else:
     this_run = 0
 os.makedirs(os.path.join(backup_dir, str(this_run))) # make backup directory
@@ -50,6 +51,7 @@ if job == 'NEB':
     time = getMaxLoopTimes(times)
     try:
         shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
+        shutil.copy('nebef.dat', os.path.join(backup_dir, str(this_run)))
     except:
         pass
 
