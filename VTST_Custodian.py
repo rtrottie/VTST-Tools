@@ -64,9 +64,9 @@ elif job == 'Dimer':
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     try:
         shutil.copy('DIMCAR', os.path.join(backup_dir, str(this_run)))
+        time = sum(getLoopPlusTimes('OUTCAR'))
     except:
         pass
-    time = sum(getLoopPlusTimes('OUTCAR'))
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
 
