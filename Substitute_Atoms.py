@@ -60,7 +60,7 @@ def replace_atom_arbitrary(prev_dir, this_dir, atom_nums, new_atom):
         replace_atom_NEB(prev_dir, this_dir, atom_nums, new_atom)
     elif job == 'Dimer':
         replace_atom(prev_dir, this_dir, atom_nums, new_atom, {'MODECAR': Modecar})
-    elif job == 'standard':
+    elif job == 'Standard':
         replace_atom(prev_dir, this_dir, atom_nums, new_atom)
     else:
         raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
