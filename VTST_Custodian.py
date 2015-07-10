@@ -92,7 +92,7 @@ if len(sys.argv) < 3:
             sys.argv[2] = file
             break
 if len(sys.argv) < 4:
-    sys.argv.append(16)
+    sys.argv.append(24)
 
 # initialize variables for template
 
