@@ -8,13 +8,14 @@ import os
 import cfg
 import mock
 
-def remove_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
+def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
     Poscar.get_string = get_string_more_sigfig
     vasp = VaspInput.from_directory(prev_dir, optional_files)
     transformation = RemoveSitesTransformation(atom_nums)
 
     # Modifying POSCAR
-    sd = vasp['POSCAR'].selective_dynamics
+    for i in atom_nums:
+        sd = vasp['POSCAR'].selective_dynamics.pop(i)
     vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCAR'].structure)
     vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
     vasp['POSCAR'].selective_dynamics = sd
@@ -29,11 +30,11 @@ def remove_atom_arbitrary(prev_dir, this_dir, atom_nums):
     job = getJobType(prev_dir)
     print('Creating new ' + str(job) + ' Job at ' + this_dir)
     if job == 'NEB':
-        remove_atom_NEB(prev_dir, this_dir, atom_nums, new_atom)
+        remove_atom_NEB(prev_dir, this_dir, atom_nums)
     elif job == 'Dimer':
-        remove_atom(prev_dir, this_dir, atom_nums, new_atom, {'MODECAR': Modecar})
+        remove_atom(prev_dir, this_dir, atom_nums, {'MODECAR': Modecar})
     elif job == 'Standard':
-        remove_atom(prev_dir, this_dir, atom_nums, new_atom)
+        remove_atom(prev_dir, this_dir, atom_nums)
     else:
         raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
     return

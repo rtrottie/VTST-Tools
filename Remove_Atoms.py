@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 __author__ = 'ryan'
 import sys
 from Substitute_Atoms import *
@@ -12,4 +13,4 @@ try:
 except:
     this_NEB_dir = sys.argv[2]
     atom_nums = map(lambda x: int(x), sys.argv[3:len(sys.argv)])
-replace_atom_arbitrary(prev_NEB_dir, this_NEB_dir, atom_nums, new_atom)
+remove_atom_arbitrary(prev_NEB_dir, this_NEB_dir, atom_nums)
