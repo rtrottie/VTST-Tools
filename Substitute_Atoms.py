@@ -98,6 +98,30 @@ def replace_atom_arbitrary(prev_dir, this_dir, atom_nums, new_atom):
         raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
     return
 
+def switch_atom(prev_dir, this_dir, atoms, optional_files=None):
+    poscar = Poscar.from_file(os.path.join(prev_dir, 'POSCAR'))
+    temp_dir = os.path.join(this_dir, 'temp')
+    for i in range(len(atoms)/2):
+        a1 = str(poscar.structure.species[atoms[2*i]])
+        a2 = str(poscar.structure.species[atoms[2*i+1]])
+        replace_atom(prev_dir, temp_dir, [atoms[2*i]], a2)
+        replace_atom(temp_dir, this_dir, [atoms[2*i+1]], a1)
+        os.system('rm -r ' + temp_dir)
+
+def switch_atom_arbitrary(prev_dir, this_dir, atom_nums):
+    job = getJobType(prev_dir)
+    print('Creating new ' + str(job) + ' Job at ' + this_dir)
+    if job == 'NEB':
+        switch_atom_NEB(prev_dir, this_dir, atom_nums)
+    elif job == 'Dimer':
+        switch_atom(prev_dir, this_dir, atom_nums, {'MODECAR': Modecar})
+    elif job == 'Standard':
+        switch_atom(prev_dir, this_dir, atom_nums)
+    else:
+        raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
+    return
+
+
 if os.path.basename(sys.argv[0]) == 'Substitute_Atoms.py':
     if len(sys.argv) < 4:
         raise Exception('Not Enough Arguments Provided\n need: Previous_Dir [This_Dir] Atom_#s New_Atom')
