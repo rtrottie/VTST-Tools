@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from pymatgen.io.vaspio.vasp_input import *
-from pymatgen.transformations.site_transformations import ReplaceSiteSpeciesTransformation
+from pymatgen.transformations.site_transformations import ReplaceSiteSpeciesTransformation, RemoveSitesTransformation
 from Classes_Pymatgen import *
 from Helpers import *
 import sys
@@ -8,6 +8,35 @@ import os
 import cfg
 import mock
 
+def remove_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
+    Poscar.get_string = get_string_more_sigfig
+    vasp = VaspInput.from_directory(prev_dir, optional_files)
+    transformation = RemoveSitesTransformation(atom_nums)
+
+    # Modifying POSCAR
+    sd = vasp['POSCAR'].selective_dynamics
+    vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCAR'].structure)
+    vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
+    vasp['POSCAR'].selective_dynamics = sd
+
+    # Creating new POTCAR
+    vasp['POTCAR'] = Potcar(vasp['POSCAR'].site_symbols)
+
+    vasp.write_input(this_dir)
+    return
+
+def remove_atom_arbitrary(prev_dir, this_dir, atom_nums):
+    job = getJobType(prev_dir)
+    print('Creating new ' + str(job) + ' Job at ' + this_dir)
+    if job == 'NEB':
+        remove_atom_NEB(prev_dir, this_dir, atom_nums, new_atom)
+    elif job == 'Dimer':
+        remove_atom(prev_dir, this_dir, atom_nums, new_atom, {'MODECAR': Modecar})
+    elif job == 'Standard':
+        remove_atom(prev_dir, this_dir, atom_nums, new_atom)
+    else:
+        raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
+    return
 
 def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
     Poscar.get_string = get_string_more_sigfig
