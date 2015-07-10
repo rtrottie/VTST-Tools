@@ -14,8 +14,10 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
     transformation = RemoveSitesTransformation(atom_nums)
 
     # Modifying POSCAR
+    sd = vasp['POSCAR'].selective_dynamics
+    atom_nums.sort(reverse=True)
     for i in atom_nums:
-        sd = vasp['POSCAR'].selective_dynamics.pop(i)
+        sd.pop(i)
     vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCAR'].structure)
     vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
     vasp['POSCAR'].selective_dynamics = sd
