@@ -44,6 +44,7 @@ if job == 'NEB':
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
             times.append(getLoopPlusTimes(os.path.join(dir, 'OUTCAR')))
         elif os.path.exists(os.path.join(dir,'POSCAR')):
+            os.makedirs(os.path.join(backup_dir, str(this_run), dir))
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     os.system('nebmovie.pl') # Clean directory and do basic-postprocessing
