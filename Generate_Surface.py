@@ -16,7 +16,7 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
         for depth in range(depth_min, depth_max):
             for width in range(width_min, width_max):
                 for freeze in xfrange(0, depth+1, freeze_step):
-                    s = material
+                    s = Poscar.from_file('POSCAR').structure
                     frozen_depth = s.lattice.b
                     s.make_supercell([width, depth, width])
                     sf = surf.SlabGenerator(s, [0,1,0], 2, 10, primitive=False)
@@ -38,6 +38,6 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
 if os.path.basename(sys.argv[0]) == 'Generate_Surface.py':
     if len(sys.argv) < 6:
         raise Exception('Not Enough Arguments Provided\n need: depth_min, depth_max, width_min, width_max, freeze_step')
-    Generate_Surfaces(Poscar.from_file('POSCAR').structure, int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]),
+    Generate_Surfaces('POSCAR', int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]),
                       int(sys.argv[4]), float(sys.argv[5]), Incar.from_file('INCAR'), Kpoints.from_file('KPOINTS') )
 
