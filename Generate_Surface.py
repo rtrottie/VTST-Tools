@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import pymatgen as pmg
 import pymatgen.core.structure as struc
 import pymatgen.core.surface as surf
