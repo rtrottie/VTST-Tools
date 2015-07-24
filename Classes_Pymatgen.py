@@ -1,5 +1,6 @@
 from pymatgen.io.vaspio.vasp_input import *
 import numpy as np
+import cfg
 
 def get_string_more_sigfig(self, direct=True, vasp4_compatible=False, significant_figures=20):
     """
@@ -62,6 +63,17 @@ def get_string_more_sigfig(self, direct=True, vasp4_compatible=False, significan
             lines.append(" ".join([format_str.format(i) for i in v]))
 
     return "\n".join(lines) + "\n"
+
+def pretty_incar_string(self):
+    set_keywords = set(map(lambda x : x.upper(), self.keys()))
+    s = ''
+    for section_tup in cfg.INCAR_format:
+        (section, section_keywords) = section_tup
+        if bool(set(section_keywords) & set_keywords):
+            s = s + ('#' * (4 + len(section))) + '\n' +'# ' + section.upper() + ' #' + '\n' + ('#' * (4 + len(section))) + '\n'
+            for key in section_keywords:
+                if key.upper() in set_keywords:
+
 
 
 class VaspNEBInput(VaspInput):
