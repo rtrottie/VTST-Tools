@@ -6,6 +6,7 @@ import cfg
 import shutil
 
 def xfrange(start, stop, step):
+    start = float(start)
     while start < stop:
         yield start
         start += step
