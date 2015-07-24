@@ -64,8 +64,8 @@ def get_string_more_sigfig(self, direct=True, vasp4_compatible=False, significan
 
     return "\n".join(lines) + "\n"
 
-def pretty_incar_string(self):
-    set_keywords = set(map(lambda x : x.upper(), self.keys()))
+def pretty_incar_string(self, sort_keys=True, pretty=False):
+    set_keywords = set(self.keys())
     s = ''
     for section_tup in cfg.INCAR_format:
         (section, section_keywords) = section_tup
@@ -73,6 +73,24 @@ def pretty_incar_string(self):
             s = s + ('#' * (4 + len(section))) + '\n' +'# ' + section.upper() + ' #' + '\n' + ('#' * (4 + len(section))) + '\n'
             for key in section_keywords:
                 if key.upper() in set_keywords:
+                    if key == "MAGMOM" and isinstance(self[key], list):
+                        value = []
+                        for m, g in itertools.groupby(self[key]):
+                            value.append("{}*{}".format(len(tuple(g)), m))
+                        s = s + key.upper() + ' = ' + " ".join(value) + '\n'
+                    elif isinstance(self[key], list):
+                        s = s + key.upper() + ' = ' + " ".join([str(i) for i in self[key]]) + '\n'
+                    else:
+                        s = s + key.upper() + ' = ' + str(self[key]) + '\n'
+                    set_keywords.remove(key)
+        s = s + '\n'
+    s = s + ('#' * 9) + '\n' +'# OTHER #' + '\n' + ('#' * 9) + '\n'
+    for key in set_keywords:
+        if isinstance(self[key], list):
+            s = s + key.upper() + ' = ' + " ".join([str(i) for i in self[key]]) + '\n'
+        else:
+            s = s + key.upper() + ' = ' + str(self[key]) + '\n'
+    return s
 
 
 

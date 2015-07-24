@@ -15,12 +15,20 @@ INCAR = {
                 }
 }
 
+
+
+
 INCAR_format = [
 
-    ('ALGORITHM', ['ALGO', 'ENCUT', 'NPAR', 'EDIFF', 'EDIFFG', 'IBRION', 'NSW', 'POTIM', 'LREAL']),
+    ('ALGORITHM - ELECTRONIC', ['ALGO', 'IALGO', 'NPAR', 'ENCUT', 'NELMIN', 'NELM', 'NELMDL',  'EDIFF']),
+    ('ALGORITHM - IONIC', ['IBRION', 'NSW', 'POTIM', 'EDIFFG']),
+    ('ALGORITHM - GENERAL', ['LREAL']),
     ('INPUT', ['ISTART', 'ICHARG']),
     ('OUTPUT', ['NWRITE', 'LORBIT', 'LAECHG']),
-    ('DFT+U', ['LDAU', 'LDAUTYPE', 'LDAUL', 'LDAUU', 'LMAXMIX', 'LDAUPRINT'])
+    ('ELECTRONIC STRUCTURE', ['MAGMOM', 'NBANDS', 'ISPIN', 'SIGMA', 'ISMEAR']),
+    ('DFT+U', ['LDAU', 'LDAUTYPE', 'LDAUL', 'LDAUU', 'LMAXMIX', 'LDAUPRINT']),
+    ('NEB', ['IMAGES', 'SPRING']),
+    ('VTST', ['ICHAIN', 'IOPT'])
 
 ]
 

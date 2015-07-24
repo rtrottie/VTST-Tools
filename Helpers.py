@@ -1,8 +1,14 @@
 import os
 import subprocess
 from pymatgen.io.vaspio.vasp_input import Incar
+from pymatgen.core.structure import *
 import cfg
 import shutil
+
+def xfrange(start, stop, step):
+    while start < stop:
+        yield start
+        start += step
 
 def neb2dim(neb_dir, dimer_dir):
     dimer_dir = os.path.abspath(dimer_dir)
@@ -54,3 +60,15 @@ def getLoopPlusTimes(outcar):
 def getMaxLoopTimes(times):
     return sum(map(lambda x: max(x),
                    zip(*times)))
+
+def update_incar(structure, incar):
+    for k in incar.keys():
+        if k in cfg.INCAR:
+            species = map(lambda sp: str(sp), structure.species)
+            if k != 'MAGMOM':
+                species = list(species)
+                lspecies = list(map(lambda x: [x], species))
+                species = reduce(lambda x,y: x+y if x[-1] != y[0] else x + y[1:-1],
+                                 map(lambda x: [x], species))
+            incar[k] = list(map(lambda a: cfg.INCAR[k][a] if a in cfg.INCAR[k] else cfg.INCAR[k]['default'],
+                            species))
