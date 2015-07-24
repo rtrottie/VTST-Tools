@@ -18,7 +18,7 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
             for width in range(width_min, width_max+1):
                 for freeze in xfrange(0, depth+.1, freeze_step):
                     s = Poscar.from_file('POSCAR').structure
-                    frozen_depth = s.lattice.b
+                    frozen_depth = s.lattice.b * freeze
                     s.make_supercell([width, depth, width])
                     surface_depth = s.lattice.b
                     sf = surf.SlabGenerator(s, [0,1,0], 2, 10, primitive=False)
@@ -26,7 +26,7 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                     poscar = Poscar(sf.get_slab())
                     sd = []
                     for site in poscar.structure.sites:
-                        if site.b * site.lattice.b < frozen_depth * freeze:
+                        if site.c * site.lattice.c < frozen_depth:
                             sd.append([False, False, False])
                         else:
                             sd.append([True, True, True])
