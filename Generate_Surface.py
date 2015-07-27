@@ -26,7 +26,7 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                     poscar = Poscar(sf.get_slab())
                     sd = []
                     for site in poscar.structure.sites:
-                        if site.c * site.lattice.c <= frozen_depth:
+                        if site.c * site.lattice.c < frozen_depth:
                             sd.append([False, False, False])
                         else:
                             sd.append([True, True, True])
