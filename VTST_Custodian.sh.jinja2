@@ -7,6 +7,7 @@
 #SBATCH -e {{ logname }}-%j.err
 #SBATCH --qos=normal
 
+{% if host == janus %}
 # Load important modules and ensure environemnt variables are correctly set up
 
 module load python/anaconda-2.0.0
@@ -14,7 +15,12 @@ module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib
 module load intel/intel-12.1.6;
 module load openmpi/openmpi-1.4.5_intel-12.1.6_ib;
 PYTHONPATH=$PYTHONPATH:/home/rytr1806/NEB-Tools
+
+{% endif %}
+
 export OMP_NUM_THREADS=1
+
+
 
 # Execute python commands, could be separated into a separate file, but 1 file is easier to template.
 

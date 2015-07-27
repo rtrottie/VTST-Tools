@@ -7,6 +7,7 @@ import os
 import shutil
 import fnmatch
 import cfg
+import socket
 
 backup_dir = "backup"
 
@@ -107,6 +108,15 @@ else:
     images = 1
 script = jobname + '.sh'
 
+if 'psiops' in socket.gethostname():
+    raise Exception('Haven\'t implemented psiops script yet')
+elif '.rc' in socket.gethostname():
+    vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
+    vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
+    host = 'janus'
+else:
+    raise Exception('Don\'t recognize host: ' + socket.gethostname())
+
 keywords = {'J' : jobname,
             'hours' : time,
             'nodes' : images*nodes_per_image,
@@ -114,7 +124,9 @@ keywords = {'J' : jobname,
             'logname' : jobname,
             'tasks' : images*nodes_per_image*12,
             'user' : os.environ['USER'],
-            'jobtype' : job}
+            'jobtype' : job,
+            'vasp_tst_gamma' : vasp_tst_gamma,
+            'vasp_tst_kpts' : vasp_tst_kpts}
 
 with open(script, 'w+') as f:
     f.write(template.render(keywords))
