@@ -117,6 +117,11 @@ elif '.rc.' in socket.gethostname():
     host = 'janus'
 elif 'rapunzel' in socket.gethostname():
     raise Exception('Haven\'t implemented psiops script yet')
+elif 'ryan-VirtualBox' in socket.gethostname():
+    vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
+    vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
+    host = 'janus'
+
 else:
     raise Exception('Don\'t recognize host: ' + socket.gethostname())
 
