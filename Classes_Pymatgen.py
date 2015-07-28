@@ -93,7 +93,6 @@ def pretty_incar_string(self, sort_keys=True, pretty=False):
     return s
 
 
-
 class VaspNEBInput(VaspInput):
     def __init__(self, incar, kpoints, poscars, potcar, optional_files=None,
                  **kwargs):
@@ -411,3 +410,6 @@ class Modecar(PMGSONable):
     def from_dict(cls, d):
         return (d['contents'])
 
+
+Poscar.get_string = get_string_more_sigfig
+Incar.get_string = pretty_incar_string
