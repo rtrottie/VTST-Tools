@@ -109,12 +109,25 @@ else:
     images = 1
 script = jobname + '.sh'
 
+connection = ''
+
 if 'psiops' in socket.gethostname():
-    raise Exception('Haven\'t implemented psiops script yet')
+    host = 'psiops'
+    hours = 200
+    mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
+    if nodes_per_image == 1:
+        connection = 'gb'
+        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
+        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
+    else:
+        connection = 'ib'
+        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
+        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
 elif '.rc.' in socket.gethostname():
     vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
     vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
     host = 'janus'
+    mpi = 'mpirun'
 elif 'rapunzel' in socket.gethostname():
     raise Exception('Haven\'t implemented psiops script yet')
 elif 'ryan-VirtualBox' in socket.gethostname():
@@ -135,7 +148,8 @@ keywords = {'J' : jobname,
             'jobtype' : job,
             'vasp_tst_gamma' : vasp_tst_gamma,
             'vasp_tst_kpts' : vasp_tst_kpts,
-            'host' : host}
+            'host' : host,
+            'connection' : connection}
 
 with open(script, 'w+') as f:
     f.write(template.render(keywords))
