@@ -115,6 +115,7 @@ if 'psiops' in socket.gethostname():
     host = 'psiops'
     hours = 200
     mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
+    queue_sub = 'qsub'
     if nodes_per_image == 1:
         connection = 'gb'
         vasp_tst_gamma = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
@@ -128,6 +129,7 @@ elif '.rc.' in socket.gethostname():
     vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
     host = 'janus'
     mpi = 'mpirun'
+    queue_sub = 'sbatch'
 elif 'rapunzel' in socket.gethostname():
     raise Exception('Haven\'t implemented psiops script yet')
 elif 'ryan-VirtualBox' in socket.gethostname():
@@ -154,4 +156,4 @@ keywords = {'J' : jobname,
 with open(script, 'w+') as f:
     f.write(template.render(keywords))
 
-os.system('sbatch ' + script) 
+os.system(queue_sub + ' ' + script)
