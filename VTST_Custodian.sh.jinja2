@@ -59,7 +59,8 @@ from pymatgen.io.vaspio.vasp_input import *
 from pymatgen.io.vaspio_set import *
 from Classes_Custodian import *
 
-vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', '{{ vasp_tst_kpts }}', '-t', '$HOME', '-d'], '{{ logname }}', gamma_vasp_cmd=['{{ mpi }}', '-npernode', '{{ tasks }}', '{{ vasp_tst_gamma }}', '-t', '/lustre/janus_scratch/{{ user }}', '-d'],auto_npar=False)]
+vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', '{{ vasp_tst_kpts }}'], '{{ logname }}',
+                            gamma_vasp_cmd=['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', '{{ vasp_tst_gamma }}'], auto_npar=False)]
 handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 20*60)]
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()"
