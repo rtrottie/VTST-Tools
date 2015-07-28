@@ -118,8 +118,8 @@ if 'psiops' in socket.gethostname():
     queue_sub = 'qsub'
     if nodes_per_image == 1:
         connection = 'gb'
-        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
-        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
+        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
+        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
     else:
         connection = 'ib'
         vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'

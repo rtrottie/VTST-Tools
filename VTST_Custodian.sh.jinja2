@@ -38,6 +38,7 @@ PATH=/usr/lib64/qt-3.3/bin:/usr/kerberos/sbin:/usr/kerberos/bin:/usr/local/sbin:
 export PATH
 LD_LIBRARY_PATH=/opt/intel/Compiler/11.1/064/lib/intel64/:/home/dummy/open_mpi_intel/openmpi-1.6/lib:/opt/intel/Compiler/11.1/064/mkl/lib/em64t
 export LD_LIBRARY_PATH
+PYTHONPATH=~/usr/bin/VTST-Tools:$PYTHONPATH
 
 {% endif %}
 
@@ -58,7 +59,7 @@ from pymatgen.io.vaspio.vasp_input import *
 from pymatgen.io.vaspio_set import *
 from Classes_Custodian import *
 
-vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', {{ vasp_tst_kpts }}, '-t', '/lustre/janus_scratch/{{ user }}', '-d'], '{{ logname }}', gamma_vasp_cmd=['mpirun', '-np', '{{ tasks }}', {{ vasp_tst_gamma }}, '-t', '/lustre/janus_scratch/{{ user }}', '-d'],auto_npar=False)]
+vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', '{{ vasp_tst_kpts }}', '-t', '$HOME', '-d'], '{{ logname }}', gamma_vasp_cmd=['{{ mpi }}', '-npernode', '{{ tasks }}', '{{ vasp_tst_gamma }}', '-t', '/lustre/janus_scratch/{{ user }}', '-d'],auto_npar=False)]
 handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 20*60)]
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()"
