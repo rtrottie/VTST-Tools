@@ -85,8 +85,10 @@ template = env.get_template(template)
 
 # Use default arguments if not enough are provided
 
+incar = Incar.from_file('INCAR')
 if len(sys.argv) < 2:
-    sys.argv.append(1)
+    sys.argv.append(incar['NPAR'])
+
 if len(sys.argv) < 3:
     sys.argv.append(job + '_' + os.path.basename(os.getcwd()))
     for file in os.listdir('.'):
@@ -102,7 +104,6 @@ nodes_per_image = int(sys.argv[1])
 jobname = sys.argv[2]
 time = int(sys.argv[3])
 if job == 'NEB':
-    incar = Incar.from_file('INCAR')
     images = int(incar['IMAGES'])
 else:
     images = 1
@@ -110,10 +111,12 @@ script = jobname + '.sh'
 
 if 'psiops' in socket.gethostname():
     raise Exception('Haven\'t implemented psiops script yet')
-elif '.rc' in socket.gethostname():
+elif '.rc.' in socket.gethostname():
     vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
     vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
     host = 'janus'
+elif 'rapunzel' in socket.gethostname():
+    raise Exception('Haven\'t implemented psiops script yet')
 else:
     raise Exception('Don\'t recognize host: ' + socket.gethostname())
 
@@ -126,7 +129,8 @@ keywords = {'J' : jobname,
             'user' : os.environ['USER'],
             'jobtype' : job,
             'vasp_tst_gamma' : vasp_tst_gamma,
-            'vasp_tst_kpts' : vasp_tst_kpts}
+            'vasp_tst_kpts' : vasp_tst_kpts,
+            'host' : host}
 
 with open(script, 'w+') as f:
     f.write(template.render(keywords))
