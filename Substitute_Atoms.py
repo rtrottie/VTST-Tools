@@ -57,10 +57,7 @@ def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
     vasp['POTCAR'] = Potcar(vasp['POSCAR'].site_symbols)
 
     # Modifying INCAR
-    for k in vasp['INCAR'].keys():
-        if k in cfg.INCAR:
-            vasp['INCAR'][k] = map(lambda a: cfg.INCAR[k][a] if a in cfg.INCAR[k] else cfg.INCAR[k]['default'],
-                                    vasp['POSCAR'].site_symbols)
+    update_incar(vasp['POSCAR'].structure, vasp['INCAR'])
 
     vasp.write_input(this_dir)
     return
@@ -77,10 +74,8 @@ def replace_atom_NEB(prev_NEB_dir, this_NEB_dir, atom_nums, new_atom):
 
     NEB['POTCAR'] = Potcar(NEB['POSCARs'][i].site_symbols)
 
-    for k in NEB['INCAR'].keys():
-        if k in cfg.INCAR:
-            NEB['INCAR'][k] = map(lambda a: cfg.INCAR[k][a] if a in cfg.INCAR[k] else cfg.INCAR[k]['default'],
-                                    NEB['POSCARs'][0].site_symbols)
+
+    update_incar(vasp['POSCAR'].structure, vasp['INCAR'])
 
     NEB.write_input(this_NEB_dir)
     return
