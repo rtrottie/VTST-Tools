@@ -151,7 +151,8 @@ keywords = {'J' : jobname,
             'vasp_tst_gamma' : vasp_tst_gamma,
             'vasp_tst_kpts' : vasp_tst_kpts,
             'host' : host,
-            'connection' : connection}
+            'connection' : connection,
+            'mpi' : mpi}
 
 with open(script, 'w+') as f:
     f.write(template.render(keywords))
