@@ -16,7 +16,7 @@ module load openmpi/openmpi-1.4.5_intel-12.1.6_ib;
 export OMP_NUM_THREADS=1
 
 {% elif host == "psiops" %}#PBS -l nodes={{ nodes }}:ppn={{ nntasks_per_node }}:{{ connection }} -q batch -l walltime={{ hours }}:00:00
-#PBS -k eo -m n -e {{ logname }}-$PBS_JOBID.out -o {{ logname }}-$PBS_JOBID.out
+#PBS -k eo -m n -e $PBS_O_WORKDIR/{{ logname }}-$PBS_JOBID.out -o $PBS_O_WORKDIR/{{ logname }}-$PBS_JOBID.out
 
 # Header for script adds nodes list from PBS
 cd $PBS_O_WORKDIR
