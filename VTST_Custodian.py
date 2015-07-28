@@ -58,8 +58,8 @@ if job == 'NEB':
         pass
 
 elif job == 'Dimer':
-    if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
-        shutil.move('CONTCAR', 'POSCAR')
+    if os.path.exists('CENTCAR') and os.path.getsize('CENTCAR') > 0:
+        shutil.move('CENTCAR', 'POSCAR')
     if os.path.exists('NEWMODECAR') and os.path.getsize('NEWMODECAR') > 0:
         shutil.move('NEWMODECAR', 'MODECAR')
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
