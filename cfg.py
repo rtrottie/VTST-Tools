@@ -12,6 +12,7 @@ INCAR = {
               },
     'MAGMOM' : {'default': 0,
                 'Fe': 4,
+                'Co': 5
                 }
 }
 
