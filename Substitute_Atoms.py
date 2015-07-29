@@ -122,6 +122,7 @@ if os.path.basename(sys.argv[0]) == 'Substitute_Atoms.py':
         raise Exception('Not Enough Arguments Provided\n need: Previous_Dir [This_Dir] Atom_#s New_Atom')
     prev_NEB_dir = sys.argv[1]
     try:
+        int(sys.argv[2])
         this_NEB_dir = os.getcwd()
         atom_nums = map(lambda x: int(x), sys.argv[2:len(sys.argv)-1])
     except:
