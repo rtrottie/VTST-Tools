@@ -56,7 +56,7 @@ from Classes_Custodian import *
 vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', '{{ vasp_tst_kpts }}'], '{{ logname }}',
                             gamma_vasp_cmd=['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', '{{ vasp_tst_gamma }}'], auto_npar=False)]
 
-{% if job == "Dimer" or job == "NEB"}
+{% if job == "Dimer" or job == "NEB" %}
 handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 20*60)]
 
 {% elif job == "Standard" %}
