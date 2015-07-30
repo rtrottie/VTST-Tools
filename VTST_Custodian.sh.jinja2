@@ -56,13 +56,14 @@ from Classes_Custodian import *
 vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', '{{ vasp_tst_kpts }}'], '{{ logname }}',
                             gamma_vasp_cmd=['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', '{{ vasp_tst_gamma }}'], auto_npar=False)]
 
-{% if job == "Dimer" %}
+{% if jobtype == "Dimer" %}
 handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 20*60)]
 
-{% elif job == "NEB" %}
-handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 20*60)]
+{% elif jobtype == "NEB" %}
+handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 20*60), PositiveEnergyErrorHandler(),
+            PotimErrorHandler(), VaspErrorHandler('{{ logname }})']
 
-{% elif job == "Standard" %}
+{% elif jobtype == "Standard" %}
 handlers = [WalltimeHandler({{ hours }}*60*60), NonConvergingErrorHandler(nionic_steps=15), PositiveEnergyErrorHandler(),
             PotimErrorHandler(), VaspErrorHandler('{{ logname }})']
 {% endif %}
