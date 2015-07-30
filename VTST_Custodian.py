@@ -123,7 +123,7 @@ connection = ''
 if job == 'Dimer' or job == 'NEB':
     if 'psiops' in socket.gethostname():
         host = 'psiops'
-        hours = 200
+        time = 200
         mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
         queue_sub = 'qsub'
         if nodes_per_image == 1:
