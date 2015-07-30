@@ -41,7 +41,7 @@ if job == 'NEB':
     for dir in os.listdir('.'): # Move over CONTCARs from previous run, and store POSCARs in backup folder
         if os.path.exists(os.path.join(dir,'CONTCAR')) and os.path.getsize(os.path.join(dir,'CONTCAR')) > 0:
             os.makedirs(os.path.join(backup_dir, str(this_run), dir))
-            shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
+            shutil.move(os.path.join(dilr,'CONTCAR'), os.path.join(dir, 'POSCAR'))
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
             times.append(getLoopPlusTimes(os.path.join(dir, 'OUTCAR')))
         elif os.path.exists(os.path.join(dir,'POSCAR')):
@@ -66,6 +66,15 @@ elif job == 'Dimer':
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     try:
         shutil.copy('DIMCAR', os.path.join(backup_dir, str(this_run)))
+        time = sum(getLoopPlusTimes('OUTCAR'))
+    except:
+        time = 0
+elif job == 'Standard':
+    if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
+        shutil.move('CONTCAR', 'POSCAR')
+    shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
+    shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
+    try:
         time = sum(getLoopPlusTimes('OUTCAR'))
     except:
         time = 0
@@ -111,34 +120,64 @@ script = jobname + '.sh'
 
 connection = ''
 
-if 'psiops' in socket.gethostname():
-    host = 'psiops'
-    hours = 200
-    mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
-    queue_sub = 'qsub'
-    if nodes_per_image == 1:
-        connection = 'gb'
-        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
-        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
-    else:
-        connection = 'ib'
-        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
-        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
-elif '.rc.' in socket.gethostname():
-    vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-    vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
-    host = 'janus'
-    mpi = 'mpirun'
-    queue_sub = 'sbatch'
-elif 'rapunzel' in socket.gethostname():
-    raise Exception('Haven\'t implemented psiops script yet')
-elif 'ryan-VirtualBox' in socket.gethostname():
-    vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-    vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
-    host = 'janus'
+if job == 'Dimer' or job == 'NEB':
+    if 'psiops' in socket.gethostname():
+        host = 'psiops'
+        hours = 200
+        mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
+        queue_sub = 'qsub'
+        if nodes_per_image == 1:
+            connection = 'gb'
+            vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
+            vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
+        else:
+            connection = 'ib'
+            vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
+            vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
+    elif '.rc.' in socket.gethostname():
+        vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
+        vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
+        host = 'janus'
+        mpi = 'mpirun'
+        queue_sub = 'sbatch'
+    elif 'rapunzel' in socket.gethostname():
+        raise Exception('Haven\'t implemented psiops script yet')
+    elif 'ryan-VirtualBox' in socket.gethostname():
+        vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
+        vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
+        host = 'janus'
 
+    else:
+        raise Exception('Don\'t recognize host: ' + socket.gethostname())
+elif job == 'Standard':
+    if 'psiops' in socket.gethostname():
+        host = 'psiops'
+        hours = 200
+        mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
+        queue_sub = 'qsub'
+        vasp_tst_gamma = '/home/dummy/vasp5.12/stacked_cache_gamma/vasp.5.2/vasp'
+        vasp_tst_kpts = '/home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
+        if nodes_per_image == 1:
+            connection = 'gb'
+        else:
+            connection = 'ib'
+    elif '.rc.' in socket.gethostname():
+        vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/gamma/vasp.5.3/vasp'
+        vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/kpts/vasp.5.3/vasp'
+        host = 'janus'
+        mpi = 'mpirun'
+        queue_sub = 'sbatch'
+    elif 'rapunzel' in socket.gethostname():
+        raise Exception('Haven\'t implemented psiops script yet')
+    elif 'ryan-VirtualBox' in socket.gethostname():
+        vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
+        vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
+        host = 'janus'
+
+    else:
+        raise Exception('Don\'t recognize host: ' + socket.gethostname())
 else:
-    raise Exception('Don\'t recognize host: ' + socket.gethostname())
+    raise Exception('Don\'t recognize jobtype: ' + job)
 
 keywords = {'J' : jobname,
             'hours' : time,

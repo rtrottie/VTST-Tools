@@ -101,3 +101,6 @@ class DimerJob(VaspJob):
 
         if self.settings_override is not None:
             VaspModder().apply_actions(self.settings_override)
+
+
+StandardJob = VaspJob

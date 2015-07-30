@@ -48,19 +48,21 @@ PYTHONPATH=~/usr/bin/VTST-Tools:$PYTHONPATH
 
 python -c "
 
-import sys
-import os
-import shutil
 from custodian.vasp.jobs import *
 from custodian.vasp.handlers import *
 from custodian.custodian import *
-import pymatgen
-from pymatgen.io.vaspio.vasp_input import *
-from pymatgen.io.vaspio_set import *
 from Classes_Custodian import *
 
 vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', '{{ vasp_tst_kpts }}'], '{{ logname }}',
                             gamma_vasp_cmd=['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}', '{{ vasp_tst_gamma }}'], auto_npar=False)]
+
+{% if job == "Dimer" or job == "NEB"}
 handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 20*60)]
+
+{% elif job == "Standard" %}
+handlers = [WalltimeHandler({{ hours }}*60*60), NonConvergingErrorHandler(nionic_steps=15), PositiveEnergyErrorHandler(),
+            PotimErrorHandler(), VaspErrorHandler('{{ logname }})']
+{% endif %}
+
 c = Custodian(handlers, vaspjob, max_errors=10)
 c.run()"
