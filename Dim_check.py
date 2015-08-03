@@ -14,3 +14,4 @@ def check_dimer(directory):
         incar.pop('ICHAIN')
         incar['IOPT'] = 7
         incar.write_file(os.path.join(dir,'INCAR'))
+        os.system('VTST_Custodian.py')
