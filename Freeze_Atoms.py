@@ -11,6 +11,8 @@ def freeze_atoms_except_neighbors(dir, atom, unfrozen_dist=4):
     if os.path.exists(os.path.join(dir, 'selective_dynamics')): # if atoms are alread frozen, we don't want to overwrite original SD
         raise Exception('Selective Dynamics File Exists')
     sd_orig = poscar.selective_dynamics
+    with open(os.path.join(dir, 'selective_dynamics'),'w+') as f:
+        f.write(str(sd_orig))
     neigh = poscar.structure.get_neighbors(poscar.structure.sites[atom-1], unfrozen_dist, True) # find nearby atoms
     neigh = map(lambda x: x[2], neigh) # get indices
     neigh.append(atom-1) # add center atom
@@ -19,9 +21,7 @@ def freeze_atoms_except_neighbors(dir, atom, unfrozen_dist=4):
             poscar.selective_dynamics[i] = [False, False, False]
 
     Poscar.get_string = get_string_more_sigfig
-    poscar.write_file(os.path.join(dir, 'POSCAR_t'))
-    with open(os.path.join(dir, 'selective_dynamics'),'w+') as f:
-        f.write(str(sd_orig))
+    poscar.write_file(os.path.join(dir, 'POSCAR'))
     return
 
 #TODO: write unfreeze atoms
