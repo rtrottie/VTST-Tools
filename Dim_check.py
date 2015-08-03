@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import cfg
 import shutil
