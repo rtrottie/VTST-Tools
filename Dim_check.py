@@ -19,4 +19,4 @@ def check_dimer(directory):
         os.system('VTST_Custodian.py')
 
 if os.path.basename(sys.argv[0]) == 'Dim_check.py':
-    check_dimer(os.curdir())
+    check_dimer(os.curdir)
