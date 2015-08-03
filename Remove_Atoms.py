@@ -9,8 +9,8 @@ if len(sys.argv) < 3:
 prev_NEB_dir = sys.argv[1]
 try:
     this_NEB_dir = os.getcwd()
-    atom_nums = list(map(lambda x: int(x), sys.argv[2:len(sys.argv)]))
+    atom_nums = list(map(lambda x: int(x)-1, sys.argv[2:len(sys.argv)]))
 except:
     this_NEB_dir = sys.argv[2]
-    atom_nums = list(map(lambda x: int(x), sys.argv[3:len(sys.argv)]))
+    atom_nums = list(map(lambda x: int(x)-1, sys.argv[3:len(sys.argv)]))
 remove_atom_arbitrary(prev_NEB_dir, this_NEB_dir, atom_nums)
