@@ -5,7 +5,7 @@ import shutil
 import sys
 from Classes_Pymatgen import *
 
-def check_dimer(directory):
+def check_dimer(directory, runP=True):
     os.chdir(directory)
     os.system(os.path.join(cfg.VTST_DIR, 'dimmins.pl'))
     for m in ['min1', 'min2']:
@@ -16,9 +16,10 @@ def check_dimer(directory):
         incar.pop('ICHAIN')
         incar['IOPT'] = 7
         incar.write_file(os.path.join(dir,'INCAR'))
-        os.chdir(dir)
-        os.system('VTST_Custodian.py')
-        os.chdir(directory)
+        if runP:
+            os.chdir(dir)
+            os.system('VTST_Custodian.py')
+            os.chdir(directory)
 
-if os.path.basename(sys.argv[0]) == 'Dim_check.py':
+if os.path.basename(sys.argv[0]) == 'Dim_Check.py':
     check_dimer(os.path.abspath(os.curdir))

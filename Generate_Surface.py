@@ -13,7 +13,7 @@ import Vis
 def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, freeze_step, incar, kpoints):
     Poscar.get_string = get_string_more_sigfig
     Incar.get_string = pretty_incar_string
-    with pmg.matproj.rest.MPRester(cfg.key) as m:
+    with pmg.matproj.rest.MPRester(cfg.MAT_PROJ_KEY) as m:
         for depth in range(depth_min, depth_max+1):
             for width in range(width_min, width_max+1):
                 for freeze in xfrange(0, depth+.1, freeze_step):

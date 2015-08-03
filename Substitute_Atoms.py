@@ -22,15 +22,16 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
     # Creating new POTCAR
     vasp['POTCAR'] = Potcar(vasp['POSCAR'].site_symbols)
 
+    # Modifying INCAR
+    update_incar(vasp['POSCAR'].structure, vasp['INCAR'])
+
     vasp.write_input(this_dir)
     return
 
 def remove_atom_arbitrary(prev_dir, this_dir, atom_nums):
     job = getJobType(prev_dir)
     print('Creating new ' + str(job) + ' Job at ' + this_dir)
-    if job == 'NEB':
-        remove_atom_NEB(prev_dir, this_dir, atom_nums)
-    elif job == 'Dimer':
+    if job == 'Dimer':
         remove_atom(prev_dir, this_dir, atom_nums, {'MODECAR': Modecar})
     elif job == 'Standard':
         remove_atom(prev_dir, this_dir, atom_nums)
