@@ -12,6 +12,7 @@ def check_dimer(directory, runP=True):
         dir = os.path.join(directory, 'mins', m)
         shutil.copy(os.path.join(directory, 'WAVECAR'), dir)
         incar = Incar.from_file(os.path.join(dir,'INCAR'))
+        incar['EDIFF'] = 1e-5
         incar['EDIFFG'] = -5e-2
         incar.pop('ICHAIN')
         incar['IOPT'] = 7
