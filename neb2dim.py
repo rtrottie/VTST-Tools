@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+# attempts to Fully initialize (changes ICHAIN) from an NEB run, still has a few issues
+
+# Usage: neb2dim.py NEB_dir [Dim_dir]
+
 from Helpers import *
 import sys
 import os

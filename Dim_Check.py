@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+# Starts two relaxations from opposite ends of the saddle point.  Uses the Fire Method, which should relax into
+# local minima so subsequent runs should be done with the VTST code.  Files can be found in mins/min{1,2}
+
+# usage:  Dim_Check.py
 import os
 import cfg
 import shutil

@@ -1,3 +1,5 @@
+# Functions which check and maintain VASP runs
+# Not meant to be called from command line
 from custodian.vasp.jobs import *
 from custodian.vasp.handlers import *
 from monty.os.path import which

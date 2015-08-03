@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#TODO: Make more general, currently only cuts on 010
 import pymatgen as pmg
 import pymatgen.core.structure as struc
 import pymatgen.core.surface as surf

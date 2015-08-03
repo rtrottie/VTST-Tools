@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+# Starts a run that won't move ions.  Sets NSW to 0 and raises NELM to 1000 to allow even difficult surfaces to converge
+# Does this only for the current directory
+
+# Usage: No_Relax.py
+
 from Classes_Pymatgen import *
 import sys
 

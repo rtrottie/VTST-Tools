@@ -1,5 +1,8 @@
 #!/usr/bin/env python
+# Freezes all atoms around a specified atom, by default, 4 angstrom radius (chosen arbitrarily).  Creates file named
+# selective_dynamics which saves the previous selective_dynamics to be restored later.  Saves POSCAR to current folder
 
+# Usage: Freeze_Atoms [Dir] Atom_# [Unfrozen_Distance]
 from pymatgen.io.vaspio.vasp_input import Poscar
 from Classes_Pymatgen import get_string_more_sigfig
 import os

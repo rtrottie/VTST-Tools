@@ -1,3 +1,6 @@
+# Various functions called by other functions
+# Not meant to be called from command line
+
 import os
 import subprocess
 from pymatgen.io.vaspio.vasp_input import Incar
@@ -25,7 +28,6 @@ def neb2dim(neb_dir, dimer_dir):
     os.chdir(dimer_dir)
     incar = Incar.from_file('INCAR')
     incar['ICHAIN'] = 2
-    incar['IOPT'] = 2
     incar['EDIFF'] = 1e-7
     incar.pop('IMAGES'); incar.pop('SPRING')
     os.remove(os.path.join(dimer_dir, 'INCAR'))
