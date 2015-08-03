@@ -16,3 +16,6 @@ def check_dimer(directory):
         incar['IOPT'] = 7
         incar.write_file(os.path.join(dir,'INCAR'))
         os.system('VTST_Custodian.py')
+
+if os.path.basename(sys.argv[0]) == 'Freeze_Atoms.py':
+    check_dimer(os.curdir())
