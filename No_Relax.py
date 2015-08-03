@@ -6,6 +6,8 @@ def no_relax(directory, runP=true):
     incar = Incar.from_file('INCAR')
     incar['NSW'] = 0
     incar['NELM'] = 1000
+    if 'ICHAIN' in incar:
+        incar.pop('ICHAIN')
     Incar.write_file('INCAR')
     if runP:
         os.system('VTST_Custodian.py')
