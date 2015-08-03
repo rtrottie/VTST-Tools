@@ -153,7 +153,7 @@ if job == 'Dimer' or job == 'NEB':
 elif job == 'Standard':
     if 'psiops' in socket.gethostname():
         host = 'psiops'
-        hours = 200
+        time = 200
         mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
         queue_sub = 'qsub'
         vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'

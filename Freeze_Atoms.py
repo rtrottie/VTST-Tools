@@ -49,5 +49,6 @@ if os.path.basename(sys.argv[0]) == 'Freeze_Atoms.py':
         unfrozen_dist = int(sys.argv[3])
     else:
         raise Exception('Too Many Arguments\n need: [Dir] Atom_#s [Distance]')
+    freeze_atoms_except_neighbors(dir, atom, unfrozen_dist)
 
 
