@@ -2,6 +2,7 @@
 import os
 import cfg
 import shutil
+import sys
 from Classes_Pymatgen import *
 
 def check_dimer(directory):
