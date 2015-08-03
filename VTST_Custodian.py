@@ -156,8 +156,8 @@ elif job == 'Standard':
         hours = 200
         mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
         queue_sub = 'qsub'
-        vasp_tst_gamma = '/home/dummy/vasp5.12/stacked_cache_gamma/vasp.5.2/vasp'
-        vasp_tst_kpts = '/home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
+        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
+        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
         if nodes_per_image == 1:
             connection = 'gb'
         else:
