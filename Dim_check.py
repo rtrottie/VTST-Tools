@@ -16,7 +16,9 @@ def check_dimer(directory):
         incar.pop('ICHAIN')
         incar['IOPT'] = 7
         incar.write_file(os.path.join(dir,'INCAR'))
+        os.chdir(dir)
         os.system('VTST_Custodian.py')
+        os.chdir(directory)
 
 if os.path.basename(sys.argv[0]) == 'Dim_check.py':
     check_dimer(os.curdir)
