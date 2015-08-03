@@ -2,7 +2,7 @@
 from Classes_Pymatgen import *
 import sys
 
-def no_relax(directory, runP=true):
+def no_relax(directory, runP=True):
     incar = Incar.from_file('INCAR')
     incar['NSW'] = 0
     incar['NELM'] = 1000
