@@ -116,7 +116,7 @@ if len(sys.argv) < 4:
     sys.argv.append(job + '_' + os.path.basename(os.getcwd()) + '.log')
     for file in os.listdir('.'):
         if fnmatch.fnmatch(file, '*.log'):
-            sys.argv[2] = file
+            sys.argv[3] = file
             break
 
 # initialize variables for template
