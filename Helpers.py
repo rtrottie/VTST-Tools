@@ -3,7 +3,6 @@
 
 import os
 import subprocess
-from pymatgen.io.vaspio.vasp_input import Incar
 from pymatgen.core.structure import *
 import cfg
 import shutil
