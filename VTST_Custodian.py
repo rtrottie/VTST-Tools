@@ -3,6 +3,8 @@
 # based on NPAR and KPAR what type (NEB,Dimer,Standard) to run and sets up a submission script and runs it
 #TODO: fix how the time is setup
 
+# Usage: VTST_Custodian.py [time] [nodes] [log_file]
+
 from jinja2 import Environment, FileSystemLoader
 from Classes_Pymatgen import *
 from Helpers import *
@@ -99,25 +101,29 @@ template = env.get_template(template)
 
 # Use default arguments if not enough are provided
 
-incar = Incar.from_file('INCAR')
 if len(sys.argv) < 2:
+    if 'psiops' in socket.gethostname():
+        sys.argv.append(200)
+    else:
+        sys.argv.append(24)
+
+incar = Incar.from_file('INCAR')
+if len(sys.argv) < 3:
     nodes = incar['NPAR'] if 'KPAR' not in incar else int(incar['NPAR']) * int(incar['KPAR'])
     sys.argv.append(nodes)
 
-if len(sys.argv) < 3:
+if len(sys.argv) < 4:
     sys.argv.append(job + '_' + os.path.basename(os.getcwd()) + '.log')
     for file in os.listdir('.'):
         if fnmatch.fnmatch(file, '*.log'):
             sys.argv[2] = file
             break
-if len(sys.argv) < 4:
-    sys.argv.append(24)
 
 # initialize variables for template
 
-nodes_per_image = int(sys.argv[1])
-jobname = sys.argv[2]
-time = int(sys.argv[3])
+nodes_per_image = int(sys.argv[2])
+jobname = sys.argv[3]
+time = int(sys.argv[1])
 if job == 'NEB':
     images = int(incar['IMAGES'])
 else:
@@ -129,7 +135,6 @@ connection = ''
 if job == 'Dimer' or job == 'NEB':
     if 'psiops' in socket.gethostname():
         host = 'psiops'
-        time = 200
         mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
         queue_sub = 'qsub'
         if nodes_per_image == 1:
@@ -158,7 +163,6 @@ if job == 'Dimer' or job == 'NEB':
 elif job == 'Standard':
     if 'psiops' in socket.gethostname():
         host = 'psiops'
-        time = 200
         mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
         queue_sub = 'qsub'
         vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
