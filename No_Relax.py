@@ -16,7 +16,7 @@ def no_relax(directory, runP=True):
         incar.pop('ICHAIN')
     incar.write_file('INCAR')
     if runP:
-        os.system('VTST_Custodian.py ' + reduce(lambda x,y: str(x)+' '+str(y), sys.argv[1:]))
+        os.system('VTST_Custodian.py ' + reduce(lambda x,y: str(x)+' '+str(y), sys.argv[1:], ''))
 
 
 if os.path.basename(sys.argv[0]) == 'No_Relax.py':
