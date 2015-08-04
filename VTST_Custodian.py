@@ -4,7 +4,7 @@
 #TODO: fix how the time is setup
 
 from jinja2 import Environment, FileSystemLoader
-from pymatgen.io.vaspio.vasp_input import Incar
+from Classes_Pymatgen import *
 from Helpers import *
 import sys
 import os
@@ -45,7 +45,7 @@ if job == 'NEB':
     for dir in os.listdir('.'): # Move over CONTCARs from previous run, and store POSCARs in backup folder
         if os.path.exists(os.path.join(dir,'CONTCAR')) and os.path.getsize(os.path.join(dir,'CONTCAR')) > 0:
             os.makedirs(os.path.join(backup_dir, str(this_run), dir))
-            shutil.move(os.path.join(dilr,'CONTCAR'), os.path.join(dir, 'POSCAR'))
+            shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
             times.append(getLoopPlusTimes(os.path.join(dir, 'OUTCAR')))
         elif os.path.exists(os.path.join(dir,'POSCAR')):
