@@ -7,6 +7,7 @@ import os
 import cfg
 import shutil
 import sys
+import subprocess
 from Classes_Pymatgen import *
 
 def check_dimer(directory, runP=True):
@@ -23,6 +24,7 @@ def check_dimer(directory, runP=True):
         incar.write_file(os.path.join(dir,'INCAR'))
         if runP:
             os.chdir(dir)
+            os.system('touch ' + m + '-' + subprocess.check_output('basename $( ls ../../*.log )', shell=True).strip())
             os.system('VTST_Custodian.py ' + reduce(lambda x,y: str(x)+' '+str(y), sys.argv[1:], ''))
             os.chdir(directory)
 
