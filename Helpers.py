@@ -22,8 +22,9 @@ def neb2dim(neb_dir, dimer_dir):
     if not os.path.exists(dimer_dir):
         os.makedirs(dimer_dir)
     os.system(os.path.join(cfg.VTST_DIR,'neb2dim.pl') + ' > /dev/null')
-    for f in os.listdir('dim'):
-        shutil.move(os.path.join('dim', f), dimer_dir)
+    if os.path.join(os.path.abspath(neb_dir), 'dim') != dimer_dir:
+        for f in os.listdir('dim'):
+            shutil.move(os.path.join('dim', f), dimer_dir)
 
     os.chdir(dimer_dir)
     incar = Incar.from_file('INCAR')
