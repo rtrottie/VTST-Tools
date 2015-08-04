@@ -6,6 +6,7 @@ import subprocess
 from pymatgen.core.structure import *
 import cfg
 import shutil
+from Classes_Pymatgen import *
 
 def xfrange(start, stop, step):
     start = float(start)
