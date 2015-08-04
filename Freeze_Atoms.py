@@ -3,7 +3,7 @@
 # selective_dynamics which saves the previous selective_dynamics to be restored later.  Saves POSCAR to current folder
 
 # Usage: Freeze_Atoms [Dir] Atom_# [Unfrozen_Distance]
-from pymatgen.io.vaspio.vasp_input import Poscar
+from pymatgen.io.vasp.inputs import Poscar
 from Classes_Pymatgen import get_string_more_sigfig
 import os
 import sys
