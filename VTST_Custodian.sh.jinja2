@@ -40,7 +40,7 @@ LD_LIBRARY_PATH=/opt/intel/Compiler/11.1/064/lib/intel64/:/home/dummy/open_mpi_i
 export LD_LIBRARY_PATH
 PYTHONPATH=~/usr/bin/VTST-Tools:$PYTHONPATH
 
-{% elif host == "rapunzel" %}#SBATCH --job-name=$3
+{% elif host == "rapunzel" %}#SBATCH -J {{ J }}
 #SBATCH --time={{ hours }}:00:00
 #SBATCH -N {{ nodes }}
 #SBATCH --ntasks-per-node {{ nntasks_per_node }}
