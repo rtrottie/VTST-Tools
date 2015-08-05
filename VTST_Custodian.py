@@ -107,7 +107,7 @@ if len(sys.argv) < 2:
         nntasks_per_node = 12
     elif 'rapunzel' in socket.gethostname():
         sys.argv.append(500)
-        nntasks_per_node = 7
+        nntasks_per_node = 8
     else:
         sys.argv.append(24)
         nntasks_per_node = 12
