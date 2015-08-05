@@ -104,8 +104,13 @@ template = env.get_template(template)
 if len(sys.argv) < 2:
     if 'psiops' in socket.gethostname():
         sys.argv.append(200)
+        nntasks_per_node = 12
+    elif 'rapunzel' in socket.gethostname():
+        sys.argv.append(500)
+        nntasks_per_node = 7
     else:
         sys.argv.append(24)
+        nntasks_per_node = 12
 
 incar = Incar.from_file('INCAR')
 if len(sys.argv) < 3:
@@ -152,7 +157,11 @@ if job == 'Dimer' or job == 'NEB':
         mpi = 'mpirun'
         queue_sub = 'sbatch'
     elif 'rapunzel' in socket.gethostname():
-        raise Exception('Haven\'t implemented psiops script yet')
+        vasp_tst_gamma = '/export/home/apps/VASP/VTST/vasp.gamma'
+        vasp_tst_kpts = '/export/home/apps/VASP/VTST/vasp.kpts'
+        host = 'rapunzel'
+        mpi = 'mpirun'
+        queue_sub = 'sbatch'
     elif 'ryan-VirtualBox' in socket.gethostname():
         vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
         vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
@@ -178,7 +187,11 @@ elif job == 'Standard':
         mpi = 'mpirun'
         queue_sub = 'sbatch'
     elif 'rapunzel' in socket.gethostname():
-        raise Exception('Haven\'t implemented psiops script yet')
+        vasp_tst_gamma = '/export/home/apps/VASP/VTST/vasp.gamma'
+        vasp_tst_kpts = '/export/home/apps/VASP/VTST/vasp.kpts'
+        host = 'rapunzel'
+        mpi = 'mpirun'
+        queue_sub = 'sbatch'
     elif 'ryan-VirtualBox' in socket.gethostname():
         vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
         vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
@@ -192,7 +205,7 @@ else:
 keywords = {'J' : jobname,
             'hours' : time,
             'nodes' : images*nodes_per_image,
-            'nntasks_per_node' : 12,
+            'nntasks_per_node' : nntasks_per_node,
             'logname' : jobname,
             'tasks' : images*nodes_per_image*12,
             'user' : os.environ['USER'],

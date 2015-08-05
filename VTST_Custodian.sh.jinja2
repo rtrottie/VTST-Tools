@@ -40,10 +40,19 @@ LD_LIBRARY_PATH=/opt/intel/Compiler/11.1/064/lib/intel64/:/home/dummy/open_mpi_i
 export LD_LIBRARY_PATH
 PYTHONPATH=~/usr/bin/VTST-Tools:$PYTHONPATH
 
+{% elif host == "rapunzel" %}#SBATCH --job-name=$3
+#SBATCH --time=100:00:00
+#SBATCH --ntasks=$nprocs
+#SBATCH --workdir=$( pwd )
+#SBATCH -o $outfile-%j.out
+#SBATCH -e $outfile-%j.err
+
+LD_LIBRARY_PATH=/export/home/apps/compile/gcc.5.1.0/lib64:/opt/openmpi/lib:/opt/python/lib
+export OMP_NUM_THREADS=1
 {% endif %}
 
 
-
+0
 # Execute python commands, could be separated into a separate file, but 1 file is easier to template.
 
 python -c "
