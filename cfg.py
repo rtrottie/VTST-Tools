@@ -8,15 +8,21 @@ INCAR = {
 
     'LDAUL': {'default': -1,
               'Fe': 2,
-              'Co': 2
+              'Co': 2,
+              'Ni': 2,
+              'Cu': 2
               },
     'LDAUU': {'default': 0,
               'Fe': 3,
-              'Co': 3
+              'Co': 3,
+              'Ni': 3,
+              'Cu': 5
               },
     'MAGMOM' : {'default': 0,
                 'Fe': 4,
-                'Co': 5
+                'Co': 5,
+                'Ni': 4,
+                'Cu': 3
                 }
 }
 
