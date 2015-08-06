@@ -157,7 +157,7 @@ if job == 'Dimer' or job == 'NEB':
         mpi = 'mpirun'
         queue_sub = 'sbatch'
     elif 'rapunzel' in socket.gethostname():
-        vasp_tst_gamma = '/export/home/apps/VASP/VTST/vasp.gamma'
+        vasp_tst_gamma = '/export/home/apps/VASP/VTST.gamma/vasp'
         vasp_tst_kpts = '/export/home/apps/VASP/VTST/vasp.kpts'
         host = 'rapunzel'
         mpi = 'mpirun'
