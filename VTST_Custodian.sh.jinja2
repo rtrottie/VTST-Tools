@@ -70,7 +70,7 @@ handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ log
 
 {% elif jobtype == "Dimer" %}
 handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 20*60), PositiveEnergyErrorHandler(),
-            PotimErrorHandler(), VaspErrorHandler('{{ logname }}', DimerDivergingHandler())]
+            PotimErrorHandler(), VaspErrorHandler('{{ logname }}'), DimerDivergingHandler()]
 
 {% elif jobtype == "Standard" %}
 handlers = [WalltimeHandler({{ hours }}*60*60), NonConvergingErrorHandler(nionic_steps=15), PositiveEnergyErrorHandler(),
