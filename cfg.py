@@ -28,7 +28,7 @@ INCAR = {
 
 INCAR_format = [
 
-    ('ALGORITHM - ELECTRONIC', ['ALGO', 'IALGO', 'NPAR', 'ENCUT', 'NELMIN', 'NELM', 'NELMDL',  'EDIFF']),
+    ('ALGORITHM - ELECTRONIC', ['ALGO', 'IALGO', 'NPAR', 'ENCUT', 'NELMIN', 'NELM', 'NELMDL',  'EDIFF', 'NELECT']),
     ('ALGORITHM - IONIC', ['IBRION', 'NSW', 'POTIM', 'EDIFFG']),
     ('ALGORITHM - GENERAL', ['LREAL']),
     ('INPUT', ['ISTART', 'ICHARG']),
@@ -36,7 +36,7 @@ INCAR_format = [
     ('ELECTRONIC STRUCTURE', ['ISPIN', 'MAGMOM', 'NBANDS', 'ISMEAR', 'SIGMA']),
     ('DFT+U', ['LDAU', 'LDAUTYPE', 'LDAUL', 'LDAUU', 'LMAXMIX', 'LDAUPRINT']),
     ('NEB', ['IMAGES', 'SPRING']),
-    ('VTST', ['ICHAIN', 'IOPT'])
+    ('VTST', ['ICHAIN', 'IOPT', 'LCLIMB'])
 
 ]
 
