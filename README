@@ -10,25 +10,22 @@ add ' /home/rytr1806/bin/VTST-Tools ' to your path i.e. modify the export PATH l
 
 export PATH=lots_of_other_stuff:/home/rytr1806/bin/VTST-Tools
 
-should be in your .my.bashrc (without any spaces) This will give you the most up to date version of the code, but since
-I'm constantly adding and tweaking things, I might temporarily break some things.
+should be in your .my.bashrc (without any spaces) This will give you the most up to date version of the code, but since I'm constantly adding and tweaking things, I might temporarily break some things.
 
-You can also just download everything from github either manually or with git/subversion and add the install location to
-your path
+You can also just download everything from github either manually or with git/subversion and add the install location to your path
 
 either way, make sure to also set the following in your .my.bashrc:
 
-export PYTHONPATH="location_you_installed_to_or_/home/rytr1806/bin/VTST-Tools":$PYTHONPATH
+export PYTHONPATH="location_you_installed_to_OR_/home/rytr1806/bin/VTST-Tools":$PYTHONPATH
 export VASP_PSP_DIR=/projects/musgravc/data/PMG
-export TEMPLATE_DIR="location_you_installed_to_or_/home/rytr1806/bin/VTST-Tools"
+export TEMPLATE_DIR="location_you_installed_to_OR_/home/rytr1806/bin/VTST-Tools"
 
 
 I'll be using the latest version of pymatgen at all times so if something isn't working right try:
 
 pip install pymatgen --user --upgrade --no-deps
 
-you'll have to unload any icc modules first (' module list ' to check and ' module unload * ' to get rid of them)
-you don't have to load any gcc modules since they're the default
+you'll have to unload any icc modules first (' module list ' to check and ' module unload * ' to get rid of them) you don't have to load any gcc modules since they're the default
 
 #########
 ## USE ##
