@@ -16,6 +16,8 @@ def check_dimer(directory, runP=True):
     for m in ['min1', 'min2']:
         dir = os.path.join(directory, 'mins', m)
         shutil.copy(os.path.join(directory, 'WAVECAR'), dir)
+        shutil.copy(os.path.join(directory, 'CHG'), dir)
+        shutil.copy(os.path.join(directory, 'CHGCAR'), dir)
         incar = Incar.from_file(os.path.join(dir,'INCAR'))
         incar['EDIFF'] = 1e-5
         incar['EDIFFG'] = -5e-2
