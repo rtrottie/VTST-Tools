@@ -23,6 +23,8 @@ def check_dimer(directory, runP=True):
         incar['EDIFFG'] = -5e-2
         incar.pop('ICHAIN')
         incar['IOPT'] = 7
+        if 'AUTO_TIME' in incar:
+            incar.pop('AUTO_TIME')
         incar.write_file(os.path.join(dir,'INCAR'))
         if runP:
             os.chdir(dir)
