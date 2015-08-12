@@ -100,20 +100,23 @@ env = Environment(loader=FileSystemLoader(template_dir))
 template = env.get_template(template)
 
 # Use default arguments if not enough are provided
+incar = Incar.from_file('INCAR')
 
 if len(sys.argv) < 2:
-    if 'psiops' in socket.gethostname():
+    if 'AUTO_TIME' in incar:
+        sys.argv.append(incar['AUTO_TIME'])
+    elif 'psiops' in socket.gethostname():
         sys.argv.append(200)
-        nntasks_per_node = 12
     elif 'rapunzel' in socket.gethostname():
         sys.argv.append(500)
-        nntasks_per_node = 7
     else:
         sys.argv.append(24)
 
-incar = Incar.from_file('INCAR')
 if len(sys.argv) < 3:
-    nodes = incar['NPAR'] if 'KPAR' not in incar else int(incar['NPAR']) * int(incar['KPAR'])
+    if 'AUTO_NODES' in incar:
+        nodes = incar['AUTO_NODES']
+    else:
+        nodes = incar['NPAR'] if 'KPAR' not in incar else int(incar['NPAR']) * int(incar['KPAR'])
     sys.argv.append(nodes)
 
 if len(sys.argv) < 4:
@@ -135,7 +138,7 @@ else:
 script = jobname + '.sh'
 
 connection = ''
-
+queue = ''
 if job == 'Dimer' or job == 'NEB':
     if 'psiops' in socket.gethostname():
         host = 'psiops'
@@ -156,6 +159,7 @@ if job == 'Dimer' or job == 'NEB':
         host = 'janus'
         mpi = 'mpirun'
         queue_sub = 'sbatch'
+        queue = 'janus' if time < 24 else 'janus-long'
         nntasks_per_node = 12
     elif 'rapunzel' in socket.gethostname():
         vasp_tst_gamma = '/export/home/apps/VASP/VTST.gamma/vasp'
@@ -219,7 +223,8 @@ keywords = {'J' : jobname,
             'vasp_tst_kpts' : vasp_tst_kpts,
             'host' : host,
             'connection' : connection,
-            'mpi' : mpi}
+            'mpi' : mpi,
+            'queue': queue}
 
 with open(script, 'w+') as f:
     f.write(template.render(keywords))

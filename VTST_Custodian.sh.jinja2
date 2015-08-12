@@ -5,7 +5,8 @@
 #SBATCH --ntasks-per-node {{ nntasks_per_node }}
 #SBATCH -o {{ logname }}-%j.out
 #SBATCH -e {{ logname }}-%j.err
-#SBATCH --qos=normal
+#SBATCH --qos {{ queue }}
+{% if nodes == 1 %}#SBATCH --reservation=janus-serial {% endif %}
 
 # Load important modules and ensure environemnt variables are correctly set up
 
