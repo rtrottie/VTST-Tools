@@ -4,6 +4,7 @@ from custodian.vasp.jobs import *
 from custodian.vasp.handlers import *
 from monty.os.path import which
 from pymatgen.io.vaspio.vasp_input import *
+import Dim_Check
 
 class NEBNotTerminating(FrozenJobErrorHandler):
 
@@ -42,6 +43,32 @@ class DimerDivergingHandler(ErrorHandler):
         # STOPCAR is written. We do not want subsequent jobs to proceed.
         return {"errors": ["Dimer Force Too High"], "actions": None}
 
+class DimerCheckMins(ErrorHandler):
+    is_monitor = False
+
+    def __init__(self, output_filename="vasprun.xml"):
+        """
+        Initializes the handler with the output file to check.
+
+        Args:
+            output_vasprun (str): Filename for the vasprun.xml file. Change
+                this only if it is different from the default (unlikely).
+        """
+        self.output_filename = output_filename
+
+    def check(self):
+        try:
+            v = Vasprun(self.output_filename)
+            if not v.converged:
+                return True
+        except:
+            pass
+        return False
+
+    def correct(self):
+        Dim_Check.check_dimer(os.path.abspath('.'))
+        return {"errors": ['checking minima'], 'actions' : None}
+
 class NEBJob(VaspJob):
     def run(self):
         """
@@ -78,7 +105,6 @@ class NEBJob(VaspJob):
         for i in xrange(self._images):
             if not os.path.isfile(os.path.join(str(i).zfill(2),'POSCAR')):
                 raise RuntimeError("Expected file at : " + os.path.join(str(i).zfill(2),'POSCAR'))
-
 
 class DimerJob(VaspJob):
     def setup(self):
