@@ -59,7 +59,7 @@ class DimerCheckMins(ErrorHandler):
     def check(self):
         try:
             v = Vasprun(self.output_filename)
-            if not v.converged:
+            if v.converged:
                 return True
         except:
             pass
