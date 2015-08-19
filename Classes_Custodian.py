@@ -45,6 +45,8 @@ class DimerDivergingHandler(ErrorHandler):
 
 class DimerCheckMins(ErrorHandler):
     is_monitor = False
+    is_terminating = False
+    raises_runtime_error = False
 
     def __init__(self, output_filename="vasprun.xml"):
         """
