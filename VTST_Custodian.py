@@ -231,7 +231,7 @@ keywords = {'J' : jobname,
             'connection' : connection,
             'mpi' : mpi,
             'queue': queue,
-            'mem', mem}
+            'mem': mem}
 
 with open(script, 'w+') as f:
     f.write(template.render(keywords))
