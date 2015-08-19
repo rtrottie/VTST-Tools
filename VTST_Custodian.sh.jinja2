@@ -47,6 +47,7 @@ PYTHONPATH=~/usr/bin/VTST-Tools:$PYTHONPATH
 #SBATCH --ntasks-per-node {{ nntasks_per_node }}
 #SBATCH -o {{ logname }}-%j.out
 #SBATCH -e {{ logname }}-%j.err
+#SBATCH --mem={{ mem }}
 
 LD_LIBRARY_PATH=/export/home/apps/compile/gcc.5.1.0/lib64:/opt/openmpi/lib:/opt/python/lib
 export OMP_NUM_THREADS=1

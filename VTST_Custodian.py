@@ -137,6 +137,11 @@ else:
     images = 1
 script = jobname + '.sh'
 
+if 'AUTO_MEM' in incar:
+    mem = incar['AUTO_MEM']
+else:
+    mem = 8000
+
 connection = ''
 queue = ''
 if job == 'Dimer' or job == 'NEB':
@@ -225,7 +230,8 @@ keywords = {'J' : jobname,
             'host' : host,
             'connection' : connection,
             'mpi' : mpi,
-            'queue': queue}
+            'queue': queue,
+            'mem', mem}
 
 with open(script, 'w+') as f:
     f.write(template.render(keywords))
