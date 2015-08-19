@@ -75,7 +75,7 @@ vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-npernode', '{{ nntasks_per_node }}',
 handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 30*60)]
 
 {% elif jobtype == "Dimer" %}
-handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 30*60), PositiveEnergyErrorHandler(),
+handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 60*60), PositiveEnergyErrorHandler(),
             PotimErrorHandler(), VaspErrorHandler('{{ logname }}'), DimerDivergingHandler(), DimerCheckMins()]
 
 {% elif jobtype == "Standard" %}
