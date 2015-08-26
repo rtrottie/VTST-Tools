@@ -50,6 +50,7 @@ PYTHONPATH=~/usr/bin/VTST-Tools:$PYTHONPATH
 #SBATCH -o {{ logname }}-%j.out
 #SBATCH -e {{ logname }}-%j.err
 #SBATCH --mem={{ mem }}
+#SBATCH --workdir={{ currdir }}
 
 echo $SLURM_JOB_NODELIST
 
