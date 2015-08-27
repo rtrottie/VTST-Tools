@@ -231,7 +231,7 @@ keywords = {'J' : jobname,
             'connection' : connection,
             'mpi' : mpi,
             'queue': queue,
-            'mem': mem
+            'mem': mem,
             'currdir': os.path.abspath('.')}
 
 with open(script, 'w+') as f:
