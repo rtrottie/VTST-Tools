@@ -21,6 +21,8 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
     if sd:
         for i in atom_nums:
             sd.pop(i)
+    if mm:
+        for i in atom_nums:
             mm.pop(i)
     vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCAR'].structure)
     vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
