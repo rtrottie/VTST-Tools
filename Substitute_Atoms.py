@@ -16,10 +16,12 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
 
     # Modifying POSCAR
     sd = vasp['POSCAR'].selective_dynamics
+    mm = vasp["INCAR"]['MAGMOM']
     atom_nums.sort(reverse=True)
     if sd:
         for i in atom_nums:
             sd.pop(i)
+            mm.pop(i)
     vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCAR'].structure)
     vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
     vasp['POSCAR'].selective_dynamics = sd
@@ -29,6 +31,7 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
 
     # Modifying INCAR
     update_incar(vasp['POSCAR'].structure, vasp['INCAR'])
+    vasp["INCAR"]['MAGMOM'] = mm
 
     vasp.write_input(this_dir)
     return
