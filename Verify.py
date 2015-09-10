@@ -99,8 +99,8 @@ if os.path.basename(sys.argv[0]) == 'Verify.py':
 
     print('Magnetization\n')
     for dif in differences[0]:
-        print(' '.join(map(str, dif)) + '\n')
+        print(' '.join(map(str, dif)))
 
-    print('Charge\n')
+    print('\nCharge\n')
     for dif in differences[1]:
-        print(' '.join(map(str, dif)) + '\n')
+        print(' '.join(map(str, dif)))
