@@ -110,7 +110,7 @@ if len(sys.argv) < 2:
     elif 'rapunzel' in socket.gethostname():
         sys.argv.append(500)
     else:
-        sys.argv.append(24)
+        sys.argv.append(20)
 
 if len(sys.argv) < 3:
     if 'AUTO_NODES' in incar:
