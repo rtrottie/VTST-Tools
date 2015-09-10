@@ -164,7 +164,7 @@ if job == 'Dimer' or job == 'NEB':
         host = 'janus'
         mpi = 'mpirun'
         queue_sub = 'sbatch'
-        queue = 'janus' if time < 24 else 'janus-long'
+        queue = 'janus' if time <= 24 else 'janus-long'
         nntasks_per_node = 12
     elif 'rapunzel' in socket.gethostname():
         vasp_tst_gamma = '/export/home/apps/VASP/VTST.gamma/vasp'
