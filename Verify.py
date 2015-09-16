@@ -89,15 +89,15 @@ def verify_run(run1, run2):
 
 if os.path.basename(sys.argv[0]) == 'Verify.py':
     if len(sys.argv) < 2:
-        raise Exception('Not Enough Arguments Provided\n need: Dir_1 [This_Dir]')
+        raise Exception('Not Enough Arguments Provided\n need: Dir_1 [Dir_2]')
     elif len(sys.argv) == 2:
         differences = verify_run(sys.argv[1], os.path.abspath('.'))
     elif len(sys.argv) == 3:
         differences = verify_run(sys.argv[1], sys.argv[2])
     else:
-        raise Exception('Too Many Arguments Provided\n need: Dir_1 [This_Dir]')
+        raise Exception('Too Many Arguments Provided\n need: Dir_1 [Dir_2]')
 
-    print('Magnetization\n')
+    print('\nMagnetization\n')
     for dif in differences[0]:
         print(' '.join(map(str, dif)))
 

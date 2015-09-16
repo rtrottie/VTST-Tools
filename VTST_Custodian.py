@@ -53,6 +53,7 @@ if job == 'NEB':
         elif os.path.exists(os.path.join(dir,'POSCAR')):
             os.makedirs(os.path.join(backup_dir, str(this_run), dir))
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
+    shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     os.system('nebmovie.pl') # Clean directory and do basic-postprocessing
     shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
@@ -71,6 +72,7 @@ elif job == 'Dimer':
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('MODECAR', os.path.join(backup_dir, str(this_run)))
+    shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     try:
         shutil.copy('DIMCAR', os.path.join(backup_dir, str(this_run)))
         time = sum(getLoopPlusTimes('OUTCAR'))
@@ -81,6 +83,7 @@ elif job == 'Standard':
         shutil.move('CONTCAR', 'POSCAR')
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
+    shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     try:
         time = sum(getLoopPlusTimes('OUTCAR'))
     except:
