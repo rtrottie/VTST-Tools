@@ -49,11 +49,11 @@ if job == 'NEB':
             os.makedirs(os.path.join(backup_dir, str(this_run), dir))
             shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
+            shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
             times.append(getLoopPlusTimes(os.path.join(dir, 'OUTCAR')))
         elif os.path.exists(os.path.join(dir,'POSCAR')):
             os.makedirs(os.path.join(backup_dir, str(this_run), dir))
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
-    shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     os.system('nebmovie.pl') # Clean directory and do basic-postprocessing
     shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
@@ -67,12 +67,12 @@ if job == 'NEB':
 elif job == 'Dimer':
     if os.path.exists('CENTCAR') and os.path.getsize('CENTCAR') > 0:
         shutil.move('CENTCAR', 'POSCAR')
+        shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     if os.path.exists('NEWMODECAR') and os.path.getsize('NEWMODECAR') > 0:
         shutil.move('NEWMODECAR', 'MODECAR')
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('MODECAR', os.path.join(backup_dir, str(this_run)))
-    shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     try:
         shutil.copy('DIMCAR', os.path.join(backup_dir, str(this_run)))
         time = sum(getLoopPlusTimes('OUTCAR'))
@@ -81,9 +81,9 @@ elif job == 'Dimer':
 elif job == 'Standard':
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
         shutil.move('CONTCAR', 'POSCAR')
+        shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
-    shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     try:
         time = sum(getLoopPlusTimes('OUTCAR'))
     except:
