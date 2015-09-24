@@ -31,7 +31,7 @@ INCAR_format = [
     ('ALGORITHM - IONIC', ['IBRION', 'NSW', 'POTIM', 'EDIFFG', 'ISIF']),
     ('ALGORITHM - GENERAL', ['LREAL']),
     ('INPUT', ['ISTART', 'ICHARG']),
-    ('OUTPUT', ['NWRITE', 'LORBIT', 'LAECHG']),
+    ('OUTPUT', ['NWRITE', 'LORBIT', 'LAECHG', 'LWAVE']),
     ('ELECTRONIC STRUCTURE', ['ISPIN', 'MAGMOM', 'NBANDS', 'ISMEAR', 'SIGMA']),
     ('DFT+U', ['LDAU', 'LDAUTYPE', 'LDAUL', 'LDAUU', 'LMAXMIX', 'LDAUPRINT']),
     ('NEB', ['IMAGES', 'SPRING']),

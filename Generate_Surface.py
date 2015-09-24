@@ -10,20 +10,21 @@ from pymatgen.io.vaspio.vasp_input import Poscar
 from Helpers import *
 from Classes_Pymatgen import *
 import Vis
+import Vis
 
-def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, freeze_step, incar, kpoints):
+def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, freeze_step, incar, kpoints, vis='False'):
     Poscar.get_string = get_string_more_sigfig
     Incar.get_string = pretty_incar_string
     with pmg.matproj.rest.MPRester(cfg.MAT_PROJ_KEY) as m:
         for depth in range(depth_min, depth_max+1):
             for width in range(width_min, width_max+1):
                 for freeze in xfrange(0, depth+.1, freeze_step):
-                    s = Poscar.from_file('POSCAR').structure
+                    s = Poscar.from_file(material).structure
                     frozen_depth = s.lattice.b * freeze
-                    s.make_supercell([width, depth, width])
+                    s.make_supercell([2, 2, 2])
                     surface_depth = s.lattice.b
-                    sf = surf.SlabGenerator(s, [0,1,0], 2, 10, primitive=False)
-                    folder = 'd' + str(depth) + '-w' + str(width) + '-f' + str(freeze)
+                    sf = surf.SlabGenerator(s, [0,1,1], 4, 10, primitive=False)
+                    folder = unicode('d' + str(depth) + '-w' + str(width) + '-f' + str(freeze))
                     poscar = Poscar(sf.get_slab())
                     sd = []
                     for site in poscar.structure.sites:
@@ -31,6 +32,8 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                             sd.append([False, False, False])
                         else:
                             sd.append([True, True, True])
+                    if vis:
+                        Vis.open_in_VESTA(poscar.structure)
                     poscar.selective_dynamics = sd
                     update_incar(s, incar)
                     potcar = Potcar(poscar.site_symbols)
