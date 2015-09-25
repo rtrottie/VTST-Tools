@@ -36,8 +36,8 @@ if os.path.basename(sys.argv[0]) == 'Vacancy_Correction.py':
     if len(sys.argv) < 2:
         raise Exception('Not Enough Arguments Provided\n need: POSCAR_1 POSCAR_2 Atom_1 Atom_2 [Dir]')
     elif len(sys.argv) == 5:
-        reorder_vacancies(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], os.path.abspath('.'))
+        reorder_vacancies(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), os.path.abspath('.'))
     elif len(sys.argv) == 6:
-        reorder_vacancies(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], os.path.abspath(sys.argv[5]))
+        reorder_vacancies(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), os.path.abspath(sys.argv[5]))
     else:
         raise Exception('Too Many Arguments\n need: POSCAR_1 POSCAR_2 Atom_1 Atom_2 [Dir]')
