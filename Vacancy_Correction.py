@@ -1,4 +1,4 @@
-__author__ = 'ryan'
+#!/usr/bin/env python
 from Classes_Pymatgen import *
 from pymatgen.transformations.site_transformations import *
 import os
