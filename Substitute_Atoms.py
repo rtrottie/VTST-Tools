@@ -49,6 +49,7 @@ def remove_atom_arbitrary(prev_dir, this_dir, atom_nums, atom=None):
                 break
             else:
                 plus = plus + poscar.natoms[i]
+        atom_nums = map(lambda x: x + plus, atom_nums)
     if job == 'Dimer':
         remove_atom(prev_dir, this_dir, atom_nums, {'MODECAR': Modecar})
     elif job == 'Standard':
