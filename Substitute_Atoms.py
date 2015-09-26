@@ -38,9 +38,17 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
     vasp.write_input(this_dir)
     return
 
-def remove_atom_arbitrary(prev_dir, this_dir, atom_nums):
+def remove_atom_arbitrary(prev_dir, this_dir, atom_nums, atom=None):
     job = getJobType(prev_dir)
     print('Creating new ' + str(job) + ' Job at ' + this_dir)
+    if atom != None:
+        poscar = Poscar.from_file(os.path.join(prev_dir, 'POSCAR'))
+        plus = 0
+        for i in range(len(poscar.site_symbols)):
+            if atom == poscar.site_symbols[i]:
+                break
+            else:
+                plus = plus + poscar.natoms[i]
     if job == 'Dimer':
         remove_atom(prev_dir, this_dir, atom_nums, {'MODECAR': Modecar})
     elif job == 'Standard':
