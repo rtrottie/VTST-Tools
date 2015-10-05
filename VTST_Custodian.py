@@ -49,7 +49,7 @@ if job == 'NEB':
             os.makedirs(os.path.join(backup_dir, str(this_run), dir))
             shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
-            shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
+            shutil.copy(os.path.join(dir,'OUTCAR'), os.path.join(backup_dir, str(this_run), dir))
             times.append(getLoopPlusTimes(os.path.join(dir, 'OUTCAR')))
         elif os.path.exists(os.path.join(dir,'POSCAR')):
             os.makedirs(os.path.join(backup_dir, str(this_run), dir))
