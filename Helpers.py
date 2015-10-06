@@ -30,7 +30,15 @@ def neb2dim(neb_dir, dimer_dir):
     incar = Incar.from_file('INCAR')
     incar['ICHAIN'] = 2
     incar['EDIFF'] = 1e-7
-    incar.pop('IMAGES'); incar.pop('SPRING')
+    incar.pop('IMAGES');
+    try:
+        incar.pop('SPRING');
+    except:
+        pass
+    try:
+        incar.pop('LCLIMB')
+    except:
+        pass
     os.remove(os.path.join(dimer_dir, 'INCAR'))
     incar.write_file('INCAR')
 
