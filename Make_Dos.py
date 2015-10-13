@@ -5,6 +5,13 @@ import sys
 from pymatgen.io.vasp import *
 import numpy as np
 
+
+
+os.chdir('/home/ryan/Desktop')
+sys.argv = ['Make_Dos.py', '4:all,d' ,'H' ,'113', '114']
+
+
+
 v = Vasprun('vasprun.xml', parse_eigen=False)
 tdos = v.complete_dos
 
@@ -48,7 +55,7 @@ for unformated_dos in unformated_doss:
     for orbital in orbitals:
         for atom in unformated_atoms:
             try:
-                atoms.append(int(atom))
+                atoms.append(int(atom)-1)
             except:
                 atoms = atoms + np.where(np.array(v.atomic_symbols) == atom)[0].tolist()
         headers.append(unformated_dos +':' + orbital + ' +')
