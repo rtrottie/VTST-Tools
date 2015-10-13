@@ -5,13 +5,6 @@ import sys
 from pymatgen.io.vasp import *
 import numpy as np
 
-
-
-os.chdir('/home/ryan/Desktop')
-sys.argv = ['Make_Atoms.py', 'Fe,O,22:d,all', 'O:s,p']
-
-
-
 v = Vasprun('vasprun.xml', parse_eigen=False)
 tdos = v.complete_dos
 
