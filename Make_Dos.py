@@ -5,13 +5,6 @@ import sys
 from pymatgen.io.vasp import *
 import numpy as np
 
-
-
-os.chdir('/home/ryan/Desktop')
-sys.argv = ['Make_Dos.py', '4:all,d' ,'H' ,'113', '114']
-
-
-
 v = Vasprun('vasprun.xml', parse_eigen=False)
 tdos = v.complete_dos
 
