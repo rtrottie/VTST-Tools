@@ -12,20 +12,24 @@ from Classes_Pymatgen import *
 import Vis
 import Vis
 
-def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, freeze_step, incar, kpoints, vis='False'):
+def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, freeze_step, incar, kpoints, vis=False):
     Poscar.get_string = get_string_more_sigfig
     Incar.get_string = pretty_incar_string
     with pmg.matproj.rest.MPRester(cfg.MAT_PROJ_KEY) as m:
         for depth in range(depth_min, depth_max+1):
             for width in range(width_min, width_max+1):
-                for freeze in xfrange(0, depth+.1, freeze_step):
-                    s = Poscar.from_file(material).structure
-                    frozen_depth = s.lattice.b * freeze
-                    s.make_supercell([2, 2, 2])
-                    surface_depth = s.lattice.b
-                    sf = surf.SlabGenerator(s, [0,1,1], 4, 10, primitive=False)
-                    folder = unicode('d' + str(depth) + '-w' + str(width) + '-f' + str(freeze))
-                    poscar = Poscar(sf.get_slab())
+                freeze = 0.5
+                s = Poscar.from_file(material).structure
+                frozen_depth = s.lattice.b * freeze
+                s.make_supercell([width, width, depth])
+                surface_depth = s.lattice.b
+                sf = surf.SlabGenerator(s, [1,1,1], 4, 15, primitive=False)
+                folder = unicode('d' + str(depth) + '-w' + str(width) + '-f' + str(freeze))
+                i=0
+                for poscar in sf.get_slabs():
+                    folder = unicode('d' + str(depth) + '-w' + str(width) + '-f' + str(freeze) + '-s' + str(i))
+                    i+=1
+                    poscar = Poscar(poscar)
                     sd = []
                     for site in poscar.structure.sites:
                         if site.c * site.lattice.c < frozen_depth:

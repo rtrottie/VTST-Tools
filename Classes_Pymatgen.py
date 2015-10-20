@@ -92,7 +92,7 @@ def pretty_incar_string(self, sort_keys=True, pretty=False):
             s = s + key.upper() + ' = ' + " ".join([str(i) for i in self[key]]) + '\n'
         else:
             s = s + key.upper() + ' = ' + str(self[key]) + '\n'
-    return s
+    return unicode(s)
 
 
 class VaspNEBInput(VaspInput):

@@ -119,7 +119,10 @@ if len(sys.argv) < 3:
     if 'AUTO_NODES' in incar:
         nodes = incar['AUTO_NODES']
     else:
-        nodes = incar['NPAR'] if 'KPAR' not in incar else int(incar['NPAR']) * int(incar['KPAR'])
+        if 'NPAR' in incar:
+            nodes = incar['NPAR'] if 'KPAR' not in incar else int(incar['NPAR']) * int(incar['KPAR'])
+        else:
+            nodes = 1
     sys.argv.append(nodes)
 
 if len(sys.argv) < 4:
