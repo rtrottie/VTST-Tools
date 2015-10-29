@@ -7,8 +7,6 @@ import shutil
 
 saved_files = ['CONTCAR, vasprun.xml', 'OUTCAR', 'INCAR', 'KPOINTS', 'POSCAR']
 
-os.chdir('/home/ryan/scratch')
-
 def parse_incar_update(f_string):
     with open(f_string) as f:
         dicts = []
