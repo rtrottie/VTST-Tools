@@ -50,14 +50,12 @@ if 'STAGE_NUMBER' not in run.incar:
     cont = input('    or cancel (c) :  ')
     if cont == -1:
         sys.exit('Canceled')
-    elif cont.isdigit():
+    else:
         stage = updates[int(cont)]
         if int(cont) > 0:
             prev_stage_name = updates[int(cont)-1]['STAGE_NAME']
         else:
             prev_stage_name = None
-    else:
-        sys.exit('Improper value provided')
 else:
     stage = updates[int(run.incar['STAGE_NUMBER'])+1]
     if int(run.incar['STAGE_NUMBER'])+1 < 1:
