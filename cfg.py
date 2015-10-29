@@ -36,7 +36,7 @@ INCAR_format = [
     ('DFT+U', ['LDAU', 'LDAUTYPE', 'LDAUL', 'LDAUU', 'LMAXMIX', 'LDAUPRINT']),
     ('NEB', ['IMAGES', 'SPRING']),
     ('VTST', ['ICHAIN', 'IOPT', 'LCLIMB']),
-    ('SETUP', ['AUTO_TIME', 'AUTO_NODES'])
+    ('SETUP', ['AUTO_TIME', 'AUTO_NODES', 'STAGE_NUMBER', 'STAGE_NAME'])
 
 ]
 
