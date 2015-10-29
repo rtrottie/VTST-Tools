@@ -31,8 +31,8 @@ def parse_incar_update(f_string):
 run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
 
 if not run.converged:
-    cont = input('Run has not converged.  Continue? (y/n):  ')
-    if cont[0] == 'y':
+    cont = input('Run has not converged.  Continue? (0/1 = yes/no):  ')
+    if cont == 1:
         pass
     else:
         sys.exit('Run will not be updated')
@@ -48,7 +48,7 @@ if 'STAGE_NUMBER' not in run.incar:
     stages = '\n'.join(list(map(lambda x: '    ' + str(x['STAGE_NUMBER']) + ' ' +x['STAGE_NAME'], updates)))
     print(prompt+stages)
     cont = input('    or cancel (c) :  ')
-    if cont[0] == 'c':
+    if cont == -1:
         sys.exit('Canceled')
     elif cont.isdigit():
         stage = updates[int(cont)]
