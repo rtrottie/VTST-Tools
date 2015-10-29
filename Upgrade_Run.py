@@ -2,8 +2,9 @@ from Classes_Pymatgen import *
 from pymatgen.io.vasp.outputs import *
 import os
 import sys
+import shutil
 
-saved_files = ['CONTCAR, vasprun.xml']
+saved_files = ['CONTCAR, vasprun.xml', 'OUTCAR', 'INCAR', 'KPOINTS', 'POSCAR']
 
 os.chdir('/home/ryan/scratch')
 
@@ -52,12 +53,29 @@ if 'STAGE_NUMBER' not in run.incar:
         sys.exit('Canceled')
     elif cont.isdigit():
         stage = updates[int(cont)]
+        if int(cont) > 0:
+            stage_name = updates[int(cont)-1]['STAGE_NAME']
+        else:
+            stage_name = None
     else:
         sys.exit('Improper value provided')
 else:
     stage = updates[int(run.incar['STAGE_NUMBER'])]
+    stage_name = run.incar['STAGE_NAME']
 
-if 'REMOVE' in stage.keys():
-    to_remove = stage.pop('REMOVE').replace(',',' ').split()
-    for item in to_remove:
-        run.incar.pop(item)
+for val in stage.keys():
+    if val in run.incar:
+        run.incar.pop(val)
+    elif val == 'REMOVE':
+        to_remove = stage.pop('REMOVE').replace(',',' ').split()
+        for item in to_remove:
+            run.incar.pop(item)
+
+if stage_name:
+    os.mkdir(stage_name)
+    for f in saved_files:
+        if os.path.exists(f):
+            shutil.copy(f,os.path.join(stage_name, f))
+
+new_incar = run.incar.__add__(Incar(stage))
+new_incar.write_file('INCAR')
