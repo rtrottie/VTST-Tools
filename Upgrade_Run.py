@@ -30,7 +30,7 @@ def parse_incar_update(f_string):
 
 run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
 
-if not run.converged:
+if not run.converged or sys.argv[1] == 'ask':
     cont = input('Run has not converged.  Continue? (0/1 = yes/no):  ')
     if cont == 1:
         pass
