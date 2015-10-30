@@ -70,7 +70,7 @@ for val in stage.keys():
         for item in to_remove:
             run.incar.pop(item)
     elif val == 'KPOINTS':
-        kpt = stage.pop['KPOINTS'].replace(',',' ').split()
+        kpt = stage.pop('KPOINTS').replace(',',' ').split()
         if len(kpt) == 1 and kpt[0] == 'G':
             kpoints = Kpoints.gamma_automatic()
         elif len(kpt) == 3 or (len(kpt) == 4 and kpt[0] == 'G'):
