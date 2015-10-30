@@ -34,7 +34,7 @@ def get_dos(dos, site, orbital='all'):
     else:
         return dos.get_site_orbital_dos(dos.structure.sites[site], orbital)
 m = max(max(tdos.densities[1]), max(tdos.densities[-1]))
-columns = [tdos.energies.tolist(), list(map(lambda x: x/m*1.5, tdos.densities[1])), list(map(lambda x: -x/m*1.5, tdos.densities[-1]))]
+columns = [list(map(lambda x: x-tdos.efermi, tdos.energies.tolist())), list(map(lambda x: x/m*1.5, tdos.densities[1])), list(map(lambda x: -x/m*1.5, tdos.densities[-1]))]
 title = ['Energy', 'Total +', 'Total -']
 
 for unformated_dos in unformated_doss:
@@ -62,10 +62,10 @@ for unformated_dos in unformated_doss:
         up_down = list(map(lambda site: get_dos(tdos, site, orbital), atoms))
         up = list(map(lambda dos: dos.densities[1].tolist(), up_down))
         up = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), up)
-        m = max(max(up), max(down))
-        norm_up = list(map(lambda x: x/m, up))
         down = list(map(lambda dos: dos.densities[-1].tolist(), up_down))
         down = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), down)
+        m = max(max(up), max(down))
+        norm_up = list(map(lambda x: x/m, up))
         norm_down = list(map(lambda x: -x/m, down))
         title.append(unformated_dos.replace(',','-') + ':' + orbital + ' +')
         title.append(unformated_dos.replace(',','-') + ':' + orbital + ' -')
