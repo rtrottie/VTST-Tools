@@ -50,7 +50,7 @@ for unformated_dos in unformated_doss:
         for atom in unformated_atoms:
             if '-' in atom:
                 start_end = atom.split('-')
-                for a in range(int(start_end[0]), int(start_end[1])):
+                for a in range(int(start_end[0]), int(start_end[1])+1):
                     atoms.append(a-1)
             else:
                 try:
