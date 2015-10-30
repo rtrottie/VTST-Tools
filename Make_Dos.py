@@ -33,7 +33,8 @@ def get_dos(dos, site, orbital='all'):
         return dos.get_site_spd_dos(dos.structure.sites[site])[orbital.upper()]
     else:
         return dos.get_site_orbital_dos(dos.structure.sites[site], orbital)
-columns = [tdos.energies.tolist(), list(map(lambda x: x/max(tdos.densities[1])*1.5, tdos.densities[1])), list(map(lambda x: -x/max(tdos.densities[-1])*1.5, tdos.densities[-1]))]
+m = max(max(tdos.densities[1]), max(tdos.densities[-1]))
+columns = [tdos.energies.tolist(), list(map(lambda x: x/m*1.5, tdos.densities[1])), list(map(lambda x: -x/m*1.5, tdos.densities[-1]))]
 title = ['Energy', 'Total +', 'Total -']
 
 for unformated_dos in unformated_doss:
@@ -47,20 +48,24 @@ for unformated_dos in unformated_doss:
     atoms = []
     for orbital in orbitals:
         for atom in unformated_atoms:
-            try:
-                atoms.append(int(atom)-1)
-            except:
-                atoms = atoms + np.where(np.array(v.atomic_symbols) == atom)[0].tolist()
+            if '-' in atom:
+                start_end = atom.split('-')
+                for a in range(int(start_end[0]), int(start_end[1])):
+                    atoms.append(a-1)
+            else:
+                try:
+                    atoms.append(int(atom)-1)
+                except:
+                    atoms = atoms + np.where(np.array(v.atomic_symbols) == atom)[0].tolist()
         headers.append(unformated_dos +':' + orbital + ' +')
         headers.append(unformated_dos +':' + orbital + ' -')
         up_down = list(map(lambda site: get_dos(tdos, site, orbital), atoms))
         up = list(map(lambda dos: dos.densities[1].tolist(), up_down))
         up = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), up)
-        m = max(up)
+        m = max(max(up), max(down))
         norm_up = list(map(lambda x: x/m, up))
         down = list(map(lambda dos: dos.densities[-1].tolist(), up_down))
         down = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), down)
-        m = max(down)
         norm_down = list(map(lambda x: -x/m, down))
         title.append(unformated_dos.replace(',','-') + ':' + orbital + ' +')
         title.append(unformated_dos.replace(',','-') + ':' + orbital + ' -')
