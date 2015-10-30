@@ -38,6 +38,7 @@ if sys.argv[1] != '0':
 else:
     run = Vasprun
     run.incar = Incar.from_file('INCAR')
+    run.incar['STAGE_NUMBER'] = -1
 
 
 if 'STAGE_FILE' in run.incar:
