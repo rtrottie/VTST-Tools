@@ -61,6 +61,7 @@ else:
     if int(run.incar['STAGE_NUMBER'])+1 < 1:
         prev_stage_name = run.incar['STAGE_NAME']
 
+kpoints = False
 for val in stage.keys():
     if val in run.incar:
         run.incar.pop(val)
@@ -68,6 +69,16 @@ for val in stage.keys():
         to_remove = stage.pop('REMOVE').replace(',',' ').split()
         for item in to_remove:
             run.incar.pop(item)
+    elif val == 'KPOINTS':
+        kpt = stage.pop['KPOINTS'].replace(',',' ').split()
+        if len(kpt) == 1 and kpt[0] == 'G':
+            kpoints = Kpoints.gamma_automatic()
+        elif len(kpt) == 3 or (len(kpt) == 4 and kpt[0] == 'G'):
+            kpoints = Kpoints.gamma_automatic((int(kpt[-3]), int(kpt[-2]), int(kpt[-1]) ))
+        elif (len(kpt) == 4 and kpt[0] == 'M'):
+            kpoints = Kpoints.monkhorst_automatic((int(kpt[-3]), int(kpt[-2]), int(kpt[-1]) ))
+        else:
+            raise Exception('Kpoint not formated correctly need [G/M] x y z [x_shift, y_shift, z_shift] or G')
 
 if prev_stage_name:
     os.mkdir(prev_stage_name)
@@ -77,3 +88,5 @@ if prev_stage_name:
 
 new_incar = run.incar.__add__(Incar(stage))
 new_incar.write_file('INCAR')
+if kpoints:
+    kpoints.write_file('KPOINTS')
