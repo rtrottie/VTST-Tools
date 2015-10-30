@@ -36,12 +36,25 @@ if not run.converged:
         pass
     else:
         sys.exit('Run will not be updated')
-
-for incar_adjust_file in ['CONVERGENCE', '../CONVERGENCE', '../../CONVERGENCE', None]: # Look up at least three directories
+if 'STAGE_FILE' in run.incar:
+    conv_file = run.incar["STAGE_FILE"]
+else:
+    conv_file = "CONVERGENCE"
+for incar_adjust_file in [conv_file, '../' + conv_file, '../../' + conv_file, None]: # Look up at least three directories
     if os.path.exists(incar_adjust_file):
         break
 
 updates = parse_incar_update(incar_adjust_file)
+
+incar = Incar.from_file("INCAR")
+diff = incar.diff(run.incar)
+if len(diff["Different"].keys) > 0:
+    err_msg = 'INCAR appears different than the vasprun.xml.  Problems with: ' + ' '.join(diff["Different"].keys)
+    cont = input(err_msg + '  Continue? (1/0 = yes/no):  ')
+    if cont == 1:
+        pass
+    else:
+        sys.exit('Run will not be updated')
 
 if 'STAGE_NUMBER' not in run.incar or sys.argv[1] == 'ask':
     prompt = 'Run does not appear to have been staged previously.\nWhat stage should be selected:\n'
