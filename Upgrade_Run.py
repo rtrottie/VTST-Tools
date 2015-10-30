@@ -56,7 +56,7 @@ incar = Incar.from_file("INCAR")
 diff = incar.diff(run.incar)
 for i in cfg.INCAR_format[-1][1]:
     if i in diff["Different"].keys():
-        diff.pop(i)
+        diff["Different"].pop(i)
 if len(diff["Different"].keys()) > 0:
     err_msg = 'INCAR appears different than the vasprun.xml.  Problems with: ' + ' '.join(diff["Different"].keys())
     cont = input(err_msg + '  Continue? (1/0 = yes/no):  ')
