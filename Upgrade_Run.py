@@ -48,8 +48,8 @@ updates = parse_incar_update(incar_adjust_file)
 
 incar = Incar.from_file("INCAR")
 diff = incar.diff(run.incar)
-if len(diff["Different"].keys) > 0:
-    err_msg = 'INCAR appears different than the vasprun.xml.  Problems with: ' + ' '.join(diff["Different"].keys)
+if len(diff["Different"].keys()) > 0:
+    err_msg = 'INCAR appears different than the vasprun.xml.  Problems with: ' + ' '.join(diff["Different"].keys())
     cont = input(err_msg + '  Continue? (1/0 = yes/no):  ')
     if cont == 1:
         pass
