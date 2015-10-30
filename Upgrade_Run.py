@@ -40,6 +40,7 @@ else:
     run = Vasprun
     run.incar = Incar.from_file('INCAR')
     run.incar['STAGE_NUMBER'] = -1
+    run.incar['STAGE_NAME'] = 'init'
 
 
 if 'STAGE_FILE' in run.incar:
