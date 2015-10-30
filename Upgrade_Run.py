@@ -6,7 +6,7 @@ import sys
 import shutil
 import cfg
 
-saved_files = ['CONTCAR, vasprun.xml', 'OUTCAR', 'INCAR', 'KPOINTS', 'POSCAR']
+saved_files = ['CONTCAR, vasprun.xml', 'OUTCAR', 'INCAR', 'KPOINTS', 'POSCAR', 'MODECAR', 'NEWMODECAR']
 
 def parse_incar_update(f_string):
     with open(f_string) as f:

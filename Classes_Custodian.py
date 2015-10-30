@@ -18,7 +18,7 @@ class DimerDivergingHandler(ErrorHandler):
     is_terminating = True
 
     def check(self):
-        if os.path.exists("DIMCAR"):
+        if os.path.exists("DIMCAR") and os.path.getsize('DIMCAR') > 0:
             with open("DIMCAR") as f:
                 dimcar = list(map(lambda x: [x.split()], reversed(f.readlines())))
                 dimcar = list(reduce(lambda x,y: x if x[-1][0] == y[0][0] else x + y, dimcar))
