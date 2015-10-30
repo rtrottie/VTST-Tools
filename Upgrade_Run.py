@@ -30,8 +30,8 @@ def parse_incar_update(f_string):
 
 run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
 
-if not run.converged or sys.argv[1] == 'ask':
-    cont = input('Run has not converged.  Continue? (0/1 = yes/no):  ')
+if not run.converged:
+    cont = input('Run has not converged.  Continue? (1/0 = yes/no):  ')
     if cont == 1:
         pass
     else:
@@ -43,7 +43,7 @@ for incar_adjust_file in ['CONVERGENCE', '../CONVERGENCE', '../../CONVERGENCE', 
 
 updates = parse_incar_update(incar_adjust_file)
 
-if 'STAGE_NUMBER' not in run.incar:
+if 'STAGE_NUMBER' not in run.incar or sys.argv[1] == 'ask':
     prompt = 'Run does not appear to have been staged previously.\nWhat stage should be selected:\n'
     stages = '\n'.join(list(map(lambda x: '    ' + str(x['STAGE_NUMBER']) + ' ' +x['STAGE_NAME'], updates)))
     print(prompt+stages)
