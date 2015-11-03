@@ -28,7 +28,7 @@ def parse_incar_update(f_string):
     return dicts
 
 
-if sys.argv[1] != '0':
+if len(sys.argv) > 1 and sys.argv[1] != '0':
     run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
     if not run.converged:
         cont = input('Run has not converged.  Continue? (1/0 = yes/no):  ')
