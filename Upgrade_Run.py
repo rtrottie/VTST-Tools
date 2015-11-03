@@ -66,7 +66,7 @@ if len(diff["Different"].keys()) > 0:
     else:
         sys.exit('Run will not be updated')
 
-if 'STAGE_NUMBER' not in run.incar or sys.argv[1] == 'ask':
+if 'STAGE_NUMBER' not in run.incar or (len(sys.argv) > 1 and sys.argv[1] == 'ask'):
     prompt = 'Run does not appear to have been staged previously.\nWhat stage should be selected:\n'
     stages = '\n'.join(list(map(lambda x: '    ' + str(x['STAGE_NUMBER']) + ' ' +x['STAGE_NAME'], updates)))
     print(prompt+stages)
