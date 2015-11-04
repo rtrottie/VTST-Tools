@@ -10,19 +10,22 @@ INCAR = {
               'Fe': 2,
               'Co': 2,
               'Ni': 2,
-              'Cu': 2
+              'Cu': 2,
+              'Mn': 2
               },
     'LDAUU': {'default': 0,
               'Fe': 3,
               'Co': 3,
               'Ni': 3,
-              'Cu': 5
+              'Cu': 5,
+              'Mn': 3
               },
     'MAGMOM' : {'default': 0,
                 'Fe': 4,
                 'Co': 5,
                 'Ni': 4,
-                'Cu': 3
+                'Cu': 3,
+                'Mn': 5
                 }
 }
 
