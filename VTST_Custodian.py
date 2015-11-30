@@ -200,7 +200,7 @@ elif job == 'Standard':
             connection = 'ib'
     elif '.rc.' in socket.gethostname():
         vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-        vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
+        vasp_tst_kpts = '/projects/musgravc/apps/vasp.5.3.3_vtst/kpts/vasp'
         host = 'janus'
         mpi = 'mpirun'
         queue_sub = 'sbatch'
