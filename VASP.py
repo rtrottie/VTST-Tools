@@ -194,6 +194,9 @@ elif 'ryan-VirtualBox' in socket.gethostname():
     vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
     vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
     host = 'janus'
+    nntasks_per_node = 1
+    mpi = 'please dont run'
+    queue_sub = 'sbatch'
 else:
     raise Exception('Don\'t recognize host: ' + socket.gethostname())
 
