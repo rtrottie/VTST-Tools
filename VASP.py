@@ -3,7 +3,7 @@
 # based on NPAR and KPAR what type (NEB,Dimer,Standard) to run and sets up a submission script and runs it
 #TODO: fix how the time is setup
 
-# Usage: VTST_Custodian.py [time] [nodes] [log_file]
+# Usage: VASP.py [time] [nodes] [log_file]
 
 from jinja2 import Environment, FileSystemLoader
 from Classes_Pymatgen import *
@@ -42,7 +42,9 @@ else:
     this_run = 0
 os.makedirs(os.path.join(backup_dir, str(this_run))) # make backup directory
 
-if job == 'NEB':
+if job == 'NEB':  #backuping up files and setting up the templates for the jobs
+    template_dir = cfg.TEMPLATE_DIR
+    template = 'VTST_Custodian.sh.jinja2'
     times = []
     for dir in os.listdir('.'): # Move over CONTCARs from previous run, and store POSCARs in backup folder
         if os.path.exists(os.path.join(dir,'CONTCAR')) and os.path.getsize(os.path.join(dir,'CONTCAR')) > 0:
@@ -65,6 +67,8 @@ if job == 'NEB':
         pass
 
 elif job == 'Dimer':
+    template_dir = cfg.TEMPLATE_DIR
+    template = 'VTST_Custodian.sh.jinja2'
     if os.path.exists('CENTCAR') and os.path.getsize('CENTCAR') > 0:
         shutil.move('CENTCAR', 'POSCAR')
         shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
@@ -79,6 +83,8 @@ elif job == 'Dimer':
     except:
         time = 0
 elif job == 'Standard':
+    template_dir = cfg.TEMPLATE_DIR
+    template = 'VTST_Custodian.sh.jinja2'
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
         shutil.move('CONTCAR', 'POSCAR')
         shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
@@ -88,6 +94,9 @@ elif job == 'Standard':
         time = sum(getLoopPlusTimes('OUTCAR'))
     except:
         time = 0
+elif job == 'GSM':
+    template_dir = os.environ['GSM_DIR']
+    template = 'submit.sh.jinja2'
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
 
@@ -97,8 +106,6 @@ with open(os.path.join(backup_dir, str(this_run), 'run_info'), 'w+') as f:
 os.system('rm *.out *.err STOPCAR') # Clean directory and do basic-postprocessing
 # Setup Templating for submit script
 
-template_dir = cfg.TEMPLATE_DIR
-template = 'VTST_Custodian.sh.jinja2'
 env = Environment(loader=FileSystemLoader(template_dir))
 template = env.get_template(template)
 
@@ -191,8 +198,8 @@ elif job == 'Standard':
         host = 'psiops'
         mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
         queue_sub = 'qsub'
-        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
-        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
+        vasp_tst_gamma = '/home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
+        vasp_tst_kpts = '/home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
         nntasks_per_node = 12
         if nodes_per_image == 1:
             connection = 'gb'

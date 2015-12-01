@@ -29,7 +29,7 @@ def check_dimer(directory, runP=True):
         if runP:
             os.chdir(dir)
             os.system('touch ' + m + '-' + subprocess.check_output('basename $( ls ../../*.log )', shell=True).strip())
-            os.system('VTST_Custodian.py ' + reduce(lambda x,y: str(x)+' '+str(y), sys.argv[1:], ''))
+            os.system('VASP.py ' + reduce(lambda x,y: str(x)+' '+str(y), sys.argv[1:], ''))
             os.chdir(directory)
 
 if os.path.basename(sys.argv[0]) == 'Dim_Check.py':

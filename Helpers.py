@@ -52,7 +52,9 @@ def getJobType(dir):
         incar = Incar.from_file(dir)
     else:
         incar = Incar.from_file(os.path.join(dir,'INCAR'))
-    if 'ICHAIN' in incar:
+    if os.path.exists(os.path.join(dir, 'gfstringq.exe')):
+        return 'GSM'
+    elif 'ICHAIN' in incar:
         if incar['ICHAIN'] == 0:
             return 'NEB'
         elif incar['ICHAIN'] == 2:
