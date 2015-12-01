@@ -42,9 +42,10 @@ else:
     this_run = 0
 os.makedirs(os.path.join(backup_dir, str(this_run))) # make backup directory
 
-if job == 'NEB':  #backuping up files and setting up the templates for the jobs
+if job == 'NEB':  #backuping up files and setting up the templates for the jobs as well as setting template variables
     template_dir = cfg.TEMPLATE_DIR
     template = 'VTST_Custodian.sh.jinja2'
+    keywords = {}
     times = []
     for dir in os.listdir('.'): # Move over CONTCARs from previous run, and store POSCARs in backup folder
         if os.path.exists(os.path.join(dir,'CONTCAR')) and os.path.getsize(os.path.join(dir,'CONTCAR')) > 0:
@@ -69,6 +70,7 @@ if job == 'NEB':  #backuping up files and setting up the templates for the jobs
 elif job == 'Dimer':
     template_dir = cfg.TEMPLATE_DIR
     template = 'VTST_Custodian.sh.jinja2'
+    keywords = {}
     if os.path.exists('CENTCAR') and os.path.getsize('CENTCAR') > 0:
         shutil.move('CENTCAR', 'POSCAR')
         shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
@@ -85,6 +87,7 @@ elif job == 'Dimer':
 elif job == 'Standard':
     template_dir = cfg.TEMPLATE_DIR
     template = 'VTST_Custodian.sh.jinja2'
+    keywords = {}
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
         shutil.move('CONTCAR', 'POSCAR')
         shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
@@ -97,6 +100,7 @@ elif job == 'Standard':
 elif job == 'GSM':
     template_dir = os.environ['GSM_DIR']
     template = 'submit.sh.jinja2'
+    keywords = load_variables(os.path.join(os.environ['GSM_DIR'], 'VARS.jinja2'))
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
 
@@ -230,7 +234,7 @@ elif job == 'Standard':
 else:
     raise Exception('Don\'t recognize jobtype: ' + job)
 
-keywords = {'J' : jobname,
+keywords.update( {'J' : jobname,
             'hours' : time,
             'nodes' : images*nodes_per_image,
             'nntasks_per_node' : nntasks_per_node,
@@ -245,7 +249,7 @@ keywords = {'J' : jobname,
             'mpi' : mpi,
             'queue': queue,
             'mem': mem,
-            'currdir': os.path.abspath('.')}
+            'currdir': os.path.abspath('.')} )
 
 with open(script, 'w+') as f:
     f.write(template.render(keywords))

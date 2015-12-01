@@ -86,3 +86,11 @@ def update_incar(structure, incar):
                                  map(lambda x: [x], species))
             incar[k] = list(map(lambda a: cfg.INCAR[k][a] if a in cfg.INCAR[k] else cfg.INCAR[k]['default'],
                             species))
+
+def load_variables(file_loc):
+    vars = {}
+    with open(file_loc) as f:
+        for l in f.readlines():
+            variable_value = l.split(':')
+            vars[variable_value[0].strip()] = variable_value[1].strip()
+    return vars
