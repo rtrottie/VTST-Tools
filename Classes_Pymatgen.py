@@ -391,7 +391,7 @@ class PoscarNEB(Poscar):
         return self.get_string(significant_figures=20)
 
 
-class Modecar(PMGSONable):
+class Modecar(MSONable):
 
     def __init__(self, contents):
         self.contents = contents

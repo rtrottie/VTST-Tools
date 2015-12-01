@@ -98,9 +98,10 @@ elif job == 'Standard':
     except:
         time = 0
 elif job == 'GSM':
-    template_dir = os.environ['GSM_DIR']
+    template_dir = cfg.TEMPLATE_DIR
     template = 'submit.sh.jinja2'
     keywords = load_variables(os.path.join(os.environ['GSM_DIR'], 'VARS.jinja2'))
+    time = 'NOT APPLICABLE'
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
 
@@ -161,78 +162,41 @@ else:
 
 connection = ''
 queue = ''
-if job == 'Dimer' or job == 'NEB':
-    if 'psiops' in socket.gethostname():
-        host = 'psiops'
-        mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
-        queue_sub = 'qsub'
-        nntasks_per_node = 12
-        if nodes_per_image == 1:
-            connection = 'gb'
-            vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
-            vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
-        else:
-            connection = 'ib'
-            vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
-            vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
-    elif '.rc.' in socket.gethostname():
-        vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-        vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
-        host = 'janus'
-        mpi = 'mpirun'
-        queue_sub = 'sbatch'
-        queue = 'janus' if time <= 24 else 'janus-long'
-        nntasks_per_node = 12
-    elif 'rapunzel' in socket.gethostname():
-        vasp_tst_gamma = '/export/home/apps/VASP/VTST.gamma/vasp'
-        vasp_tst_kpts = '/export/home/apps/VASP/VTST/vasp.kpts'
-        host = 'rapunzel'
-        mpi = 'mpirun'
-        queue_sub = 'sbatch'
-        nntasks_per_node = 7
-    elif 'ryan-VirtualBox' in socket.gethostname():
-        vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-        vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
-        host = 'janus'
-
+if 'psiops' in socket.gethostname():
+    host = 'psiops'
+    mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
+    queue_sub = 'qsub'
+    nntasks_per_node = 12
+    if nodes_per_image == 1:
+        connection = 'gb'
+        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
+        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
     else:
-        raise Exception('Don\'t recognize host: ' + socket.gethostname())
-elif job == 'Standard':
-    if 'psiops' in socket.gethostname():
-        host = 'psiops'
-        mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
-        queue_sub = 'qsub'
-        vasp_tst_gamma = '/home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
-        vasp_tst_kpts = '/home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
-        nntasks_per_node = 12
-        if nodes_per_image == 1:
-            connection = 'gb'
-        else:
-            connection = 'ib'
-    elif '.rc.' in socket.gethostname():
-        vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-        vasp_tst_kpts = '/projects/musgravc/apps/vasp.5.3.3_vtst/kpts/vasp'
-        host = 'janus'
-        mpi = 'mpirun'
-        queue_sub = 'sbatch'
-        queue = 'janus' if time < 24 else 'janus-long'
-        nntasks_per_node = 12
-    elif 'rapunzel' in socket.gethostname():
-        vasp_tst_gamma = '/export/home/apps/VASP/VTST/vasp.gamma'
-        vasp_tst_kpts = '/export/home/apps/VASP/VTST/vasp.kpts'
-        host = 'rapunzel'
-        mpi = 'mpirun'
-        queue_sub = 'sbatch'
-        nntasks_per_node = 7
-    elif 'ryan-VirtualBox' in socket.gethostname():
-        vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-        vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
-        host = 'janus'
-
-    else:
-        raise Exception('Don\'t recognize host: ' + socket.gethostname())
+        connection = 'ib'
+        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
+        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
+elif '.rc.' in socket.gethostname():
+    vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
+    vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
+    host = 'janus'
+    mpi = 'mpirun'
+    queue_sub = 'sbatch'
+    queue = 'janus' if time <= 24 else 'janus-long'
+    nntasks_per_node = 12
+elif 'rapunzel' in socket.gethostname():
+    vasp_tst_gamma = '/export/home/apps/VASP/VTST.gamma/vasp'
+    vasp_tst_kpts = '/export/home/apps/VASP/VTST/vasp.kpts'
+    host = 'rapunzel'
+    mpi = 'mpirun'
+    queue_sub = 'sbatch'
+    nntasks_per_node = 7
+elif 'ryan-VirtualBox' in socket.gethostname():
+    vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
+    vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
+    host = 'janus'
 else:
-    raise Exception('Don\'t recognize jobtype: ' + job)
+    raise Exception('Don\'t recognize host: ' + socket.gethostname())
+
 
 keywords.update( {'J' : jobname,
             'hours' : time,

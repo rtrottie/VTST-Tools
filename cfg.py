@@ -2,7 +2,7 @@
 # cfg.py file before this one on your python path.  If an atom you want to use is missing just let me know
 # and I can add it.  Variables at the end of this file should be declared in your .bashrc (or .my.bashrc on janus)
 
-import subprocess
+import os
 
 INCAR = {
 
@@ -43,6 +43,6 @@ INCAR_format = [
 
 ]
 
-VTST_DIR = subprocess.check_output('echo $VTST_DIR', shell=True).strip()
-TEMPLATE_DIR = subprocess.check_output('echo $TEMPLATE_DIR', shell=True).strip()
-MAT_PROJ_KEY = subprocess.check_output('echo $MAT_PROJ_KEY', shell=True).strip()
+VTST_DIR = os.environ['VTST_DIR']
+GSM_DIR = os.environ['GSM_DIR']
+TEMPLATE_DIR = os.environ['TEMPLATE_DIR'].split(':')
