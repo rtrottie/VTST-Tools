@@ -36,14 +36,14 @@ if os.path.isdir(backup_dir):  # Find what directory to backup to
         raise Exception("backup setup is invalid")
     this_run = last_run+1
     if job == "NEB":
-        os.system(os.path.join(cfg.VTST_DIR, 'nebbarrier.pl') + ';'+
-                  os.path.join(cfg.VTST_DIR, 'nebef.pl > nebef.dat')) # do some post-processing only if this is not the first run
+        os.system(os.path.join(os.environ['VTST_DIR'], 'nebbarrier.pl') + ';'+
+                  os.path.join(os.environ['VTST_DIR'], 'nebef.pl > nebef.dat')) # do some post-processing only if this is not the first run
 else:
     this_run = 0
 os.makedirs(os.path.join(backup_dir, str(this_run))) # make backup directory
 
 if job == 'NEB':  #backuping up files and setting up the templates for the jobs as well as setting template variables
-    template_dir = cfg.TEMPLATE_DIR
+    template_dir = os.environ['TEMPLATE_DIR']
     template = 'VTST_Custodian.sh.jinja2'
     keywords = {}
     times = []
@@ -68,7 +68,7 @@ if job == 'NEB':  #backuping up files and setting up the templates for the jobs 
         pass
 
 elif job == 'Dimer':
-    template_dir = cfg.TEMPLATE_DIR
+    template_dir = os.environ['TEMPLATE_DIR']
     template = 'VTST_Custodian.sh.jinja2'
     keywords = {}
     if os.path.exists('CENTCAR') and os.path.getsize('CENTCAR') > 0:
@@ -85,7 +85,7 @@ elif job == 'Dimer':
     except:
         time = 0
 elif job == 'Standard':
-    template_dir = cfg.TEMPLATE_DIR
+    template_dir = os.environ['TEMPLATE_DIR']
     template = 'VTST_Custodian.sh.jinja2'
     keywords = {}
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
@@ -98,7 +98,7 @@ elif job == 'Standard':
     except:
         time = 0
 elif job == 'GSM':
-    template_dir = cfg.TEMPLATE_DIR
+    template_dir = os.environ['TEMPLATE_DIR']
     template = 'submit.sh.jinja2'
     keywords = load_variables(os.path.join(os.environ['GSM_DIR'], 'VARS.jinja2'))
     time = 'NOT APPLICABLE'

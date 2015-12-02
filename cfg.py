@@ -42,7 +42,3 @@ INCAR_format = [
     ('SETUP', ['AUTO_TIME', 'AUTO_NODES', 'AUTO_MEM', 'STAGE_NUMBER', 'STAGE_NAME', 'STAGE_FILE']) # must be last
 
 ]
-
-VTST_DIR = os.environ['VTST_DIR']
-GSM_DIR = os.environ['GSM_DIR']
-TEMPLATE_DIR = os.environ['TEMPLATE_DIR'].split(':')

@@ -57,7 +57,18 @@ def GSM_Setup():
     final = ase.io.read(final_pos)
     if not os.path.exists('scratch'):
         os.makedirs('scratch')
-    ase.io.write('scratch/initial0000.xyz',[start,final])
+    ase.io.write('scratch/initial0000.temp.xyz',[start,final])
+    with open('scratch/initial0000.temp.xyz', 'r') as f:
+        sd = Poscar.from_file('start').selective_dynamics
+        sd = map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' X\n', sd)
+        to_zip = ['\n', '\n'] + sd + ['\n', '\n'] + sd
+        zipped = zip(f.readlines(), to_zip)
+        xyz = map(lambda (x,y) : x.rstrip()+y, zipped)
+        with open('scratch/initial0000.xyz', 'w') as f:
+            f.writelines(xyz)
+    os.remove('scratch/initial0000.temp.xyz')
+
+    print 'woot'
 
 if os.path.basename(sys.argv[0]) == 'GSM_Setup.py':
     GSM_Setup()
