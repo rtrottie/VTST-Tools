@@ -68,7 +68,5 @@ def GSM_Setup():
             f.writelines(xyz)
     os.remove('scratch/initial0000.temp.xyz')
 
-    print 'woot'
-
 if os.path.basename(sys.argv[0]) == 'GSM_Setup.py':
     GSM_Setup()
