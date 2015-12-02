@@ -60,7 +60,7 @@ def GSM_Setup():
     ase.io.write('scratch/initial0000.temp.xyz',[start,final])
     with open('scratch/initial0000.temp.xyz', 'r') as f:
         sd = Poscar.from_file('start').selective_dynamics
-        sd = map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' X\n', sd)
+        sd = map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd)
         to_zip = ['\n', '\n'] + sd + ['\n', '\n'] + sd
         zipped = zip(f.readlines(), to_zip)
         xyz = map(lambda (x,y) : x.rstrip()+y, zipped)
