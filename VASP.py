@@ -169,12 +169,12 @@ if 'psiops' in socket.gethostname():
     nntasks_per_node = 12
     if nodes_per_image == 1:
         connection = 'gb'
-        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
-        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
+        vasp_tst_gamma = '/home/dummy/vasp5.3_gamma/vasp.5.3/vasp'
+        vasp_tst_kpts = ' /home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
     else:
         connection = 'ib'
-        vasp_tst_gamma = '/home/dummy/vasp5.12/tst/gamma/vasp.5.2/vasp'
-        vasp_tst_kpts = '/home/dummy/vasp5.12/tst/kpoints/vasp.5.2/vasp'
+        vasp_tst_gamma = '/home/dummy/vasp5.3_gamma/vasp.5.3/vasp'
+        vasp_tst_kpts = ' /home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
 elif '.rc.' in socket.gethostname():
     vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
     vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
