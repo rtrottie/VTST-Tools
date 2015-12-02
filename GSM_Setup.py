@@ -31,7 +31,11 @@ def GSM_Setup():
 
     start_pos = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) else os.path.join(start, 'POSCAR')
     final_pos = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) else os.path.join(final, 'POSCAR')
+    images = int(jinja_vars['IMAGES'])
 
+
+    if not os.path.exists('scratch'):
+        os.makedirs('scratch')
 
     shutil.copy(os.path.join(file_loc, 'gfstringq.exe'), 'gfstringq.exe')
     shutil.copy(os.path.join(file_loc, 'status'), 'status')
@@ -42,6 +46,12 @@ def GSM_Setup():
     incar.write_file('INCAR')
     shutil.copy(os.path.join(start, 'KPOINTS'), 'KPOINTS')
     shutil.copy(os.path.join(start, 'POTCAR'), 'POTCAR')
+    if os.path.exists(os.path.join(start, 'WAVECAR')):
+        os.makedirs('scratch/IMAGE.01')
+        shutil.copy(os.path.join(start, 'WAVECAR'), '/scratch/IMAGE.01/WAVECAR')
+    if os.path.exists(os.path.join(final, 'WAVECAR')):
+        os.makedirs('/scratch/IMAGE.' + str(images-1).zfill(2))
+        shutil.copy(os.path.join(final, 'WAVECAR'), '/scratch/IMAGE.' + str(images-1).zfill(2) + '/WAVECAR')
 
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(file_loc))
 
@@ -55,8 +65,6 @@ def GSM_Setup():
     os.chmod('grad.py', 0o755)
     start = ase.io.read(start_pos)
     final = ase.io.read(final_pos)
-    if not os.path.exists('scratch'):
-        os.makedirs('scratch')
     ase.io.write('scratch/initial0000.temp.xyz',[start,final])
     with open('scratch/initial0000.temp.xyz', 'r') as f:
         sd = Poscar.from_file('start').selective_dynamics
