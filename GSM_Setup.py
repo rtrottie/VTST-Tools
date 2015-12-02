@@ -48,10 +48,10 @@ def GSM_Setup():
     shutil.copy(os.path.join(start, 'POTCAR'), 'POTCAR')
     if os.path.exists(os.path.join(start, 'WAVECAR')):
         os.makedirs('scratch/IMAGE.01')
-        shutil.copy(os.path.join(start, 'WAVECAR'), '/scratch/IMAGE.01/WAVECAR')
+        shutil.copy(os.path.join(start, 'WAVECAR'), 'scratch/IMAGE.01/WAVECAR')
     if os.path.exists(os.path.join(final, 'WAVECAR')):
-        os.makedirs('/scratch/IMAGE.' + str(images-1).zfill(2))
-        shutil.copy(os.path.join(final, 'WAVECAR'), '/scratch/IMAGE.' + str(images-1).zfill(2) + '/WAVECAR')
+        os.makedirs('scratch/IMAGE.' + str(images-1).zfill(2))
+        shutil.copy(os.path.join(final, 'WAVECAR'), 'scratch/IMAGE.' + str(images-1).zfill(2) + '/WAVECAR')
 
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(file_loc))
 
