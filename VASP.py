@@ -164,17 +164,17 @@ connection = ''
 queue = ''
 if 'psiops' in socket.gethostname():
     host = 'psiops'
-    mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
+    mpi = '/home/apps/openmpi/openmpi-1.10.1/bin/mpirun'
     queue_sub = 'qsub'
     nntasks_per_node = 12
     if nodes_per_image == 1:
         connection = 'gb'
-        vasp_tst_gamma = '/home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
-        vasp_tst_kpts = ' /home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
+        vasp_tst_gamma = '/home/apps/vasp_tst/vasp.5.3/vasp'
+        vasp_tst_kpts  = '/home/apps/vasp_tst/vasp.5.3/vasp'
     else:
         connection = 'ib'
-        vasp_tst_gamma = '/home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
-        vasp_tst_kpts = ' /home/dummy/vasp.5.3.3/kpts/vasp.5.3/vasp'
+        vasp_tst_gamma = '/home/apps/vasp_tst/vasp.5.3/vasp'
+        vasp_tst_kpts  = '/home/apps/vasp_tst/vasp.5.3/vasp'
 elif '.rc.' in socket.gethostname():
     vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
     vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
