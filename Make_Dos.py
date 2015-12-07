@@ -34,6 +34,7 @@ def get_dos(dos, site, orbital='all'):
     else:
         return dos.get_site_orbital_dos(dos.structure.sites[site], orbital)
 m = max(max(tdos.densities[1]), max(tdos.densities[-1]))
+scaling_factors = [1.5/m]
 columns = [list(map(lambda x: x-tdos.efermi, tdos.energies.tolist())), list(map(lambda x: x/m*1.5, tdos.densities[1])), list(map(lambda x: -x/m*1.5, tdos.densities[-1]))]
 title = ['Energy', 'Total +', 'Total -']
 
@@ -65,6 +66,7 @@ for unformated_dos in unformated_doss:
         down = list(map(lambda dos: dos.densities[-1].tolist(), up_down))
         down = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), down)
         m = max(max(up), max(down))
+        scaling_factors.append(1/m)
         norm_up = list(map(lambda x: x/m, up))
         norm_down = list(map(lambda x: -x/m, down))
         title.append(unformated_dos.replace(',','-') + ':' + orbital + ' +')
@@ -74,15 +76,18 @@ for unformated_dos in unformated_doss:
 
 
 csv_list = range(len(columns[0]))
-
+title.append('Scaling Factors')
 csv_str = ','.join(title)
 
 for i in range(len(columns[0])):
     csv_str = csv_str + '\n'
     for j in range(len(columns)):
-        csv_str = csv_str + str(columns[j][i])
-        if j != len(columns)-1:
-            csv_str = csv_str + ','
+        try:
+            csv_str = csv_str + str(columns[j][i])
+            if j != len(columns)-1:
+                csv_str = csv_str + ','
+        except:
+            pass
 
 with open('DOS.csv', 'w') as f:
     f.write(csv_str)
