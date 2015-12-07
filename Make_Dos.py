@@ -79,6 +79,7 @@ for unformated_dos in unformated_doss:
 
 csv_list = range(len(columns[0]))
 title.append('Scaling Factors')
+columns.append(scaling_factors)
 csv_str = ','.join(title)
 
 for i in range(len(columns[0])):
