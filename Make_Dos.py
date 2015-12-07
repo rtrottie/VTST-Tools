@@ -27,7 +27,9 @@ def sum_orbitals(pdos, atoms, orbitals=['all']):
 def get_dos(dos, site, orbital='all'):
     if orbital == 'all':
         return dos.get_site_dos(dos.structure.sites[site])
-    elif orbital == 't2g' or orbital == 'e_g':
+    elif orbital == 't2g' or orbital == 'e_g' or orbital == 'eg':
+        if orbital == 'eg':
+            orbital == 'e_g'
         return dos.get_site_t2g_eg_resolved_dos(dos.structure.sites[site])[orbital]
     elif orbital == 's' or orbital == 'p' or orbital == 'd':
         return dos.get_site_spd_dos(dos.structure.sites[site])[orbital.upper()]
