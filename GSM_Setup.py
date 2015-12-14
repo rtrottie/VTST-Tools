@@ -53,10 +53,12 @@ def GSM_Setup():
         start_pos = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) else os.path.join(start, 'POSCAR')
     else:
         start_pos = start
+        start = os.path.dirname(start)
     if not os.path.isfile(final):
         final_pos = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) else os.path.join(final, 'POSCAR')
     else:
         final_pos = final
+        final = os.path.dirname(final)
     images = int(jinja_vars['IMAGES'])
 
 
