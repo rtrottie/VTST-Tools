@@ -71,6 +71,7 @@ def GSM_Setup():
     shutil.copy(final_pos, 'POSCAR.final')
     incar = Incar.from_file(os.path.join(start, 'INCAR'))
     incar['NSW']=0
+    incar['NELM'] = 100
     incar.write_file('INCAR')
     shutil.copy(os.path.join(start, 'KPOINTS'), 'KPOINTS')
     shutil.copy(os.path.join(start, 'POTCAR'), 'POTCAR')
