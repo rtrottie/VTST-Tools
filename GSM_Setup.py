@@ -114,9 +114,9 @@ def GSM_Setup():
             xyz = map(lambda (x,y) : x.rstrip()+y, zipped)
             with open('scratch/initial0000.xyz', 'w') as f:
                 f.writelines(xyz)
+        os.remove('scratch/initial0000.temp.xyz')
     else:
         shutil.move('scratch/initial0000.temp.xyz', 'scratch/initial0000.xyz')
-    os.remove('scratch/initial0000.temp.xyz')
 
 if os.path.basename(sys.argv[0]) == 'GSM_Setup.py':
     GSM_Setup()
