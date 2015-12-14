@@ -73,8 +73,11 @@ def GSM_Setup():
     incar['NSW']=0
     incar['NELM'] = 100
     incar.write_file('INCAR')
-    shutil.copy(os.path.join(start, 'KPOINTS'), 'KPOINTS')
-    shutil.copy(os.path.join(start, 'POTCAR'), 'POTCAR')
+    try:
+        shutil.copy(os.path.join(start, 'KPOINTS'), 'KPOINTS')
+        shutil.copy(os.path.join(start, 'POTCAR'), 'POTCAR')
+    except:
+        pass
     if os.path.exists(os.path.join(start, 'WAVECAR')):
         os.makedirs('scratch/IMAGE.01')
         shutil.copy(os.path.join(start, 'WAVECAR'), 'scratch/IMAGE.01/WAVECAR')
