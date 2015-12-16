@@ -73,7 +73,6 @@ if len(diff["Different"].keys()) > 0:
     cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
     if cont == 1:
         run.incar = incar
-        pass
     else:
         sys.exit('Run will not be updated')
 
@@ -92,7 +91,7 @@ if 'STAGE_NUMBER' not in run.incar or (len(sys.argv) > 1 and sys.argv[1] == 'ask
             prev_stage_name = None
 else:
     stage = updates[int(run.incar['STAGE_NUMBER'])+1]
-    if int(run.incar['STAGE_NUMBER'])+1 < 1:
+    if int(run.incar['STAGE_NUMBER']) > 0:
         prev_stage_name = run.incar['STAGE_NAME']
 
 kpoints = False
