@@ -64,6 +64,7 @@ if len(diff["Different"].keys()) > 0:
         err_msg = err_msg + '\n vasprun.xml :  ' + run.incar[key] + 'INCAR : ' + incar[key]
     cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
     if cont == 1:
+        run.incar = incar
         pass
     else:
         sys.exit('Run will not be updated')
