@@ -91,8 +91,7 @@ if 'STAGE_NUMBER' not in run.incar or (len(sys.argv) > 1 and sys.argv[1] == 'ask
             prev_stage_name = None
 else:
     stage = updates[int(run.incar['STAGE_NUMBER'])+1]
-    if int(run.incar['STAGE_NUMBER']) > 0:
-        prev_stage_name = run.incar['STAGE_NAME']
+    prev_stage_name = run.incar['STAGE_NAME']
 
 kpoints = False
 for val in stage.keys():
