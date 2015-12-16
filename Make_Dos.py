@@ -24,6 +24,39 @@ def sum_orbitals(pdos, atoms, orbitals=['all']):
             'total'
     return
 
+def determine_scale_of_frontier_bands(energies, up, down):
+    fermi_i = len(filter(lambda x: x < 0, energies)) - 1
+    m = max(max(up), max(down))
+    counter = 0
+    bg = True
+    for i in range(fermi_i, -1, -1):
+        if up[i] < m/1000 and down[i] < m/1000:
+            if counter == 5:
+                break
+            elif bg:
+                pass
+            else:
+                counter += 1
+        else:
+            bg = False
+            counter = 0
+    bot = i
+    counter = 0
+    bg = True
+    for i in range(fermi_i, len(energies)):
+        if up[i] < m/1000 and down[i] < m/1000:
+            if counter == 5:
+                break
+            elif bg:
+                pass
+            else:
+                counter += 1
+        else:
+            bg = False
+            counter = 0
+    top = i
+    return max(max(up[bot:top]), max(down[bot:top]))
+
 def get_dos(dos, site, orbital='all'):
     if orbital == 'all':
         return dos.get_site_dos(dos.structure.sites[site])
@@ -35,9 +68,10 @@ def get_dos(dos, site, orbital='all'):
         return dos.get_site_spd_dos(dos.structure.sites[site])[orbital.upper()]
     else:
         return dos.get_site_orbital_dos(dos.structure.sites[site], orbital)
-m = max(max(tdos.densities[1]), max(tdos.densities[-1]))
+energies = list(map(lambda x: x-tdos.efermi, tdos.energies.tolist()))
+m = determine_scale_of_frontier_bands(energies, tdos.densities[1], tdos.densities[-1])
 scaling_factors = [1.5/m]
-columns = [list(map(lambda x: x-tdos.efermi, tdos.energies.tolist())), list(map(lambda x: x/m*1.5, tdos.densities[1])), list(map(lambda x: -x/m*1.5, tdos.densities[-1]))]
+columns = [energies, list(map(lambda x: x/m*1.5, tdos.densities[1])), list(map(lambda x: -x/m*1.5, tdos.densities[-1]))]
 title = ['Energy', 'Total +', 'Total -']
 
 for unformated_dos in unformated_doss:
@@ -67,7 +101,7 @@ for unformated_dos in unformated_doss:
         up = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), up)
         down = list(map(lambda dos: dos.densities[-1].tolist(), up_down))
         down = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), down)
-        m = max(max(up), max(down))
+        m = determine_scale_of_frontier_bands(energies, up, down)
         scaling_factors.append(1/m)
         norm_up = list(map(lambda x: x/m, up))
         norm_down = list(map(lambda x: -x/m, down))
