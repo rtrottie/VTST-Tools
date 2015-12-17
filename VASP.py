@@ -104,15 +104,11 @@ elif job == 'GSM':
     string_files = filter(lambda s: s.startswith('stringfile.xyz') and s[-1].isdigit() and s[-2].isdigit(),  os.listdir('.'))
     keywords['iteration'] = 0
     if len(string_files) > 0:
-        iteration = max(list(map(lambda s: int(s[-4:]), string_files)))
-        this_iter_str = str(iteration).zfill(4)
-        next_iter_str = str(iteration+1).zfill(4)
-        shutil.copy('stringfile.xyz' + this_iter_str, 'restart.xyz' + next_iter_str)
-        shutil.copy('scratch/initial' + this_iter_str +'.xyz', 'scratch/initial' + next_iter_str +'.xyz')
-        os.system('find *' + this_iter_str + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run))  + '/ \;')
+        shutil.copy('stringfile.xyz0000', 'restart.xyz0000' )
+        os.system('find *' + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run))  + '/ \;')
         os.system('mkdir ' + os.path.join(backup_dir, str(this_run), 'scratch'))
-        os.system('find scratch/*' + this_iter_str + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run), 'scratch')  + '/ \;')
-        keywords['iteration'] = iteration + 1
+        os.system('find scratch/*' + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run), 'scratch')  + '/ \;')
+        keywords['iteration'] = 0
         with open('inpfileq') as inpfileq:
             lines = inpfileq.readlines()
             gsm_settings = list(map(lambda x: (x + ' 1').split()[0], lines))
