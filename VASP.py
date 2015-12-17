@@ -105,9 +105,12 @@ elif job == 'GSM':
     keywords['iteration'] = 0
     if len(string_files) > 0:
         shutil.copy('stringfile.xyz0000', 'restart.xyz0000' )
-        os.system('find *' + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run))  + '/ \;')
         os.system('mkdir ' + os.path.join(backup_dir, str(this_run), 'scratch'))
-        os.system('find scratch/*' + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run), 'scratch')  + '/ \;')
+        os.system('cp stringfile* ' + os.path.join(backup_dir, str(this_run)))
+        for f in ['scratch/initial.xyz0000', 'scratch/paragsm0000', 'POSCAR.final', 'POSCAR.start', 'INCAR', 'KPOINTS']:
+            shutil.copy(f, os.path.join(backup_dir, str(this_run), f))
+        #os.system('find *' + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run))  + '/ \;')
+        #os.system('find scratch/*' + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run), 'scratch')  + '/ \;')
         keywords['iteration'] = 0
         with open('inpfileq') as inpfileq:
             lines = inpfileq.readlines()
