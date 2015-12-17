@@ -107,8 +107,11 @@ elif job == 'GSM':
         shutil.copy('stringfile.xyz0000', 'restart.xyz0000' )
         os.system('mkdir ' + os.path.join(backup_dir, str(this_run), 'scratch'))
         os.system('cp stringfile* ' + os.path.join(backup_dir, str(this_run)))
-        for f in ['scratch/initial.xyz0000', 'scratch/paragsm0000', 'POSCAR.final', 'POSCAR.start', 'INCAR', 'KPOINTS']:
-            shutil.copy(f, os.path.join(backup_dir, str(this_run), f))
+        for f in ['initial.xyz0000', 'scratch/paragsm0000', 'POSCAR.final', 'POSCAR.start', 'INCAR', 'KPOINTS']:
+            try:
+                shutil.copy(f, os.path.join(backup_dir, str(this_run), f))
+            except:
+                print(f + ' Not Copied')
         #os.system('find *' + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run))  + '/ \;')
         #os.system('find scratch/*' + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run), 'scratch')  + '/ \;')
         keywords['iteration'] = 0
