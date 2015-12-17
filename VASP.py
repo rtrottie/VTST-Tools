@@ -117,9 +117,9 @@ elif job == 'GSM':
             lines = inpfileq.readlines()
             gsm_settings = list(map(lambda x: (x + ' 1').split()[0], lines))
         if 'RESTART' not in gsm_settings:
-            gsm_settings.insert(len(gsm_settings)-1,'RESTART                 1')
+            lines.insert(len(lines)-1,'RESTART                 1')
             with open('inpfileq', 'w') as inpfileq:
-                inpfileq.writelines(gsm_settings)
+                inpfileq.writelines(lines)
     time = 'NOT APPLICABLE'
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
