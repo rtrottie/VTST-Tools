@@ -113,6 +113,13 @@ elif job == 'GSM':
         os.system('mkdir ' + os.path.join(backup_dir, str(this_run), 'scratch'))
         os.system('find scratch/*' + this_iter_str + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run), 'scratch')  + '/ \;')
         keywords['iteration'] = iteration + 1
+        with open('inpfileq') as inpfileq:
+            lines = inpfileq.readlines()
+            gsm_settings = list(map(lambda x: (x + ' 1').split()[0], lines))
+        if 'RESTART' not in gsm_settings:
+            inpfileq_lines = gsm_settings.insert(len(gsm_settings)-1,'RESTART                 1')
+            with open('inpfileq', 'w') as inpfileq:
+                inpfileq.writelines(inpfileq_lines)
     time = 'NOT APPLICABLE'
 else:
     raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
