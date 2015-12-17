@@ -119,7 +119,7 @@ elif job == 'GSM':
             lines = inpfileq.readlines()
             gsm_settings = list(map(lambda x: (x + ' 1').split()[0], lines))
         if 'RESTART' not in gsm_settings:
-            lines.insert(len(lines)-1,'RESTART                 1')
+            lines.insert(len(lines)-1,'RESTART                 1\n')
             with open('inpfileq', 'w') as inpfileq:
                 inpfileq.writelines(lines)
     time = 'NOT APPLICABLE'
