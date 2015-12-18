@@ -218,7 +218,7 @@ elif 'ryan-VirtualBox' in socket.gethostname():
     nntasks_per_node = 1
     mpi = 'please dont run'
     queue_sub = 'sbatch'
-elif 'login' in socket.gethostbyname():
+elif 'login' in socket.gethostname():
     vasp_tst_gamma = 'vasp.gamma'
     vasp_tst_kpts = 'vasp.realk'
     host = 'peregrine'
