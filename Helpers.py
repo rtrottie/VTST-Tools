@@ -18,10 +18,10 @@ def neb2dim(neb_dir, dimer_dir):
     dimer_dir = os.path.abspath(dimer_dir)
     os.chdir(neb_dir)
     if not os.path.exists('exts.dat'):
-        os.system(os.path.join(cfg.VTST_DIR,'nebspline.pl'))
+        os.system(os.path.join(os.environ['VTST_DIR'],'nebspline.pl'))
     if not os.path.exists(dimer_dir):
         os.makedirs(dimer_dir)
-    os.system(os.path.join(cfg.VTST_DIR,'neb2dim.pl') + ' > /dev/null')
+    os.system(os.path.join(os.environ['VTST_DIR'],'neb2dim.pl') + ' > /dev/null')
     if os.path.join(os.path.abspath(neb_dir), 'dim') != dimer_dir:
         for f in os.listdir('dim'):
             shutil.move(os.path.join('dim', f), dimer_dir)
@@ -43,7 +43,7 @@ def neb2dim(neb_dir, dimer_dir):
     incar.write_file('INCAR')
 
 def getImageDistance(POSCAR_1, POSCAR_2):
-    full_distance_string = subprocess.check_output(os.path.join(cfg.VTST_DIR,'diffcon.pl')+ ' '+ POSCAR_1 +' ' +POSCAR_2, shell=True)
+    full_distance_string = subprocess.check_output(os.path.join(os.environ['VTST_DIR'],'diffcon.pl')+ ' '+ POSCAR_1 +' ' +POSCAR_2, shell=True)
     distance = full_distance_string.split('\n')[-4].split(' ')[-1] # Stripping rest of the file away
     return distance
 
