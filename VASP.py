@@ -107,7 +107,7 @@ elif job == 'GSM':
         shutil.copy('stringfile.xyz0000', 'restart.xyz0000' )
         os.system('mkdir ' + os.path.join(backup_dir, str(this_run), 'scratch'))
         os.system('cp stringfile* ' + os.path.join(backup_dir, str(this_run)))
-        for f in ['initial.xyz0000', 'scratch/paragsm0000', 'POSCAR.final', 'POSCAR.start', 'INCAR', 'KPOINTS']:
+        for f in ['scratch/initial.xyz0000', 'scratch/paragsm0000', 'POSCAR.final', 'POSCAR.start', 'INCAR', 'KPOINTS']:
             try:
                 shutil.copy(f, os.path.join(backup_dir, str(this_run), f))
             except:
@@ -218,8 +218,26 @@ elif 'ryan-VirtualBox' in socket.gethostname():
     nntasks_per_node = 1
     mpi = 'please dont run'
     queue_sub = 'sbatch'
+elif 'login' in socket.gethostbyname():
+    vasp_tst_gamma = 'vasp.gamma'
+    vasp_tst_kpts = 'vasp.realk'
+    host = 'peregrine'
+    nntasks_per_node = 24
+    mpi = 'mpirun'
+    queue_sub = 'qsub'
+    if time <= 1 and nodes <= 4:
+        queue = 'debug'
+    elif time <= 4 and nodes <= 8:
+        queue = 'short'
+    elif time <= 24 and nodes >= 16 and nodes <= 296:
+        queue = 'short'
+    elif time <= 48 and nodes <= 296:
+        queue = 'batch'
+    else:
+        raise Exception('Queue Configuration not Valid: ' + time + ' hours ' + nodes + ' nodes ')
 else:
     raise Exception('Don\'t recognize host: ' + socket.gethostname())
+    keywords['account'] = os.environ('DEFAULT_ALLOCATION')
 
 
 keywords.update( {'J' : jobname,

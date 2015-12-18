@@ -18,6 +18,24 @@ export OMP_NUM_THREADS=1
 
 echo $SLURM_JOB_NODELIST
 
+{% elif host == "janus" %}#SBATCH -J {{ J }}
+#PBS -j eo
+#PBS -l nodes={{ nodes }}:ppn={{ nntasks_per_node }}
+#PBS -l walltime={{ hours }}:00:00
+#PBS -q {{ queue }}
+#PBS -N {{ logname }}
+#PBS -A {{ account }}
+
+# Load important modules and ensure environemnt variables are correctly set up
+
+module load python/anaconda-2.0.0
+module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib
+module load intel/intel-12.1.6;
+module load openmpi/openmpi-1.4.5_intel-12.1.6_ib;
+export OMP_NUM_THREADS=1
+
+echo $SLURM_JOB_NODELIST
+
 {% elif host == "psiops" %}#PBS -l nodes={{ nodes }}:ppn={{ nntasks_per_node }}:{{ connection }} -q batch -l walltime={{ hours }}:00:00
 #PBS -k eo -m n -e $PBS_O_WORKDIR/{{ logname }}-$PBS_JOBID.out -o $PBS_O_WORKDIR/{{ logname }}-$PBS_JOBID.out
 
