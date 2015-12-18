@@ -28,10 +28,9 @@ echo $SLURM_JOB_NODELIST
 
 # Load important modules and ensure environemnt variables are correctly set up
 
-module load python/anaconda-2.0.0
-module load fftw/fftw-3.3.3_openmpi-1.4.5_intel-12.1.0_double_ib
-module load intel/intel-12.1.6;
-module load openmpi/openmpi-1.4.5_intel-12.1.6_ib;
+module purge
+module load vasp
+
 export OMP_NUM_THREADS=1
 
 echo $SLURM_JOB_NODELIST
