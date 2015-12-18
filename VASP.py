@@ -225,7 +225,7 @@ elif 'login' in socket.gethostname():
     nntasks_per_node = 24
     mpi = 'mpirun'
     queue_sub = 'qsub'
-    keywords['account'] = os.environ('DEFAULT_ALLOCATION')
+    keywords['account'] = os.environ['DEFAULT_ALLOCATION']
     if time <= 1 and nodes <= 4:
         queue = 'debug'
     elif time <= 4 and nodes <= 8:
