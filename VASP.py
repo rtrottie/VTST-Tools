@@ -59,7 +59,10 @@ if job == 'NEB':  #backuping up files and setting up the templates for the jobs 
             shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
     os.system('nebmovie.pl') # Clean directory and do basic-postprocessing
-    shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
+    try:
+        shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
+    except:
+        pass
     time = getMaxLoopTimes(times)
     try:
         shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
