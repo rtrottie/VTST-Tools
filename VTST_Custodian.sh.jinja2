@@ -18,7 +18,7 @@ export OMP_NUM_THREADS=1
 
 echo $SLURM_JOB_NODELIST
 
-{% elif host == "janus" %}#SBATCH -J {{ J }}
+{% elif host == "peregrine" %}#SBATCH -J {{ J }}
 #PBS -j eo
 #PBS -l nodes={{ nodes }}:ppn={{ nntasks_per_node }}
 #PBS -l walltime={{ hours }}:00:00
