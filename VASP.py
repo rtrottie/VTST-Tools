@@ -235,7 +235,7 @@ elif 'login' in socket.gethostname():
     elif time <= 4 and nodes <= 8:
         queue = 'short'
     elif time <= 24 and nodes >= 16 and nodes <= 296:
-        queue = 'short'
+        queue = 'large'
     elif time <= 48 and nodes <= 296:
         queue = 'batch'
     else:
