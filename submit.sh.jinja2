@@ -72,7 +72,8 @@ module load python/2.7.8
 echo $SLURM_JOB_NODELIST
 {% endif %}
 
-
+export VASP_KPTS={{ vasp_tst_kpts }}
+export VASP_GAMMA={{ vasp_tst_gamma }}
 export OMP_NUM_THREADS=1
 export VASP_SCRIPT={{ VASP_SCRIPT }}
 export VASP_NCORE={{ nntasks_per_node }}
