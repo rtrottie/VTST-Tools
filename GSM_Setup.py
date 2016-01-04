@@ -10,19 +10,19 @@ from ase.utils.geometry import wrap_positions
 from Classes_Pymatgen import *
 
 def wrap_positions_right(positions, center, cell):
-    new_pos = []
+    scale = [1,1,1]
     x=0; y=0; z=0
     for i in range(len(positions)):
         if abs(positions[i] - center[i] ) > 0.5:
             if positions[i] < center[i]:
-                scale = positions[i] + 1
+                scale[i] = positions[i] + 1
             else:
-                scale = positions[i] - 1
+                scale[i] = positions[i] - 1
         else:
-            scale = positions[i]
-        x += cell[i][0] * scale
-        y += cell[i][1] * scale
-        z += cell[i][2] * scale
+            scale[i] = positions[i]
+        x += cell[i][0] * scale[i]
+        y += cell[i][1] * scale[i]
+        z += cell[i][2] * scale[i]
 
     return (x,y,z)
 
