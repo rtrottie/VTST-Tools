@@ -13,13 +13,12 @@ def wrap_positions_right(positions, center, cell):
     scale = [1,1,1]
     x=0; y=0; z=0
     for i in range(len(positions)):
-        if abs(center[i] - positions[i]) > 0.5:
+        scale = positions[i]
+        while abs(center[i] - positions[i]) > 0.5:
             if positions[i] < center[i]:
                 scale = positions[i] + 1
             else:
                 scale = positions[i] - 1
-        else:
-            scale = positions[i]
         x += cell[i][0] * scale
         y += cell[i][1] * scale
         z += cell[i][2] * scale
