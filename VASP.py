@@ -132,7 +132,7 @@ else:
 with open(os.path.join(backup_dir, str(this_run), 'run_info'), 'w+') as f:
     f.write('time,'+str(time))
 
-os.system('rm *.out *.err STOPCAR') # Clean directory and do basic-postprocessing
+os.system('rm *.out *.err STOPCAR *.log.e* *.log.o*') # Clean directory and do basic-postprocessing
 # Setup Templating for submit script
 
 env = Environment(loader=FileSystemLoader(template_dir))
