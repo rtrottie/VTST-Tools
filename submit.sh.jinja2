@@ -52,6 +52,24 @@ PYTHONPATH=~/usr/bin/VTST-Tools:$PYTHONPATH
 echo $SLURM_JOB_NODELIST
 
 LD_LIBRARY_PATH=/export/home/apps/compile/gcc.5.1.0/lib64:/opt/openmpi/lib:/opt/python/lib
+
+
+{% elif host == "peregrine" %}#SBATCH -J {{ J }}
+#PBS -j eo
+#PBS -l nodes={{ nodes }}:ppn={{ nntasks_per_node }}
+#PBS -l walltime={{ hours }}:00:00
+#PBS -q {{ queue }}
+#PBS -N {{ logname }}
+#PBS -A {{ account }}
+
+# Load important modules and ensure environemnt variables are correctly set up
+
+module purge
+module load vasp
+module load python/2.7.8
+
+
+echo $SLURM_JOB_NODELIST
 {% endif %}
 
 
