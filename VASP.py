@@ -230,7 +230,7 @@ elif 'login' in socket.gethostname():
     queue_sub = 'qsub'
     keywords['account'] = os.environ['DEFAULT_ALLOCATION']
     nodes = images*nodes_per_image
-    if time <= 1 and nodes <= 4:
+    if time <= 1 and nodes <= 4 and False:
         queue = 'debug'
     elif time <= 4 and nodes <= 8:
         queue = 'short'
