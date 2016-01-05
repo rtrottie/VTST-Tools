@@ -94,6 +94,7 @@ def GSM_Setup():
         f.write(template.render(jinja_vars))
 
     os.chmod('grad.py', 0o755)
+    os.chmod('status', 0o755)
     start = ase.io.read(start_pos)
     final = ase.io.read(final_pos)
     final_positions = []
