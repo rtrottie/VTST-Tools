@@ -44,6 +44,93 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                     vasp = VaspInput(incar, kpoints, poscar, potcar)
                     vasp.write_input(folder)
 
+def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False):
+    """
+
+    Args:
+        material:
+        miller:
+        width:
+        depth:
+        freeze:
+        vacuum:
+        incar:
+        kpoints:
+        vis:
+
+    Returns:
+
+    :type material: str
+    :type miller: list
+    :type width: int
+    :type depth: int
+    """
+    Poscar.get_string = get_string_more_sigfig
+    Incar.get_string = pretty_incar_string
+    with pmg.matproj.rest.MPRester(os.environ['MAT_PROJ_KEY']) as m:
+        s = Poscar.from_file(material).structure
+        sf = surf.SlabGenerator(s, miller, depth, 0, primitive=False)
+        i=0
+        for s in sf.get_slabs():
+            s = Add_Vac(s, 2, vacuum)
+            s.make_supercell([width,width,1])
+            folder = str(i).zfill(3)
+            if vis:
+                Vis.open_in_Jmol(s)
+                use = raw_input('Use this structure (y/n) or break:  ')
+                if use == 'n':
+                    continue
+                elif use =='y':
+                    i+=1
+                elif use == 'break':
+                    break
+                else:
+                    i+=1
+                    print('Bad input, assuming yes')
+            else:
+                i+=1
+            if freeze > 0:
+                sd = []
+                for site in s.sites:
+                    if s.lattice.c - (site.frac_coords[2] * site.lattice.c) < freeze:
+                        sd.append([False, False, False])
+                    else:
+                        sd.append([True, True, True])
+                poscar = Poscar(s, selective_dynamics=sd)
+            else:
+                poscar = Poscar(s)
+            if incar and kpoints:
+                update_incar(s, incar)
+                potcar = Potcar(poscar.site_symbols)
+                vasp = VaspInput(incar, kpoints, poscar, potcar)
+                vasp.write_input(folder)
+            else:
+                os.makedirs(folder)
+                poscar.write_file(os.path.join(folder, 'POSCAR'))
+
+def Add_Vac(structure, vector, vacuum):
+    """
+
+    Args:
+
+        structure: Structure to add vacuum at cell border
+        vector: Which lattice vector to add vacuum to
+        vacuum: How much vacuum to add
+
+    Returns:
+
+    :type structure: Structure
+    :type vector: int
+    :type vacuum: np.float64
+    :rtype: Structure
+    """
+    lattice = structure.lattice.matrix
+    vector_len = np.linalg.norm(lattice[vector])
+    lattice[vector] = lattice[vector] * (1 + vacuum / vector_len)
+    s = Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)
+    s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,0.5-(vector_len/(vector_len+vacuum)/2)])
+    return s
+
 
 if os.path.basename(sys.argv[0]) == 'Generate_Surface.py':
     if len(sys.argv) < 6:

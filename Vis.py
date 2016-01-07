@@ -2,15 +2,15 @@
 import os
 
 def open_in_VESTA(molecule,type='cif'):
-    VESTA_DIR = '/home/ryan/programs/vesta/VESTA-x86_64/VESTA '
+    vesta = os.path.join(os.environ['VESTA_DIR'], 'VESTA')
     SCRATCH = '/home/ryan/scratch/scratch.' + type
 
     molecule.to(type, SCRATCH)
-    os.system(VESTA_DIR+SCRATCH)
+    os.system(vesta + ' ' + SCRATCH)
 
-def open_in_Jmol(molecule,type):
-    JMOL_DIR = '/home/ryan/programs/jmol/jmol-14.2.14_2015.06.01/jmol '
+def open_in_Jmol(molecule,type='cif'):
+    JMOL_DIR = os.path.join(os.environ['JMOL_DIR'], 'jmol')
     SCRATCH = '/home/ryan/scratch/scratch.' + type
 
     molecule.to(type, SCRATCH)
-    os.system(JMOL_DIR+SCRATCH)
+    os.system(JMOL_DIR + ' ' + SCRATCH)
