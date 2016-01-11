@@ -95,11 +95,11 @@ vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_tst_kpt
 handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 120*60)]
 
 {% elif jobtype == "Dimer" %}
-handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 120*60), PositiveEnergyErrorHandler(),
+handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 120*60),
             VaspErrorHandler('{{ logname }}'), DimerDivergingHandler(), DimerCheckMins()]
 
 {% elif jobtype == "Standard" %}
-handlers = [WalltimeHandler({{ hours }}*60*60), NonConvergingErrorHandler(nionic_steps=15), PositiveEnergyErrorHandler(),
+handlers = [WalltimeHandler({{ hours }}*60*60), NonConvergingErrorHandler(nionic_steps=25),
             VaspErrorHandler('{{ logname }}')]
 {% endif %}
 
