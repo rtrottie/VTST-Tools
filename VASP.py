@@ -96,7 +96,6 @@ elif job == 'Standard':
         shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
-    shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     try:
         time = sum(getLoopPlusTimes('OUTCAR'))
     except:
