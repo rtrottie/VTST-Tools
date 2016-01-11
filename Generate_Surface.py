@@ -74,7 +74,7 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
         sf = surf.SlabGenerator(s, miller, depth, 0, primitive=False)
         i=0
         for s in sf.get_slabs():
-            s = Add_Vac(s, 2, vacuum)
+            s = Add_Vac(s.get_orthogonal_c_slab(), 2, vacuum)
             s.make_supercell([width,width,1])
             if vis:
                 Vis.view(s, program=vis)
@@ -90,6 +90,7 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
                     i+=1
                     print('Bad input, assuming yes')
             else:
+                surfs.append(s)
                 i+=1
                 '''
             if freeze > 0:
