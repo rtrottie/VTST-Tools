@@ -96,11 +96,11 @@ handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ log
 
 {% elif jobtype == "Dimer" %}
 handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 120*60), PositiveEnergyErrorHandler(),
-            PotimErrorHandler(), VaspErrorHandler('{{ logname }}'), DimerDivergingHandler(), DimerCheckMins()]
+            VaspErrorHandler('{{ logname }}'), DimerDivergingHandler(), DimerCheckMins()]
 
 {% elif jobtype == "Standard" %}
 handlers = [WalltimeHandler({{ hours }}*60*60), NonConvergingErrorHandler(nionic_steps=15), PositiveEnergyErrorHandler(),
-            PotimErrorHandler(), VaspErrorHandler('{{ logname }}')]
+            VaspErrorHandler('{{ logname }}')]
 {% endif %}
 
 c = Custodian(handlers, vaspjob, max_errors=10)
