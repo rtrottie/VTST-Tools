@@ -64,9 +64,11 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
     :type miller: list
     :type width: int
     :type depth: int
+    :rtype: Structure
     """
     Poscar.get_string = get_string_more_sigfig
     Incar.get_string = pretty_incar_string
+    surfs = []
     with pmg.matproj.rest.MPRester(os.environ['MAT_PROJ_KEY']) as m:
         s = Poscar.from_file(material).structure
         sf = surf.SlabGenerator(s, miller, depth, 0, primitive=False)
@@ -74,13 +76,13 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
         for s in sf.get_slabs():
             s = Add_Vac(s, 2, vacuum)
             s.make_supercell([width,width,1])
-            folder = str(i).zfill(3)
             if vis:
-                Vis.open_in_Jmol(s)
+                Vis.view(s, program=vis)
                 use = raw_input('Use this structure (y/n) or break:  ')
                 if use == 'n':
                     continue
                 elif use =='y':
+                    surfs.append(s)
                     i+=1
                 elif use == 'break':
                     break
@@ -89,6 +91,7 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
                     print('Bad input, assuming yes')
             else:
                 i+=1
+                '''
             if freeze > 0:
                 sd = []
                 for site in s.sites:
@@ -107,6 +110,8 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
             else:
                 os.makedirs(folder)
                 poscar.write_file(os.path.join(folder, 'POSCAR'))
+                '''
+    return surfs
 
 def Add_Vac(structure, vector, vacuum):
     """
@@ -131,6 +136,29 @@ def Add_Vac(structure, vector, vacuum):
     s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,0.5-(vector_len/(vector_len+vacuum)/2)])
     return s
 
+def get_SD_along_vector(structure, vector, range):
+    """
+
+    Args:
+        structure:
+        vector:
+        range:
+
+    Returns:
+
+    :type structure: Structure
+    :type vector: int
+    :type range: list
+    :rtype: list
+    """
+    sd = []
+    for site in structure.sites:
+        if range[0] <= site.frac_coords[vector] and site.frac_coords[vector] <= range[1]:
+            sd.append([False, False, False])
+        else:
+            sd.append([True, True, True])
+
+    return sd
 
 if os.path.basename(sys.argv[0]) == 'Generate_Surface.py':
     if len(sys.argv) < 6:

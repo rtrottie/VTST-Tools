@@ -14,3 +14,11 @@ def open_in_Jmol(molecule,type='cif'):
 
     molecule.to(type, SCRATCH)
     os.system(JMOL_DIR + ' ' + SCRATCH)
+
+def view(molecule, program='jmol', type='cif'):
+    if program.lower() == 'jmol' or program == True:
+        open_in_Jmol(molecule, type)
+    elif program.lower() == 'vesta':
+        open_in_VESTA(molecule,type)
+    else:
+        raise Exception('Unrecognized program:  ' + program.lower())
