@@ -44,7 +44,7 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                     vasp = VaspInput(incar, kpoints, poscar, potcar)
                     vasp.write_input(folder)
 
-def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False):
+def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False, orth=False):
     """
 
     Args:
@@ -74,7 +74,9 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
         sf = surf.SlabGenerator(s, miller, depth, 0, primitive=False)
         i=0
         for s in sf.get_slabs():
-            s = Add_Vac(s.get_orthogonal_c_slab(), 2, vacuum)
+            if orth:
+                s = s.get_orthogonal_c_slab()
+            s = Add_Vac(s, 2, vacuum)
             s.make_supercell([width,width,1])
             if vis:
                 Vis.view(s, program=vis)
