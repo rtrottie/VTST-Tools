@@ -71,13 +71,14 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
     surfs = []
     with pmg.matproj.rest.MPRester(os.environ['MAT_PROJ_KEY']) as m:
         s = Poscar.from_file(material).structure
-        sf = surf.SlabGenerator(s, miller, depth, 0, primitive=False)
+        sf = surf.SlabGenerator(s, miller, depth, 1, primitive=False)
         i=0
         for s in sf.get_slabs():
             if orth:
                 s = s.get_orthogonal_c_slab()
             s = Add_Vac(s, 2, vacuum)
             s.make_supercell([width,width,1])
+            s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
             if vis:
                 Vis.view(s, program=vis)
                 use = raw_input('Use this structure (y/n) or break:  ')
