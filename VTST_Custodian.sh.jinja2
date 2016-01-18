@@ -99,8 +99,7 @@ handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ log
             VaspErrorHandler('{{ logname }}'), DimerDivergingHandler(), DimerCheckMins()]
 
 {% elif jobtype == "Standard" %}
-handlers = [WalltimeHandler({{ hours }}*60*60), NonConvergingErrorHandler(nionic_steps=25),
-            VaspErrorHandler('{{ logname }}')]
+handlers = [WalltimeHandler({{ hours }}*60*60), NonConvergingErrorHandler(nionic_steps=25)')]
 {% endif %}
 
 c = Custodian(handlers, vaspjob, max_errors=10)
