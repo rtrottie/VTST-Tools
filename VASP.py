@@ -14,6 +14,7 @@ import shutil
 import fnmatch
 import cfg
 import socket
+import random
 
 backup_dir = "backup"
 
@@ -237,7 +238,10 @@ elif 'login' in socket.gethostname():
     elif time <= 24 and nodes >= 16 and nodes <= 296:
         queue = 'large'
     elif time <= 48 and nodes <= 296:
-        queue = 'batch'
+        if random.random() < 0.5:
+            queue = 'batch'
+        else:
+            queue = 'batch-h'
     else:
         raise Exception('Queue Configuration not Valid: ' + time + ' hours ' + nodes + ' nodes ')
 else:
