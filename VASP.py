@@ -94,6 +94,7 @@ elif job == 'Standard':
     keywords = {}
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
         shutil.move('CONTCAR', 'POSCAR')
+    if os.path.exists('OUTCAR'):
         shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
     shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
