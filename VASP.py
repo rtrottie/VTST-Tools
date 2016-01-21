@@ -206,6 +206,7 @@ if 'psiops' in socket.gethostname():
         vasp_tst_gamma = '/home/apps/vasp_tst/vasp.5.3/vasp'
         vasp_tst_kpts  = '/home/apps/vasp_tst/vasp.5.3/vasp'
     if job == 'Standard':
+        mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
         vasp_tst_kpts = '/home/dummy/vasp5.12/stacked_cache/vasp.5.2/vasp'
         vasp_tst_gamma = '/home/dummy/vasp5.12/stacked_cache_gamma/vasp.5.2/vasp'
 elif '.rc.' in socket.gethostname():
