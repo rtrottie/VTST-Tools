@@ -205,6 +205,9 @@ if 'psiops' in socket.gethostname():
         connection = 'ib'
         vasp_tst_gamma = '/home/apps/vasp_tst/vasp.5.3/vasp'
         vasp_tst_kpts  = '/home/apps/vasp_tst/vasp.5.3/vasp'
+    if job == 'Standard':
+        vasp_tst_kpts = '/home/dummy/vasp5.12/stacked_cache/vasp.5.2/vasp'
+        vasp_tst_gamma = '/home/dummy/vasp5.12/stacked_cache_gamma/vasp.5.2/vasp'
 elif '.rc.' in socket.gethostname():
     vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
     vasp_tst_kpts = '/projects/musgravc/apps/vasp.5.3.3_vtst/kpts/vasp'
