@@ -188,7 +188,7 @@ else:
 if 'AUTO_GAMMA' in incar:
     auto_gamma = incar['AUTO_MEM']
 else:
-    auto_gamma = 'False'
+    auto_gamma = 'True'
 
 connection = ''
 queue = ''
