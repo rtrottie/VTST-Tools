@@ -186,7 +186,7 @@ if 'AUTO_MEM' in incar:
 else:
     mem = 8000
 if 'AUTO_GAMMA' in incar:
-    auto_gamma = incar['AUTO_MEM']
+    auto_gamma = incar['AUTO_GAMMA']
 else:
     auto_gamma = 'True'
 
