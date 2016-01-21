@@ -89,7 +89,7 @@ from custodian.custodian import *
 from Classes_Custodian import *
 
 vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_tst_kpts }}'], '{{ logname }}',
-                            gamma_vasp_cmd=['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_tst_gamma }}'], auto_npar=False)]
+                            gamma_vasp_cmd=['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_tst_gamma }}'], auto_npar=False, auto_gamma={{ auto_gamma }})]
 
 {% if jobtype == "NEB" %}
 handlers = [WalltimeHandler({{ hours }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 120*60)]

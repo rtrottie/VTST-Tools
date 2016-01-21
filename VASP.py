@@ -185,6 +185,10 @@ if 'AUTO_MEM' in incar:
     mem = incar['AUTO_MEM']
 else:
     mem = 8000
+if 'AUTO_GAMMA' in incar:
+    auto_gamma = incar['AUTO_MEM']
+else:
+    auto_gamma = 'False'
 
 connection = ''
 queue = ''
@@ -264,7 +268,8 @@ keywords.update( {'J' : jobname,
             'mpi' : mpi,
             'queue': queue,
             'mem': mem,
-            'currdir': os.path.abspath('.')} )
+            'currdir': os.path.abspath('.'),
+            'auto_gamma' : auto_gamma} )
 
 with open(script, 'w+') as f:
     f.write(template.render(keywords))
