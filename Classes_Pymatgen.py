@@ -113,6 +113,24 @@ def perturb_sites(self, distance, sites):
     for i in sites:
         self.translate_sites([i], get_rand_vec())
 
+def perturb_Poscar(self, distance):
+    """
+
+    Args:
+        distance:
+
+    Returns:
+
+    :type self: Poscar
+
+    """
+    if self.selective_dynamics:
+        sites = zip(self.selective_dynamics, range(len(self.selective_dynamics)))
+        sites = map(lambda x: x[1], filter(lambda x : x[0][0], sites))
+        self.structure.perturb_sites(distance, sites)
+    else:
+        self.structure.perturb(distance)
+
 
 
 class VaspNEBInput(VaspInput):
@@ -433,4 +451,6 @@ class Modecar(MSONable):
 
 
 Poscar.get_string = get_string_more_sigfig
+Poscar.perturb = perturb_Poscar
 Incar.get_string = pretty_incar_string
+pmg.Structure.perturb_sites = perturb_sites
