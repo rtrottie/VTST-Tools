@@ -1,6 +1,7 @@
 # functions to improve Pymatgen Classes and output setup
 # Not meant to be called from command line
 from pymatgen.io.vasp.inputs import *
+import pymatgen as pmg
 import numpy as np
 import cfg
 
@@ -94,6 +95,43 @@ def pretty_incar_string(self, sort_keys=True, pretty=False):
             s = s + key.upper() + ' = ' + str(self[key]) + '\n'
     return unicode(s)
 
+def perturb_sites(self, distance, sites):
+    """
+    Performs a random perturbation of the sites in a structure to break
+    symmetries.
+    Args:
+    distance (float): Distance in angstroms by which to perturb each
+        site.
+    sites (list : int):  Sites to perturb
+    """
+    def get_rand_vec():
+        #deals with zero vectors.
+        vector = np.random.randn(3)
+        vnorm = np.linalg.norm(vector)
+        return vector / vnorm * distance if vnorm != 0 else get_rand_vec()
+
+    for i in sites:
+        self.translate_sites([i], get_rand_vec())
+
+def perturb_Poscar(self, distance):
+    """
+
+    Args:
+        distance:
+
+    Returns:
+
+    :type self: Poscar
+
+    """
+    if self.selective_dynamics:
+        sites = zip(self.selective_dynamics, range(len(self.selective_dynamics)))
+        sites = map(lambda x: x[1], filter(lambda x : x[0][0], sites))
+        self.structure.perturb_sites(distance, sites)
+    else:
+        self.structure.perturb(distance)
+
+
 
 class VaspNEBInput(VaspInput):
     def __init__(self, incar, kpoints, poscars, potcar, optional_files=None,
@@ -175,7 +213,6 @@ class VaspNEBInput(VaspInput):
                 sub_d["optional_files"][fname] = \
                     ftype.from_file(os.path.join(input_dir, fname))
         return VaspNEBInput(**sub_d)
-
 
 class PoscarNEB(Poscar):
 
@@ -390,7 +427,6 @@ class PoscarNEB(Poscar):
         """
         return self.get_string(significant_figures=20)
 
-
 class Modecar(MSONable):
 
     def __init__(self, contents):
@@ -413,5 +449,8 @@ class Modecar(MSONable):
         return (d['contents'])
 
 
+
 Poscar.get_string = get_string_more_sigfig
+Poscar.perturb = perturb_Poscar
 Incar.get_string = pretty_incar_string
+pmg.Structure.perturb_sites = perturb_sites

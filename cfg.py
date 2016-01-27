@@ -39,6 +39,6 @@ INCAR_format = [
     ('DFT+U', ['LDAU', 'LDAUTYPE', 'LDAUL', 'LDAUU', 'LMAXMIX', 'LDAUPRINT']),
     ('NEB', ['IMAGES', 'SPRING']),
     ('VTST', ['ICHAIN', 'IOPT', 'LCLIMB']),
-    ('SETUP', ['AUTO_TIME', 'AUTO_NODES', 'AUTO_MEM', 'STAGE_NUMBER', 'STAGE_NAME', 'STAGE_FILE']) # must be last
+    ('SETUP', ['AUTO_TIME', 'AUTO_NODES', 'AUTO_MEM', 'AUTO_GAMMA', 'STAGE_NUMBER', 'STAGE_NAME', 'STAGE_FILE']) # must be last
 
 ]
