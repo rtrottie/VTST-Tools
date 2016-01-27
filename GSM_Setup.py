@@ -49,7 +49,7 @@ def GSM_Setup():
     elif len(sys.argv) == 7:
         start = sys.argv[1]
         final = sys.argv[2]
-        center = (sys.argv[3], sys.argv[4], sys.argv[5])
+        center = (float(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5]))
         jinja_vars['IMAGES'] = sys.argv[6]
 
 
