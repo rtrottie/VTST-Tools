@@ -31,7 +31,7 @@ def GSM_Setup():
     file_loc = os.environ['GSM_DIR']
     jinja_vars = Helpers.load_variables(os.path.join(file_loc, 'VARS.jinja2'))
 
-
+    center = None
     if len(sys.argv) == 1:
         start = 'start'
         final = 'final'
@@ -46,6 +46,12 @@ def GSM_Setup():
         start = sys.argv[1]
         final = sys.argv[2]
         jinja_vars['IMAGES'] = sys.argv[3]
+    elif len(sys.argv) == 7:
+        start = sys.argv[1]
+        final = sys.argv[2]
+        center = (sys.argv[3], sys.argv[4], sys.argv[5])
+        jinja_vars['IMAGES'] = sys.argv[6]
+
 
 
 
@@ -97,12 +103,15 @@ def GSM_Setup():
     os.chmod('status', 0o755)
     start = ase.io.read(start_pos)
     final = ase.io.read(final_pos)
-    final_positions = []
-    for i in range(len(final)):
-        pos = [final[i].a, final[i].b, final[i].c]
-        center = [start[i].a, start[i].b, start[i].c]
-        final_positions.append(wrap_positions_right(pos, center, start.cell))
-    final.set_positions(final_positions)
+    if center:
+        start.wrap(center)
+        final.wrap(center)
+    #final_positions = []
+    #for i in range(len(final)):
+    #    pos = [final[i].a, final[i].b, final[i].c]
+    #    center = [start[i].a, start[i].b, start[i].c]
+    #    final_positions.append(wrap_positions_right(pos, center, start.cell))
+    #final.set_positions(final_positions)
     ase.io.write('scratch/initial0000.temp.xyz',[start,final])
     poscar = Poscar.from_file('POSCAR.start')
     if poscar.selective_dynamics:
