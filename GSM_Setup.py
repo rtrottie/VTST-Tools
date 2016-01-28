@@ -114,13 +114,13 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         shutil.copy(final_file, os.path.join(new_gsm_dir, 'POSCAR.final'))
         if os.path.exists(os.path.join(final_folder, 'WAVECAR')):
             print('Copying final WAVECAR')
-            if os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
+            if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
                 os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
             shutil.copy(os.path.join(final_folder, 'WAVECAR'),
                         os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/WAVECAR'))
         if os.path.exists(os.path.join(final_folder, 'CHGCAR')):
             print('Copying final CHGCAR')
-            if os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
+            if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
                 os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
             shutil.copy(os.path.join(final_folder, 'CHGCAR'),
                         os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/CHGCAR'))
