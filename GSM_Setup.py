@@ -54,12 +54,14 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
 
     # Copying and Updating Files into the directory
 
-    os.makedirs(new_gsm_dir, exist_ok=True)
+    if not os.path.exists(new_gsm_dir):
+        os.makedirs(new_gsm_dir)
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(file_loc))
     shutil.copy(os.path.join(file_loc, 'gfstringq.exe'), os.path.join(new_gsm_dir, 'gfstringq.exe'))
     shutil.copy(os.path.join(file_loc, 'status'), os.path.join(new_gsm_dir, 'status'))
     shutil.copy(start_file, os.path.join(new_gsm_dir, 'POSCAR.start'))
-    os.makedirs('scratch', exist_ok=True)
+    if not os.path.exists(os.path.join(new_gsm_dir, 'scratch')):
+        os.makedirs(os.path.join(new_gsm_dir, 'scratch'))
     try:
         incar = Incar.from_file(os.path.join(start_folder, 'INCAR'))
         incar['NSW']=0
@@ -77,12 +79,14 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
 
     if os.path.exists(os.path.join(start_folder, 'WAVECAR')):
         print('Copying initial WAVECAR')
-        os.makedirs('scratch/IMAGE.01',exist_ok=True)
+        if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.01')):
+            os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.01'))
         shutil.copy(os.path.join(start_folder, 'WAVECAR'),
                     os.path.join(new_gsm_dir, 'scratch/IMAGE.01/WAVECAR'))
     if os.path.exists(os.path.join(start_folder, 'CHGCAR')):
         print('Copying initial CHGCAR')
-        os.makedirs('scratch/IMAGE.01', exist_ok=True)
+        if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.01')):
+            os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.01'))
         shutil.copy(os.path.join(start_folder, 'CHGCAR'),
                     os.path.join(new_gsm_dir, 'scratch/IMAGE.01/CHGCAR'))
     with open('grad.py', 'w') as f:
@@ -108,12 +112,14 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         shutil.copy(final_file, os.path.join(new_gsm_dir, 'POSCAR.final'))
         if os.path.exists(os.path.join(final_folder, 'WAVECAR')):
             print('Copying final WAVECAR')
-            os.makedirs('scratch/IMAGE.' + str(images).zfill(2), exist_ok=True)
+            if os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
+                os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
             shutil.copy(os.path.join(final_folder, 'WAVECAR'),
                         os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/WAVECAR'))
         if os.path.exists(os.path.join(final_folder, 'CHGCAR')):
             print('Copying final CHGCAR')
-            os.makedirs('scratch/IMAGE.' + str(images).zfill(2), exist_ok=True)
+            if os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
+                os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
             shutil.copy(os.path.join(final_folder, 'CHGCAR'),
                         os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/CHGCAR'))
 
