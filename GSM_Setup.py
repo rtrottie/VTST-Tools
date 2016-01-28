@@ -43,7 +43,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         else: # is SSM
             images = 40
             jinja_vars["SM_TYPE"] = 'SSM'
-            print('Setting up SSM run')
+            print('Setting up SSM run, make sure to create ISOMERS File at scratch/ISOMERS0000')
     jinja_vars["IMAGES"] = images
 
     # Finding the Starting Structure
