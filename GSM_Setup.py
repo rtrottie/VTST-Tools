@@ -39,9 +39,11 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         if final: #is GSM
             images = 9
             jinja_vars["SM_TYPE"] = 'GSM'
+            print('Setting up GSM run')
         else: # is SSM
             images = 40
             jinja_vars["SM_TYPE"] = 'SSM'
+            print('Setting up SSM run')
     jinja_vars["IMAGES"] = images
 
     # Finding the Starting Structure
