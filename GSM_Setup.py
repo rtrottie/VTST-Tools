@@ -8,6 +8,7 @@ import jinja2
 import ase.io
 from ase.utils.geometry import wrap_positions
 from Classes_Pymatgen import *
+import argparse
 
 def wrap_positions_right(positions, center, cell):
     scale = [1,1,1]
@@ -26,34 +27,17 @@ def wrap_positions_right(positions, center, cell):
 
     return (x,y,z)
 
-def GSM_Setup():
+def GSM_Setup(start, final=None, images=None, center=[0.5,0.5,0.5], f_center=None):
 
     file_loc = os.environ['GSM_DIR']
     jinja_vars = Helpers.load_variables(os.path.join(file_loc, 'VARS.jinja2'))
-
-    center = None
-    if len(sys.argv) == 1:
-        start = 'start'
-        final = 'final'
-    elif len(sys.argv) == 2:
-        jinja_vars['IMAGES'] = sys.argv[1]
-        start = 'start'
-        final = 'final'
-    elif len(sys.argv) == 3:
-        start = sys.argv[1]
-        final = sys.argv[2]
-    elif len(sys.argv) == 4:
-        start = sys.argv[1]
-        final = sys.argv[2]
-        jinja_vars['IMAGES'] = sys.argv[3]
-    elif len(sys.argv) == 7:
-        start = sys.argv[1]
-        final = sys.argv[2]
-        center = (float(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5]))
-        jinja_vars['IMAGES'] = sys.argv[6]
-
-
-
+    if f_center == None:
+        f_center = center
+    if images == None:
+        if final: #is GSM
+            images = 9
+        else: # is SSM
+            images = 40
 
     if not os.path.isfile(start):
         start_pos = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) else os.path.join(start, 'POSCAR')
@@ -65,8 +49,6 @@ def GSM_Setup():
     else:
         final_pos = final
         final = os.path.dirname(final)
-    images = int(jinja_vars['IMAGES'])
-
 
     if not os.path.exists('scratch'):
         os.makedirs('scratch')
@@ -106,12 +88,6 @@ def GSM_Setup():
     if center:
         start.wrap(center)
         final.wrap(center)
-    #final_positions = []
-    #for i in range(len(final)):
-    #    pos = [final[i].a, final[i].b, final[i].c]
-    #    center = [start[i].a, start[i].b, start[i].c]
-    #    final_positions.append(wrap_positions_right(pos, center, start.cell))
-    #final.set_positions(final_positions)
     ase.io.write('scratch/initial0000.temp.xyz',[start,final])
     poscar = Poscar.from_file('POSCAR.start')
     if poscar.selective_dynamics:
@@ -127,5 +103,17 @@ def GSM_Setup():
     else:
         shutil.move('scratch/initial0000.temp.xyz', 'scratch/initial0000.xyz')
 
-if os.path.basename(sys.argv[0]) == 'GSM_Setup.py':
-    GSM_Setup()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('initial', help='structure file or VASP run folder for initial structure')
+    parser.add_argument('final', help='structure file or VASP run folder for final structure (GSM only)',
+                        default=None, nargs='?')
+    parser.add_argument('-t', '--type', help='type of run to initialize (currently done based on whether final is provided, so this is not used)',
+                        choices=['gsm', 'ssm', 'fsm'], default='gsm')
+    parser.add_argument('-n', '--nodes', help='number of nodes along string (defaults : 9 for GSM 40 for SSM)',
+                        type=int)
+    parser.add_argument('-c', '--center', help='center of cell in fractional coordinates to account for non-periodic boundary conditions',
+                        nargs=3, type=float)
+    parser.add_argument('-f', '--finalcenter', help='center of final cell in fractional coordinates (defaults to center)',
+                        nargs=3, type=float)
+    args = parser.parse_args()
