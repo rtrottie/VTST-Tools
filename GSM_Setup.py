@@ -158,7 +158,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--nodes', help='number of nodes along string (defaults : 9 for GSM 40 for SSM)',
                         type=int)
     parser.add_argument('-c', '--center', help='center of cell in fractional coordinates to account for non-periodic boundary conditions',
-                        nargs=3, type=float)
+                        nargs=3, type=float, default=[0.5,0.5,0.5])
     parser.add_argument('-f', '--finalcenter', help='center of final cell in fractional coordinates (defaults to center)',
                         nargs=3, type=float, default=None)
     args = parser.parse_args()
