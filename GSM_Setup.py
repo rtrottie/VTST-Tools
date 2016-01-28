@@ -27,7 +27,9 @@ def wrap_positions_right(positions, center, cell):
 
     return (x,y,z)
 
-def GSM_Setup(start, final=None, images=None, center=[0.5,0.5,0.5], f_center=None):
+def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None):
+
+    # Initializing Variables to be called later in function
 
     file_loc = os.environ['GSM_DIR']
     jinja_vars = Helpers.load_variables(os.path.join(file_loc, 'VARS.jinja2'))
@@ -36,65 +38,96 @@ def GSM_Setup(start, final=None, images=None, center=[0.5,0.5,0.5], f_center=Non
     if images == None:
         if final: #is GSM
             images = 9
+            jinja_vars["SM_TYPE"] = 'GSM'
         else: # is SSM
             images = 40
+            jinja_vars["SM_TYPE"] = 'SSM'
+    jinja_vars["IMAGES"] = images
 
-    if not os.path.isfile(start):
-        start_pos = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) else os.path.join(start, 'POSCAR')
+    # Finding the Starting Structure
+    if os.path.isfile(start):
+        start_file = start
+        start_folder = os.path.dirname(start)
     else:
-        start_pos = start
-        start = os.path.dirname(start)
-    if not os.path.isfile(final):
-        final_pos = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) else os.path.join(final, 'POSCAR')
-    else:
-        final_pos = final
-        final = os.path.dirname(final)
+        start_file = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) else os.path.join(start, 'POSCAR')
+        start_folder = start
 
-    if not os.path.exists('scratch'):
-        os.makedirs('scratch')
+    # Copying and Updating Files into the directory
 
-    shutil.copy(os.path.join(file_loc, 'gfstringq.exe'), 'gfstringq.exe')
-    shutil.copy(os.path.join(file_loc, 'status'), 'status')
-    shutil.copy(start_pos, 'POSCAR.start')
-    shutil.copy(final_pos, 'POSCAR.final')
-    incar = Incar.from_file(os.path.join(start, 'INCAR'))
-    incar['NSW']=0
-    incar.write_file('INCAR')
-    try:
-        shutil.copy(os.path.join(start, 'KPOINTS'), 'KPOINTS')
-        shutil.copy(os.path.join(start, 'POTCAR'), 'POTCAR')
-    except:
-        pass
-    if os.path.exists(os.path.join(start, 'WAVECAR')):
-        os.makedirs('scratch/IMAGE.01')
-        shutil.copy(os.path.join(start, 'WAVECAR'), 'scratch/IMAGE.01/WAVECAR')
-    if os.path.exists(os.path.join(final, 'WAVECAR')):
-        os.makedirs('scratch/IMAGE.' + str(images-1).zfill(2))
-        shutil.copy(os.path.join(final, 'WAVECAR'), 'scratch/IMAGE.' + str(images-1).zfill(2) + '/WAVECAR')
-
+    os.makedirs(new_gsm_dir, exist_ok=True)
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(file_loc))
+    shutil.copy(os.path.join(file_loc, 'gfstringq.exe'), os.path.join(new_gsm_dir, 'gfstringq.exe'))
+    shutil.copy(os.path.join(file_loc, 'status'), os.path.join(new_gsm_dir, 'status'))
+    shutil.copy(start_file, os.path.join(new_gsm_dir, 'POSCAR.start'))
+    os.makedirs('scratch', exist_ok=True)
+    try:
+        incar = Incar.from_file(os.path.join(start_folder, 'INCAR'))
+        incar['NSW']=0
+        incar.write_file(os.path.join(new_gsm_dir, 'INCAR'))
+    except:
+        print('Copying INCAR failed, make sure to add an appropriate INCAR to the directory')
+    try:
+        shutil.copy(os.path.join(start_folder, 'KPOINTS'), os.path.join(new_gsm_dir, 'KPOINTS'))
+    except:
+        print('Copying KPOINTS failed, make sure to add an appropriate KPOINTS to the directory')
+    try:
+        shutil.copy(os.path.join(start_folder, 'POTCAR'), os.path.join(new_gsm_dir, 'POTCAR'))
+    except:
+        print('Copying POTCAR failed, make sure to add an appropriate POTCAR to the directory')
 
+    if os.path.exists(os.path.join(start_folder, 'WAVECAR')):
+        print('Copying initial WAVECAR')
+        os.makedirs('scratch/IMAGE.01',exist_ok=True)
+        shutil.copy(os.path.join(start_folder, 'WAVECAR'),
+                    os.path.join(new_gsm_dir, 'scratch/IMAGE.01/WAVECAR'))
+    if os.path.exists(os.path.join(start_folder, 'CHGCAR')):
+        print('Copying initial CHGCAR')
+        os.makedirs('scratch/IMAGE.01', exist_ok=True)
+        shutil.copy(os.path.join(start_folder, 'CHGCAR'),
+                    os.path.join(new_gsm_dir, 'scratch/IMAGE.01/CHGCAR'))
     with open('grad.py', 'w') as f:
         template = env.get_template('grad.jinja2.py')
         f.write(template.render(jinja_vars))
     with open('inpfileq', 'w') as f:
         template = env.get_template('inpfileq.jinja2')
         f.write(template.render(jinja_vars))
-
     os.chmod('grad.py', 0o755)
     os.chmod('status', 0o755)
-    start = ase.io.read(start_pos)
-    final = ase.io.read(final_pos)
-    if center:
-        start.wrap(center)
+
+    start = ase.io.read(start_file)
+    start.wrap(center)
+    initial = [start]
+
+    if final: # is GSM
+        if os.path.isfile(final):
+            final_file = final
+            final_folder = os.path.dirname(final)
+        else:
+            final_file = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) else os.path.join(final, 'POSCAR')
+            final_folder = final
+        shutil.copy(final_file, os.path.join(new_gsm_dir, 'POSCAR.final'))
+        if os.path.exists(os.path.join(final_folder, 'WAVECAR')):
+            print('Copying final WAVECAR')
+            os.makedirs('scratch/IMAGE.' + str(images).zfill(2), exist_ok=True)
+            shutil.copy(os.path.join(final_folder, 'WAVECAR'),
+                        os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/WAVECAR'))
+        if os.path.exists(os.path.join(final_folder, 'CHGCAR')):
+            print('Copying final CHGCAR')
+            os.makedirs('scratch/IMAGE.' + str(images).zfill(2), exist_ok=True)
+            shutil.copy(os.path.join(final_folder, 'CHGCAR'),
+                        os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/CHGCAR'))
+
+        final = ase.io.read(final_file)
         final.wrap(center)
-    ase.io.write('scratch/initial0000.temp.xyz',[start,final])
+        initial.append(final)
+
+    ase.io.write('scratch/initial0000.temp.xyz', initial)
     poscar = Poscar.from_file('POSCAR.start')
     if poscar.selective_dynamics:
         with open('scratch/initial0000.temp.xyz', 'r') as f:
             sd = Poscar.from_file('POSCAR.start').selective_dynamics
             sd = map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd)
-            to_zip = ['\n', '\n'] + sd + ['\n', '\n'] + sd
+            to_zip = (['\n', '\n'] + sd) * len(initial)
             zipped = zip(f.readlines(), to_zip)
             xyz = map(lambda (x,y) : x.rstrip()+y, zipped)
             with open('scratch/initial0000.xyz', 'w') as f:
@@ -103,11 +136,17 @@ def GSM_Setup(start, final=None, images=None, center=[0.5,0.5,0.5], f_center=Non
     else:
         shutil.move('scratch/initial0000.temp.xyz', 'scratch/initial0000.xyz')
 
+
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('initial', help='structure file or VASP run folder for initial structure')
     parser.add_argument('final', help='structure file or VASP run folder for final structure (GSM only)',
                         default=None, nargs='?')
+    parser.add_argument('-d', '--directory', help='directory to put GSM run in (Defaults to "." )',
+                        default='.')
     parser.add_argument('-t', '--type', help='type of run to initialize (currently done based on whether final is provided, so this is not used)',
                         choices=['gsm', 'ssm', 'fsm'], default='gsm')
     parser.add_argument('-n', '--nodes', help='number of nodes along string (defaults : 9 for GSM 40 for SSM)',
