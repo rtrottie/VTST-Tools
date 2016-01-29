@@ -150,7 +150,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('initial', help='structure file or VASP run folder for initial structure')
+    parser.add_argument('initial', help='structure file or VASP run folder for initial structure (required for SSM and GSM)')
     parser.add_argument('final', help='structure file or VASP run folder for final structure (GSM only)',
                         default=None, nargs='?')
     parser.add_argument('-d', '--directory', help='directory to put GSM run in (Defaults to "." )',
