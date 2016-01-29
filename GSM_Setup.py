@@ -116,22 +116,14 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             print('Copying final WAVECAR')
             if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
                 os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
-            if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.01-final')):
-                os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.01-final'))
             shutil.copy(os.path.join(final_folder, 'WAVECAR'),
                         os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/WAVECAR'))
-            shutil.copy(os.path.join(start_folder, 'WAVECAR'),
-                        os.path.join(new_gsm_dir, 'scratch/IMAGE.01-final/WAVECAR'))
         if os.path.exists(os.path.join(final_folder, 'CHGCAR')):
             print('Copying final CHGCAR')
             if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
                 os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
-            if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.01-final')):
-                os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.01-final'))
             shutil.copy(os.path.join(final_folder, 'CHGCAR'),
                         os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/CHGCAR'))
-            shutil.copy(os.path.join(start_folder, 'CHGCAR'),
-                        os.path.join(new_gsm_dir, 'scratch/IMAGE.01-final/CHGCAR'))
 
         final = ase.io.read(final_file)
         final.wrap(center)
