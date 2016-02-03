@@ -252,7 +252,7 @@ elif 'login' in socket.gethostname():
         else:
             queue = 'batch-h'
     elif time > 48 and time <= 240:
-        queue = long
+        queue = 'long'
 
     else:
         raise Exception('Queue Configuration not Valid: ' + time + ' hours ' + nodes + ' nodes ')
