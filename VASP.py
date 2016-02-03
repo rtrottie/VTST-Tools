@@ -147,9 +147,9 @@ if len(sys.argv) < 2:
     if 'AUTO_TIME' in incar:
         sys.argv.append(incar['AUTO_TIME'])
     elif 'psiops' in socket.gethostname():
-        sys.argv.append(200)
+        sys.argv.append(1000)
     elif 'rapunzel' in socket.gethostname():
-        sys.argv.append(500)
+        sys.argv.append(5000)
     else:
         sys.argv.append(20)
 
