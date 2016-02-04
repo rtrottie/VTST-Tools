@@ -5,6 +5,7 @@ import os
 import subprocess
 from pymatgen.core.structure import *
 import cfg
+import socket
 import shutil
 from Classes_Pymatgen import *
 
@@ -74,6 +75,18 @@ def getJobType(dir):
             return 'NEB'
     else:
         return 'Standard'
+
+def getComputerName():
+    if 'psiops' in socket.gethostname():
+        return 'psiops'
+    elif '.rc.' in socket.gethostname():
+        return 'janus'
+    elif 'rapunzel' in socket.gethostname():
+        return 'rapunzel'
+    elif 'login' in socket.gethostname():
+        return 'peregrine'
+    else:
+        raise Exception('On an unrecognized computer')
 
 def getLoopPlusTimes(outcar):
     grep = subprocess.check_output('grep LOOP+: ' + outcar, shell=True).strip().split('\n')

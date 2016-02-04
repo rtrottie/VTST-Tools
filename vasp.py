@@ -28,7 +28,7 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
 
     '''
     instructions = {}
-    instructions["commands"] = ['rm *.out *.err STOPCAR *.log.e* *.log.o*']
+    instructions["commands"] = ['rm *.out *.err STOPCAR *.log.e* *.log.o* > /dev/null']
     instructions['backup'] = []
     instructions['move'] = []
     instructions['']
@@ -114,9 +114,20 @@ def restart_vasp(dir):
     for (old_file, new_file) in instructions["move"]:
         try:
             shutil.move(old_file, new_file)
+            print('Moved ' + old_file + ' to ' + new_file)
         except:
             print('Unable to move ' + old_file + ' to ' + new_file)
-    if jobtype == 'GSM':
+    if jobtype == 'SSM':
+        raise Exception('Make SSM run into GSM run')
+    elif jobtype == 'GSM':
+        with open('inpfileq') as inpfileq:
+            lines = inpfileq.readlines()
+            gsm_settings = list(map(lambda x: (x + ' 1').split()[0], lines))
+        if 'RESTART' not in gsm_settings:
+            lines.insert(len(lines)-1,'RESTART                 1\n')
+            with open('inpfileq', 'w') as inpfileq:
+                inpfileq.writelines(lines)
+            print('RESTART added to inpfileq')
 
 
 
@@ -135,11 +146,6 @@ parser.add_argument('-s', '--silent', help='display less information',
 #########################################################################################3
 ## ABOVE THIS LINE IS REDONE, BELOW NEEDS TO BE REDONE, WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO ##
 ##########################################################################################
-
-
-
-os.system('rm *.out *.err STOPCAR *.log.e* *.log.o*') # Clean directory and do basic-postprocessing
-# Setup Templating for submit script
 
 env = Environment(loader=FileSystemLoader(template_dir))
 template = env.get_template(template)
