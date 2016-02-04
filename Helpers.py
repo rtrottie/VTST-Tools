@@ -53,6 +53,15 @@ def getJobType(dir):
     else:
         incar = Incar.from_file(os.path.join(dir,'INCAR'))
     if os.path.exists(os.path.join(dir, 'gfstringq.exe')):
+        with open('inpfileq') as inpfileq:
+            for line in inpfileq.readlines():
+                if 'SM_TYPE' in line.split()[0]:
+                    if 'SSM' in line.split()[1]:
+                        return 'SSM'
+                    elif 'GSM' in line.split()[1]:
+                        return 'GSM'
+                    else:
+                        raise Exception('Problem with following line in inpfileq:  \n' + line + '\n Expected following format: SM_TYPE   SSM/GSM')
         return 'GSM'
     elif 'ICHAIN' in incar:
         if incar['ICHAIN'] == 0:
