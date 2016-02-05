@@ -211,6 +211,10 @@ if __name__ == '__main__':
         auto_gamma = incar['AUTO_GAMMA']
     else:
         auto_gamma = 'True'
+    if 'VASP_DEFAULT_ALLOCATION' in os.environ:
+        account = os.environ['VASP_DEFAULT_ALLOCATION']
+    else:
+        account = ''
     if computer == 'janus' or computer == 'rapunzel':
         queue_type = 'slurm'
         submit = 'sbatch'
