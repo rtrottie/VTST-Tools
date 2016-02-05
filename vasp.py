@@ -164,6 +164,7 @@ parser.add_argument('-t', '--time', help='walltime for run (integer number of ho
                     type=int, default=0)
 parser.add_argument('-o', '--nodes', help='nodes per run (default : KPAR*NPAR)',
                     type=int, default=0)
+parser.add_argument('-q', '--queue', help='manually specify queue instead of auto determining')
 parser.add_argument('-b', '--backup', help='backup files, but don\'t execute vasp ',
                     action='store_true')
 parser.add_argument('-s', '--silent', help='display less information',
@@ -221,7 +222,10 @@ if __name__ == '__main__':
     else:
         queue_type = 'pbs'
         submit = 'qsub'
-    queue = get_queue(computer, jobtype, time, nodes)
+    if args.queue:
+        queue = args.queue
+    else:
+        queue = get_queue(computer, jobtype, time, nodes)
     (template_dir, template) = get_template(computer, jobtype)
     script = name + '.sh'
 
