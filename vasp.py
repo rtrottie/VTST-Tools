@@ -239,7 +239,8 @@ if __name__ == '__main__':
                 'account'       : account,
                 'mpi'           : os.environ["VASP_MPI"],
                 'vasp_kpts'     : os.environ["VASP_KPTS"],
-                'vasp_gamma'    : os.environ["VASP_GAMMA"]}
+                'vasp_gamma'    : os.environ["VASP_GAMMA"],
+                'jobtype'       : jobtype}
 
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template)
