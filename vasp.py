@@ -31,7 +31,6 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
     instructions["commands"] = ['rm *.out *.err STOPCAR *.log.e* *.log.o* > /dev/null']
     instructions['backup'] = []
     instructions['move'] = []
-    instructions['']
     if jobtype == 'Standard':
         instructions['backup'] = ['OUTCAR', 'POSCAR', 'INCAR', 'KPOINTS']
         instructions['move'] = [('CONTCAR', 'POSCAR')]
@@ -129,8 +128,34 @@ def restart_vasp(dir):
                 inpfileq.writelines(lines)
             print('RESTART added to inpfileq')
 
-def run_vasp(nodes=1, cores=1, time=24, outputfile='vasp.out'):
-    return
+def get_queue(computer, jobtype, time, nodes):
+    if computer == "janus":
+        if time < 24:
+            return 'janus'
+        elif time >= 24:
+            return 'janus-long'
+    elif computer == "peregrine":
+        if time <= 1 and nodes <= 4 and False:
+            return 'debug'
+        elif time <= 4 and nodes <= 8:
+            return 'short'
+        elif time <= 24 and nodes >= 16 and nodes <= 296:
+            return 'large'
+        elif time <= 48 and nodes <= 296:
+            return 'batch-h'
+        elif time > 48 and time <= 240 and nodes <= 120:
+            return'long'
+        else:
+            raise Exception('Peregrine Queue Configuration not Valid: ' + time + ' hours ' + nodes + ' nodes ')
+    elif computer == "psiops":
+        return 'batch'
+    elif computer == "rapunzel":
+        return 'batch'
+    else:
+        raise Exception('Unrecognized Computer')
+
+def get_template(computer, queue):
+    return (os.environ["TEMPLATE_DIR"], 'VASP.standard.sh.jinja2')
 
 
 
@@ -192,7 +217,8 @@ if __name__ == '__main__':
     else:
         queue_type = 'pbs'
         submit = 'qsub'
-    queue = 'this'
+    queue = get_queue(computer, jobtype, time, nodes)
+    (template_dir, template) = get_template(computer, jobtype)
     script = name + '.sh'
 
     keywords = {'queue_type'    : queue_type,
@@ -206,14 +232,11 @@ if __name__ == '__main__':
                 'mem'           : mem,
                 'auto_gamma'    : auto_gamma}
 
+    env = Environment(loader=FileSystemLoader(template_dir))
+    template = env.get_template(template)
     with open(script, 'w+') as f:
         f.write(template.render(keywords))
-    os.system(queue_sub + ' ' + script)
-
-#########################################################################################3
-## ABOVE THIS LINE IS REDONE, BELOW NEEDS TO BE REDONE, WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO ##
-##########################################################################################
-
+    os.system(submit + ' ' + script)
 
 
 
