@@ -226,6 +226,7 @@ if __name__ == '__main__':
     script = name + '.sh'
 
     keywords = {'queue_type'    : queue_type,
+                'queue'         : queue,
                 'nodes'         : nodes,
                 'computer'      : computer,
                 'time'          : time,
