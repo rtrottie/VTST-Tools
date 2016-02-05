@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # A general catch all function that runs VASP with just one command.  Automatically determines number of nodes to run on,
 # based on NPAR and KPAR what type (NEB,Dimer,Standard) to run and sets up a submission script and runs it
-#TODO: fix how the time is setup
+#TODO: make silent work
 
 # Usage: VASP.py [time] [nodes] [log_file]
 
@@ -179,11 +179,15 @@ if __name__ == '__main__':
     jobtype = getJobType('.')
     incar = Incar.from_file('INCAR')
     computer = getComputerName()
+    print('Running vasp.py for ' + jobtype +' on ' + computer)
+    print('Backing up previous run')
     backup_vasp('.')
     if args.backup:
         exit(0)
     if not args.inplace:
+        print('Setting up next run')
         restart_vasp('.')
+    print('Determining settings for run')
     if args.time == 0:
         if 'AUTO_TIME' in incar:
             time = int(incar["AUTO_TIME"])
@@ -252,6 +256,7 @@ if __name__ == '__main__':
     with open(script, 'w+') as f:
         f.write(template.render(keywords))
     os.system(submit + ' ' + script)
+    print('Submitted ' + name + ' to ' + queue)
 
 
 
