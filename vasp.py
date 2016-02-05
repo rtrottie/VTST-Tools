@@ -28,7 +28,7 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
 
     '''
     instructions = {}
-    instructions["commands"] = ['rm *.out *.err STOPCAR *.log.e* *.log.o* > /dev/null']
+    instructions["commands"] = ['rm *.out *.err STOPCAR *.e* *.o* > /dev/null']
     instructions['backup'] = []
     instructions['move'] = []
     if jobtype == 'Standard':
@@ -240,7 +240,8 @@ if __name__ == '__main__':
                 'mpi'           : os.environ["VASP_MPI"],
                 'vasp_kpts'     : os.environ["VASP_KPTS"],
                 'vasp_gamma'    : os.environ["VASP_GAMMA"],
-                'jobtype'       : jobtype}
+                'jobtype'       : jobtype,
+                'tasks'         : nodes*int(os.environ["VASP_NCORE"])}
 
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template)
