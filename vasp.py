@@ -236,7 +236,10 @@ if __name__ == '__main__':
                 'logname'       : name + '.log',
                 'mem'           : mem,
                 'auto_gamma'    : auto_gamma,
-                'account'       : account}
+                'account'       : account,
+                'mpi'           : os.environ["VASP_MPI"],
+                'vasp_kpts'     : os.environ["VASP_KPTS"],
+                'vasp_gamma'    : os.environ["VASP_GAMMA"]}
 
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template)
