@@ -129,163 +129,92 @@ def restart_vasp(dir):
                 inpfileq.writelines(lines)
             print('RESTART added to inpfileq')
 
+def run_vasp(nodes=1, cores=1, time=24, outputfile='vasp.out'):
+    return
+
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-t', '--time', help='walltime for run (hours)',
-                    type=int)
-parser.add_argument('-n', '--nodes', help='nodes per run (default : KPAR*NPAR)',
-                    type=int)
+parser.add_argument('-t', '--time', help='walltime for run (integer number of hours)',
+                    type=int, default=0)
+parser.add_argument('-o', '--nodes', help='nodes per run (default : KPAR*NPAR)',
+                    type=int, default=0)
 parser.add_argument('-b', '--backup', help='backup files, but don\'t execute vasp ',
                     action='store_true')
-
 parser.add_argument('-s', '--silent', help='display less information',
                     action='store_true')
+parser.add_argument('-i', '--inplace', help='Run VASP without moving files to continue run',
+                    action='store_true')
+parser.add_argument('-n', '--name', help='name of run (Default is SYSTEM_Jobtype')
 
+args = parser.parse_args()
+
+if __name__ == '__main__':
+    jobtype = getJobType('.')
+    incar = Incar.from_file('INCAR')
+    computer = getComputerName()
+    backup_vasp('.')
+    if args.backup:
+        exit(0)
+    if not args.inplace:
+        restart_vasp('.')
+    if args.time == 0:
+        if 'AUTO_TIME' in incar:
+            time = int(incar["AUTO_TIME"])
+        elif 'VASP_DEFAULT_TIME' in os.environ:
+            time = int(incar['VASP_DEFAULT_TIME'])
+        else:
+            time = 24
+    else:
+        time = args.time
+    if args.nodes == 0:
+        if 'AUTO_NODES' in incar:
+            nodes = incar['AUTO_NODES']
+        else:
+            nodes = int(incar['NPAR']) * int(incar['KPAR']) if 'KPAR' in incar else int(incar['NPAR'])
+            if jobtype == 'NEB':
+                nodes = nodes * int(incar["IMAGES"])
+    if args.name:
+        name = args.name
+    elif 'SYSTEM' in incar:
+        name = incar['SYSTEM'].strip().replace(' ', '_')
+    if 'AUTO_MEM' in incar:
+        mem = incar['AUTO_MEM']
+    else:
+        mem = 0
+    if 'AUTO_GAMMA' in incar:
+        auto_gamma = incar['AUTO_GAMMA']
+    else:
+        auto_gamma = 'True'
+    if computer == 'janus' or computer == 'rapunzel':
+        queue_type = 'slurm'
+        submit = 'sbatch'
+    else:
+        queue_type = 'pbs'
+        submit = 'qsub'
+    queue = 'this'
+    script = name + '.sh'
+
+    keywords = {'queue_type'    : queue_type,
+                'nodes'         : nodes,
+                'computer'      : computer,
+                'time'          : time,
+                'nodes'         : nodes,
+                'name'          : name,
+                'cores'         : os.environ["VASP_NCORE"],
+                'logname'       : name + '.log',
+                'mem'           : mem,
+                'auto_gamma'    : auto_gamma}
+
+    with open(script, 'w+') as f:
+        f.write(template.render(keywords))
+    os.system(queue_sub + ' ' + script)
 
 #########################################################################################3
 ## ABOVE THIS LINE IS REDONE, BELOW NEEDS TO BE REDONE, WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO ##
 ##########################################################################################
 
-env = Environment(loader=FileSystemLoader(template_dir))
-template = env.get_template(template)
-
-# Use default arguments if not enough are provided
-incar = Incar.from_file('INCAR')
-
-if len(sys.argv) < 2:
-    if 'AUTO_TIME' in incar:
-        sys.argv.append(incar['AUTO_TIME'])
-    elif 'psiops' in socket.gethostname():
-        sys.argv.append(200)
-    elif 'rapunzel' in socket.gethostname():
-        sys.argv.append(500)
-    else:
-        sys.argv.append(20)
-
-if len(sys.argv) < 3:
-    if 'AUTO_NODES' in incar:
-        nodes = incar['AUTO_NODES']
-    else:
-        if 'NPAR' in incar:
-            nodes = incar['NPAR'] if 'KPAR' not in incar else int(incar['NPAR']) * int(incar['KPAR'])
-        else:
-            nodes = 1
-    sys.argv.append(nodes)
-
-if len(sys.argv) < 4:
-    sys.argv.append(job + '_' + os.path.basename(os.getcwd()) + '.log')
-    for file in os.listdir('.'):
-        if fnmatch.fnmatch(file, '*.log'):
-            sys.argv[3] = file
-            break
-
-# initialize variables for template
-
-nodes_per_image = int(sys.argv[2])
-jobname = sys.argv[3]
-time = int(sys.argv[1])
-if job == 'NEB':
-    images = int(incar['IMAGES'])
-else:
-    images = 1
-script = jobname + '.sh'
-
-if 'AUTO_MEM' in incar:
-    mem = incar['AUTO_MEM']
-else:
-    mem = 8000
-if 'AUTO_GAMMA' in incar:
-    auto_gamma = incar['AUTO_GAMMA']
-else:
-    auto_gamma = 'True'
-
-connection = ''
-queue = ''
-if 'psiops' in socket.gethostname():
-    host = 'psiops'
-    mpi = '/home/apps/openmpi/openmpi-1.10.1/bin/mpirun'
-    queue_sub = 'qsub'
-    nntasks_per_node = 12
-    if nodes_per_image == 1:
-        connection = 'gb'
-        vasp_tst_gamma = '/home/apps/vasp_tst/vasp.5.3/vasp'
-        vasp_tst_kpts  = '/home/apps/vasp_tst/vasp.5.3/vasp'
-    else:
-        connection = 'ib'
-        vasp_tst_gamma = '/home/apps/vasp_tst/vasp.5.3/vasp'
-        vasp_tst_kpts  = '/home/apps/vasp_tst/vasp.5.3/vasp'
-    if job == 'Standard':
-        mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
-        vasp_tst_kpts = '/home/dummy/vasp5.12/stacked_cache/vasp.5.2/vasp'
-        vasp_tst_gamma = '/home/dummy/vasp5.12/stacked_cache_gamma/vasp.5.2/vasp'
-elif '.rc.' in socket.gethostname():
-    vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-    vasp_tst_kpts = '/projects/musgravc/apps/vasp.5.3.3_vtst/kpts/vasp'
-    host = 'janus'
-    mpi = 'mpirun'
-    queue_sub = 'sbatch'
-    queue = 'janus' if time <= 24 else 'janus-long'
-    nntasks_per_node = 12
-elif 'rapunzel' in socket.gethostname():
-    vasp_tst_gamma = '/export/home/apps/VASP/VTST.gamma/vasp'
-    vasp_tst_kpts = '/export/home/apps/VASP/VTST/vasp.kpts'
-    host = 'rapunzel'
-    mpi = 'mpirun'
-    queue_sub = 'sbatch'
-    nntasks_per_node = 7
-elif 'ryan-VirtualBox' in socket.gethostname():
-    vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-    vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
-    host = 'janus'
-    nntasks_per_node = 1
-    mpi = 'please dont run'
-    queue_sub = 'sbatch'
-elif 'login' in socket.gethostname():
-    vasp_tst_gamma = 'vasp.gamma'
-    vasp_tst_kpts = 'vasp.realk'
-    host = 'peregrine'
-    nntasks_per_node = 24
-    mpi = 'mpirun'
-    queue_sub = 'qsub'
-    keywords['account'] = os.environ['DEFAULT_ALLOCATION']
-    nodes = images*nodes_per_image
-    if time <= 1 and nodes <= 4 and False:
-        queue = 'debug'
-    elif time <= 4 and nodes <= 8:
-        queue = 'short'
-    elif time <= 24 and nodes >= 16 and nodes <= 296:
-        queue = 'large'
-    elif time <= 48 and nodes <= 296:
-        if random.random() < 0.5:
-            queue = 'batch'
-        else:
-            queue = 'batch-h'
-    else:
-        raise Exception('Queue Configuration not Valid: ' + time + ' hours ' + nodes + ' nodes ')
-else:
-    raise Exception('Don\'t recognize host: ' + socket.gethostname())
 
 
-keywords.update( {'J' : jobname,
-            'hours' : time,
-            'nodes' : images*nodes_per_image,
-            'nntasks_per_node' : nntasks_per_node,
-            'logname' : jobname,
-            'tasks' : images*nodes_per_image*nntasks_per_node,
-            'user' : os.environ['USER'],
-            'jobtype' : job,
-            'vasp_tst_gamma' : vasp_tst_gamma,
-            'vasp_tst_kpts' : vasp_tst_kpts,
-            'host' : host,
-            'connection' : connection,
-            'mpi' : mpi,
-            'queue': queue,
-            'mem': mem,
-            'currdir': os.path.abspath('.'),
-            'auto_gamma' : auto_gamma} )
 
-with open(script, 'w+') as f:
-    f.write(template.render(keywords))
 
-os.system(queue_sub + ' ' + script)
