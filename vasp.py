@@ -234,7 +234,8 @@ if __name__ == '__main__':
                 'cores'         : os.environ["VASP_NCORE"],
                 'logname'       : name + '.log',
                 'mem'           : mem,
-                'auto_gamma'    : auto_gamma}
+                'auto_gamma'    : auto_gamma,
+                'account'       : account}
 
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template)
