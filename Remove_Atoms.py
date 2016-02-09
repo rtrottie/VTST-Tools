@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('input_dir', help='input VASP directory')
-    parser.add_argument('atom_nums', 'list of atom numbers (default : 1 indexed) to remove',
+    parser.add_argument('atom_nums', help='list of atom numbers (default : 1 indexed) to remove',
                         nargs='*', type=int)
     parser.add_argument('-o', '--output_dir', help='output VASP directory (Default : ".")', default='.')
     parser.add_argument('-a', '--atom', help='when specifed removes ith member of specified atom instead of ith atom overall',
