@@ -97,7 +97,7 @@ def backup_vasp(dir, backup_dir='backup'):
                 os.makedirs(os.path.dirname(backup_file))
             shutil.copy(original_file, backup_file)
         except:
-            print('Could not backup file at:  ' + backup_file)
+            print('Could not backup file at:  ' + original_file)
 
     return
 
