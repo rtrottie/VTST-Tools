@@ -49,9 +49,11 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
     elif jobtype == 'Dimer':
         instructions['backup'] = ['OUTCAR', 'POSCAR', 'INCAR', 'KPOINTS', 'MODECAR', 'DIMCAR']
         instructions['move'] = [('CENTCAR', 'POSCAR'), ('NEWMODECAR', 'MODECAR')]
-    elif jobtype == 'GSM':
+    elif jobtype == 'GSM' or jobtype == 'SSM':
         instructions['backup'] = ['stringfile.xyz0000', 'inpfileq', 'scratch/initial0000.xyz', 'scratch/paragsm0000',
                                   'INCAR']
+        if jobtype == 'SSM':
+            instructions['backup'].append('scratch/ISOMERS0000')
     else:
         raise Exception('Jobtype Not recognized:  ' + jobtype)
     return instructions
