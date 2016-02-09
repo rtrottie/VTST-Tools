@@ -22,4 +22,4 @@ if __name__ == '__main__':
 
     if not args.zero_indexed:
         args.atom_nums = list(map(lambda x: x-1, args.atom_nums))
-    remove_atom_arbitrary(args.input_dir, args.output_dir, atom_nums, args.atom)
+    remove_atom_arbitrary(args.input_dir, args.output_dir, args.atom_nums, args.atom)
