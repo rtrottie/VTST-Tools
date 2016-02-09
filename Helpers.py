@@ -56,7 +56,7 @@ def getJobType(dir):
     if os.path.exists(os.path.join(dir, 'gfstringq.exe')):
         with open('inpfileq') as inpfileq:
             for line in inpfileq.readlines():
-                if 'SM_TYPE' in line.split()[0]:
+                if len(line.split()) > 1 and 'SM_TYPE' in line.split()[0]:
                     if 'SSM' in line.split()[1]:
                         return 'SSM'
                     elif 'GSM' in line.split()[1]:
