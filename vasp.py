@@ -132,9 +132,9 @@ def restart_vasp(dir):
 
 def get_queue(computer, jobtype, time, nodes):
     if computer == "janus":
-        if time < 24:
+        if time <= 24:
             return 'janus'
-        elif time >= 24:
+        elif time > 24:
             return 'janus-long'
     elif computer == "peregrine":
         if time <= 1 and nodes <= 4 and False:
