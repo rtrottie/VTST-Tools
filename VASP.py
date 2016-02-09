@@ -102,7 +102,7 @@ elif job == 'Standard':
         time = sum(getLoopPlusTimes('OUTCAR'))
     except:
         time = 0
-elif job == 'GSM':
+elif job == 'GSM' or job =='SSM':
     template_dir = os.environ['TEMPLATE_DIR']
     template = 'submit.sh.jinja2'
     keywords = load_variables(os.path.join(os.environ['GSM_DIR'], 'VARS.jinja2'))
