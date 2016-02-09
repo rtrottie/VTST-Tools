@@ -210,6 +210,8 @@ if __name__ == '__main__':
         name = args.name
     elif 'SYSTEM' in incar:
         name = incar['SYSTEM'].strip().replace(' ', '_')
+    elif 'System' in incar:
+        name = incar['System'].strip().replace(' ', '_')
     if 'AUTO_MEM' in incar:
         mem = incar['AUTO_MEM']
     else:
