@@ -196,7 +196,7 @@ if __name__ == '__main__':
         elif 'VASP_DEFAULT_TIME' in os.environ:
             time = int(incar['VASP_DEFAULT_TIME'])
         else:
-            time = 24
+            time = 20
     else:
         time = args.time
     if args.nodes == 0:
