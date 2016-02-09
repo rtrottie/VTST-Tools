@@ -100,14 +100,17 @@ for val in stage.keys():
     elif val == 'REMOVE':
         to_remove = stage.pop('REMOVE').replace(',',' ').split()
         for item in to_remove:
-            run.incar.pop(item)
+            try:
+                run.incar.pop(item)
+            except:
+                print('Could not remove ' + item +' because it does not exist.')
     elif val == 'DELETE':
         to_delete = stage.pop('DELETE').replace(',',' ').split()
         for item in to_delete:
             try:
                 os.remove(item)
             except:
-                print('Could not remove ' + item +' because it does not exist.')
+                print('Could not delete ' + item +' because it does not exist.')
     elif val == 'KPOINTS':
         kpt = stage.pop('KPOINTS').replace(',',' ').split()
         if len(kpt) == 1 and kpt[0] == 'G':
