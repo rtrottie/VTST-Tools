@@ -197,7 +197,7 @@ if __name__ == '__main__':
         if 'AUTO_TIME' in incar:
             time = int(incar["AUTO_TIME"])
         elif 'VASP_DEFAULT_TIME' in os.environ:
-            time = int(incar['VASP_DEFAULT_TIME'])
+            time = int(os.environ['VASP_DEFAULT_TIME'])
         else:
             time = 20
     else:
