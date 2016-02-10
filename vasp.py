@@ -156,8 +156,11 @@ def get_queue(computer, jobtype, time, nodes):
     else:
         raise Exception('Unrecognized Computer')
 
-def get_template(computer, queue):
-    return (os.environ["TEMPLATE_DIR"], 'VASP.standard.sh.jinja2')
+def get_template(computer, jobtype):
+    if jobtype == 'GSM' or jobtype == 'SSM':
+        return(os.environ["VASP_TEMPLATE_DIR"], 'VASP.gsm.sh.jinja2')
+    else:
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.standard.sh.jinja2')
 
 
 
