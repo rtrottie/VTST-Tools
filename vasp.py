@@ -115,8 +115,11 @@ def restart_vasp(dir):
     instructions = get_instructions_for_backup(jobtype, os.path.join(dir, 'INCAR'))
     for (old_file, new_file) in instructions["move"]:
         try:
-            shutil.move(old_file, new_file)
-            print('Moved ' + old_file + ' to ' + new_file)
+            if os.path.getsize(old_file) > 0:
+                shutil.move(old_file, new_file)
+                print('Moved ' + old_file + ' to ' + new_file)
+            else:
+                raise Exception()
         except:
             print('Unable to move ' + old_file + ' to ' + new_file)
     if jobtype == 'SSM':
