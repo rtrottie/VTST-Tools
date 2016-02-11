@@ -23,8 +23,8 @@ def reorder_vacancies(pos1, pos2, coord1, coord2, writeDir):
 
     ins1 = InsertSitesTransformation([sp1], [f1])
     ins2 = InsertSitesTransformation([sp2], [f2])
-    r1 = RemoveSitesTransformation([coord2 - 1])
-    r2 = RemoveSitesTransformation([coord1 - 1])
+    r1 = RemoveSitesTransformation([coord2])
+    r2 = RemoveSitesTransformation([coord1])
 
     temp_s1 = ins1.apply_transformation(r1.apply_transformation(p1.structure))
     temp_s2 = ins2.apply_transformation(r2.apply_transformation(p2.structure))
