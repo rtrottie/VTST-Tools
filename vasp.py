@@ -76,8 +76,11 @@ def backup_vasp(dir, backup_dir='backup'):
         last_run = -1
         backups = os.listdir(backup_dir)
         for backup in backups:
-            if int(backup) > last_run:
-                    last_run = int(backup)
+            try:
+                if int(backup) > last_run:
+                        last_run = int(backup)
+            except:
+                pass
         if last_run == -1:
             raise Exception("backup setup is invalid")
         this_run = last_run+1
