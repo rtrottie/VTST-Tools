@@ -29,13 +29,21 @@ def parse_incar_update(f_string):
 
 
 if len(sys.argv) == 1 or sys.argv[1] != '0':
-    run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
-    if not run.converged:
-        cont = input('Run has not converged.  Continue? (1/0 = yes/no):  ')
-        if cont == 1:
-            pass
-        else:
-            sys.exit('Run will not be updated')
+    try:
+        run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
+        if not run.converged:
+            cont = input('Run has not converged.  Continue? (1/0 = yes/no):  ')
+            if cont == 1:
+                pass
+            else:
+                sys.exit('Run will not be updated')
+    except:
+        print('Could Not Read vasprun.xml, continuing anyway')
+        run = Vasprun
+        run.incar = Incar.from_file('INCAR')
+        run.incar['STAGE_NUMBER'] = -1
+        run.incar['STAGE_NAME'] = 'init'
+
 else:
     run = Vasprun
     run.incar = Incar.from_file('INCAR')
