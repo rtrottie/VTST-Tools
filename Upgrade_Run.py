@@ -41,8 +41,6 @@ if len(sys.argv) == 1 or sys.argv[1] != '0':
         print('Could Not Read vasprun.xml, continuing anyway')
         run = Vasprun
         run.incar = Incar.from_file('INCAR')
-        run.incar['STAGE_NUMBER'] = -1
-        run.incar['STAGE_NAME'] = 'init'
 
 else:
     run = Vasprun
