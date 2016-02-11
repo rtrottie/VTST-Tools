@@ -7,17 +7,17 @@ import argparse
 
 def reorder_vacancies(pos1, pos2, coord1, coord2, writeDir):
     if coord1 < coord2:
-        coord2 = coord2 - 1
+        coord2 = coord2
     elif coord2 < coord1:
-        coord1 = coord1 - 1
+        coord1 = coord1
     else:
         raise Exception('Same Coords Provided')
     p1 = Poscar.from_file(pos1)
     p2 = Poscar.from_file(pos2)
-    sp1 = p1.structure.sites[coord2 - 1].specie.symbol
-    sp2 = p2.structure.sites[coord1 - 1].specie.symbol
-    f1 = p1.structure.sites[coord2 - 1].frac_coords
-    f2 = p2.structure.sites[coord1 - 1].frac_coords
+    sp1 = p1.structure.sites[coord2].specie.symbol
+    sp2 = p2.structure.sites[coord1].specie.symbol
+    f1 = p1.structure.sites[coord2].frac_coords
+    f2 = p2.structure.sites[coord1].frac_coords
     if (sp1 != sp2):
         raise Exception('species 1 does not equal species 2')
 
@@ -53,23 +53,28 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('struct_1', help='structure file or VASP run folder for the first structure')
     parser.add_argument('struct_2', help='structure file or VASP run folder for the second structure')
-    parser.add_argument('atom_1', help='migrating atom in struct_1 (1 indexed by default)')
-    parser.add_argument('atom_2', help='migrating atom in struct_2 (1 indexed by default)')
-    parser.add_argument('-d', '--directory', help='directory to write too')
+    parser.add_argument('atom_1', help='migrating atom in struct_1 (1 indexed by default)',
+                        type=int)
+    parser.add_argument('atom_2', help='migrating atom in struct_2 (1 indexed by default)',
+                        type=int)
+    parser.add_argument('-d', '--directory', help='directory to write to (default : ".")',
+                        default='.')
+    parser.add_argument('-z', '--zero_indexed', help='change to zero indexed for supplied atom numbers',
+                        action='store_true')
+    args = parser.parse_args()
 
-    if os.path.isfile(start):
-        start_file = start
-        start_folder = os.path.dirname(start)
-    else:
-        start_file = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) else os.path.join(start, 'POSCAR')
-        start_folder = start
+    if not args.zero_indexed:
+        args.atom_1 -= 1
+        args.atom_2 -= 1
 
-if os.path.basename(sys.argv[0]) == 'Vacancy_Correction.py':
-    if len(sys.argv) < 2:
-        raise Exception('Not Enough Arguments Provided\n need: POSCAR_1 POSCAR_2 Atom_1 Atom_2 [Dir]')
-    elif len(sys.argv) == 5:
-        reorder_vacancies(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), os.path.abspath('.'))
-    elif len(sys.argv) == 6:
-        reorder_vacancies(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), os.path.abspath(sys.argv[5]))
+    if os.path.isfile(args.struct_1):
+        struct_1 = args.struct_1
     else:
-        raise Exception('Too Many Arguments\n need: POSCAR_1 POSCAR_2 Atom_1 Atom_2 [Dir]')
+        struct_1 = os.path.join(args.struct_1, 'CONTCAR') if os.path.exists(os.path.join(args.struct_1, 'CONTCAR')) else os.path.join(args.struct_1, 'POSCAR')
+
+    if os.path.isfile(args.struct_2):
+        struct_2 = args.struct_2
+    else:
+        struct_2 = os.path.join(args.struct_2, 'CONTCAR') if os.path.exists(os.path.join(args.struct_2, 'CONTCAR')) else os.path.join(args.struct_2, 'POSCAR')
+
+    reorder_vacancies(struct_1, struct_2, args.atom_1, args.atom_2, args.directory)
