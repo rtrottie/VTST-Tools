@@ -7,9 +7,9 @@ import argparse
 
 def reorder_vacancies(pos1, pos2, coord1, coord2, writeDir):
     if coord1 < coord2:
-        coord2 = coord2
+        coord2 = coord2-1
     elif coord2 < coord1:
-        coord1 = coord1
+        coord1 = coord1-1
     else:
         raise Exception('Same Coords Provided')
     p1 = Poscar.from_file(pos1)
