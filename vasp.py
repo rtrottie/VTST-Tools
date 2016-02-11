@@ -40,11 +40,11 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
             incar = Incar.from_file(incar)
             instructions['commands'].extend(['nebmovie.pl', 'nebbarrier.pl', 'nebef.pl > nebef.dat'])
             instructions['backup'] = ['INCAR', 'KPOINTS', 'neb.dat', 'nebef.dat', 'movie.xyz']
-            for i in range(int(incar["IMAGES"]) + 2):
+            for i in range(1, int(incar["IMAGES"]) + 1):
+                instructions['move'].append((os.path.join(str(i).zfill(2), 'CONTCAR'),
+                                           os.path.join(str(i).zfill(2), 'POSCAR')))
                 for f in ['OUTCAR', 'POSCAR']:
                     instructions['backup'].append(os.path.join(str(i).zfill(2), f))
-                    instructions['move'].append((os.path.join(str(i).zfill(2), 'CONTCAR'),
-                                               os.path.join(str(i).zfill(2), 'POSCAR')))
         else:
             raise Exception('Need valid INCAR')
     elif jobtype == 'Dimer':
