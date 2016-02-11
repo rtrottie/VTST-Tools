@@ -129,10 +129,10 @@ for val in stage.keys():
             raise Exception('Kpoint not formated correctly need [G/M] x y z [x_shift, y_shift, z_shift] or G')
 
 if prev_stage_name:
-    os.mkdir(prev_stage_name)
+    os.makedirs(os.path.join('backup', prev_stage_name))
     for f in saved_files:
         if os.path.exists(f):
-            shutil.copy(f,os.path.join(prev_stage_name, f))
+            shutil.copy(f,os.path.join('backup', prev_stage_name, f))
 
 new_incar = run.incar.__add__(Incar(stage))
 new_incar.write_file('INCAR')
