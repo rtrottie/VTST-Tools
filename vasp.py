@@ -38,7 +38,7 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
     elif jobtype == 'NEB':
         if os.path.isfile(incar):
             incar = Incar.from_file(incar)
-            instructions['commands'].append(['nebmovie.pl', 'nebbarrier.pl', 'nebef.pl > nebef.dat'])
+            instructions['commands'].extend(['nebmovie.pl', 'nebbarrier.pl', 'nebef.pl > nebef.dat'])
             instructions['backup'] = ['INCAR', 'KPOINTS', 'neb.dat', 'nebef.dat', 'movie.xyz']
             for i in range(int(incar["IMAGES"]) + 2):
                 for f in ['OUTCAR', 'POSCAR']:
