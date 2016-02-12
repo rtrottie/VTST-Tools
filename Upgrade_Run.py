@@ -58,7 +58,7 @@ if 'STAGE_FILE' in run.incar:
     conv_file = run.incar["STAGE_FILE"]
 else:
     conv_file = "CONVERGENCE"
-for incar_adjust_file in [conv_file, '../' + conv_file, '../../' + conv_file, '../../../' + conv_file]: # Look up at least three directories
+for incar_adjust_file in [conv_file, '../' + conv_file, '../../' + conv_file, '../../../' + conv_file, '../../../../' + conv_file, '../../../../../' + conv_file]: # Look up at least three directories
     if os.path.exists(incar_adjust_file):
         break
 
