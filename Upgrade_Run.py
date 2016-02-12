@@ -38,7 +38,12 @@ if len(sys.argv) == 1 or sys.argv[1] != '0':
             else:
                 sys.exit('Run will not be updated')
     except:
-        print('Could Not Read vasprun.xml, continuing anyway')
+        print('Could Not Read vasprun.xml, continuing anyway?')
+        cont = input('Continue? (1/0 = yes/no):  ')
+        if cont == 1:
+            pass
+        else:
+            sys.exit('Run will not be updated')
         run = Vasprun
         run.incar = Incar.from_file('INCAR')
 
