@@ -23,7 +23,7 @@ def neb2dim(neb_dir, dimer_dir):
     if not os.path.exists(dimer_dir):
         os.makedirs(dimer_dir)
     os.system(os.path.join(os.environ['VTST_DIR'],'neb2dim.pl') + ' > /dev/null')
-    if os.path.join(os.path.abspath(neb_dir), 'dim') != dimer_dir:
+    if os.path.abspath(os.path.join(os.path.abspath(neb_dir), 'dim')) != os.path.abspath(dimer_dir):
         for f in os.listdir('dim'):
             shutil.move(os.path.join('dim', f), dimer_dir)
 
