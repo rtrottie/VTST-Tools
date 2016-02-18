@@ -214,6 +214,8 @@ if __name__ == '__main__':
             nodes = int(incar['NPAR']) * int(incar['KPAR']) if 'KPAR' in incar else int(incar['NPAR'])
             if jobtype == 'NEB':
                 nodes = nodes * int(incar["IMAGES"])
+    else:
+        nodes = args.nodes
     if args.name:
         name = args.name
     elif 'SYSTEM' in incar:
