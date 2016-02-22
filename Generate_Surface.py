@@ -71,7 +71,7 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
     surfs = []
     with pmg.matproj.rest.MPRester(os.environ['MAT_PROJ_KEY']) as m:
         s = Poscar.from_file(material).structure
-        sf = surf.SlabGenerator(s, miller, depth, 1, primitive=False)
+        sf = surf.SlabGenerator(s, miller, depth, 1, primitive=True)
         i=0
         for s in sf.get_slabs():
             if orth:
