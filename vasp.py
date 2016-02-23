@@ -216,24 +216,38 @@ if __name__ == '__main__':
                 nodes = nodes * int(incar["IMAGES"])
     else:
         nodes = args.nodes
+
     if args.name:
         name = args.name
     elif 'SYSTEM' in incar:
         name = incar['SYSTEM'].strip().replace(' ', '_')
     elif 'System' in incar:
         name = incar['System'].strip().replace(' ', '_')
+    elif 'system' in incar:
+        name = incar['system'].strip().replace(' ', '_')
+
     if 'AUTO_MEM' in incar:
         mem = incar['AUTO_MEM']
     else:
         mem = 0
+
     if 'AUTO_GAMMA' in incar:
         auto_gamma = incar['AUTO_GAMMA']
     else:
         auto_gamma = 'True'
+
+    if 'AUTO_CORES' in incar:
+        cores = incar['AUTO_CORES']
+    elif 'VASP_MPI_PROCS' in os.environ
+        cores = os.environ["VASP_MPI_PROCS"]
+    else:
+        cores = os.environ["VASP_NCORE"]
+
     if 'VASP_DEFAULT_ALLOCATION' in os.environ:
         account = os.environ['VASP_DEFAULT_ALLOCATION']
     else:
         account = ''
+
     if computer == 'janus' or computer == 'rapunzel':
         queue_type = 'slurm'
         submit = 'sbatch'
@@ -254,7 +268,8 @@ if __name__ == '__main__':
                 'time'          : time,
                 'nodes'         : nodes,
                 'name'          : name,
-                'cores'         : os.environ["VASP_NCORE"],
+                'ppn'           : os.environ["VASP_NCORE"],
+                'cores'         : cores,
                 'logname'       : name + '.log',
                 'mem'           : mem,
                 'auto_gamma'    : auto_gamma,
