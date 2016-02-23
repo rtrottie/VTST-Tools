@@ -259,7 +259,7 @@ if __name__ == '__main__':
     else:
         queue = get_queue(computer, jobtype, time, nodes)
     (template_dir, template) = get_template(computer, jobtype)
-    script = name + '.sh'
+    script = 'vasp_standard.sh'
 
     keywords = {'queue_type'    : queue_type,
                 'queue'         : queue,
