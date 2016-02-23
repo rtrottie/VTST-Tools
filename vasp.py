@@ -238,7 +238,7 @@ if __name__ == '__main__':
 
     if 'AUTO_CORES' in incar:
         cores = incar['AUTO_CORES']
-    elif 'VASP_MPI_PROCS' in os.environ
+    elif 'VASP_MPI_PROCS' in os.environ:
         cores = os.environ["VASP_MPI_PROCS"]
     else:
         cores = os.environ["VASP_NCORE"]
