@@ -248,6 +248,11 @@ if __name__ == '__main__':
     else:
         account = ''
 
+    if 'VASP_OMP_NUM_THREADS' in os.environ:
+        openmp = os.environ['VASP_OMP_NUM_THREADS']
+    else:
+        openmp = 1
+
     if computer == 'janus' or computer == 'rapunzel':
         queue_type = 'slurm'
         submit = 'sbatch'
@@ -278,7 +283,8 @@ if __name__ == '__main__':
                 'vasp_kpts'     : os.environ["VASP_KPTS"],
                 'vasp_gamma'    : os.environ["VASP_GAMMA"],
                 'jobtype'       : jobtype,
-                'tasks'         : nodes*int(os.environ["VASP_NCORE"])}
+                'tasks'         : nodes*int(os.environ["VASP_NCORE"]),
+                'openmp'        : openmp}
 
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template)
