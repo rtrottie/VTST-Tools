@@ -175,6 +175,6 @@ if __name__ == '__main__':
         else:
             sd = None
         p = Poscar(surf, selective_dynamics=sd)
-        if not os.path.exists():
+        if not os.path.exists(path):
             os.makedirs(path)
         p.write_file(os.path.join(path, 'POSCAR'))
