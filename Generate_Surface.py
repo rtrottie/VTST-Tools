@@ -1,16 +1,10 @@
 #!/usr/bin/env python
 #TODO: Make more general, currently only cuts on 010
-import pymatgen as pmg
-import pymatgen.core.structure as struc
 import pymatgen.core.surface as surf
-import os
-import sys
-import cfg
-from pymatgen.io.vaspio.vasp_input import Poscar
 from Helpers import *
 from Classes_Pymatgen import *
 import Vis
-import Vis
+import argparse
 
 def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, freeze_step, incar, kpoints, vis=False):
     Poscar.get_string = get_string_more_sigfig
@@ -44,13 +38,14 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                     vasp = VaspInput(incar, kpoints, poscar, potcar)
                     vasp.write_input(folder)
 
-def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False, orth=False):
+def Generate_Surface(material, miller, width, length, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False, orth=False):
     """
 
     Args:
         material:
         miller:
         width:
+        length:
         depth:
         freeze:
         vacuum:
@@ -77,7 +72,7 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
             if orth:
                 s = s.get_orthogonal_c_slab()
             s = Add_Vac(s, 2, vacuum)
-            s.make_supercell([width,width,1])
+            s.make_supercell([width,length,1])
             s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
             if vis:
                 Vis.view(s, program=vis)
@@ -95,26 +90,6 @@ def Generate_Surface(material, miller, width, depth, freeze=0, vacuum=10, incar=
             else:
                 surfs.append(s)
                 i+=1
-                '''
-            if freeze > 0:
-                sd = []
-                for site in s.sites:
-                    if s.lattice.c - (site.frac_coords[2] * site.lattice.c) < freeze:
-                        sd.append([False, False, False])
-                    else:
-                        sd.append([True, True, True])
-                poscar = Poscar(s, selective_dynamics=sd)
-            else:
-                poscar = Poscar(s)
-            if incar and kpoints:
-                update_incar(s, incar)
-                potcar = Potcar(poscar.site_symbols)
-                vasp = VaspInput(incar, kpoints, poscar, potcar)
-                vasp.write_input(folder)
-            else:
-                os.makedirs(folder)
-                poscar.write_file(os.path.join(folder, 'POSCAR'))
-                '''
     return surfs
 
 def Add_Vac(structure, vector, vacuum):
@@ -164,9 +139,38 @@ def get_SD_along_vector(structure, vector, range):
 
     return sd
 
-if os.path.basename(sys.argv[0]) == 'Generate_Surface.py':
-    if len(sys.argv) < 6:
-        raise Exception('Not Enough Arguments Provided\n need: depth_min, depth_max, width_min, width_max, freeze_step')
-    Generate_Surfaces('POSCAR', int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]),
-                      int(sys.argv[4]), float(sys.argv[5]), Incar.from_file('INCAR'), Kpoints.from_file('KPOINTS') )
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-m', 'miller', help='Miller indecies of desired surface',
+                    type=int, nargs=3, required='True')
+parser.add_argument('-b', '--bulk', help='Bulk structure of surface',
+                    type=str, default='', nargs='?', required='True')
+parser.add_argument('-w', '--width', help='width of supercell (in # of unit cells)',
+                    type=int, default=1)
+parser.add_argument('-l', '--length', help='length of supercell (defaults to width)',
+                    type=int, default=0)
+parser.add_argument('-d', '--depth', help='minimum depth of slab (in Angstroms) (default = 6) Note:  cell will be larger to ensure stoichiometry is preserved',
+                    type=float, default=6)
+parser.add_argument('-v', '--vacuum', help='vacuum above slab (in Angstroms) (default = 12)',
+                    type=float, default=12)
+parser.add_argument('-s', '--selective_dynamics', help='Freezes all atoms along the c vector with cordinates in between or equal to the two provided fractional coordinates',
+                    type=float, nargs=2)
+parser.add_argument('--vis', help='Visualize structures and determine which ones to save (only doable on a local computer with proper environment set up)',
+                    action='store_true')
+parser.add_argument('-o', '--no_orthogonal', help='does not attempt to orthogonalize cell.  Not recommended (less efficient, marginally harder to visualize)',
+                    action='store_false')
+
+
+args = parser.parse_args()
+
+if __name__ == '__main__':
+    if args.width == 0:
+        args.width = -1
+    surfs = Generate_Surface(args.bulk, agrs.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal)
+    i = 0
+    for surf in surfs:
+        if args.selective_dynamics:
+            sd = get_SD_along_vector(surf, 2, args.selective_dynamics)
+        else:
+            sd = None
+        p = Poscar(surf, selective_dynamics=sd)
