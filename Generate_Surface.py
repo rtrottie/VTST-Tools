@@ -64,32 +64,31 @@ def Generate_Surface(material, miller, width, length, depth, freeze=0, vacuum=10
     Poscar.get_string = get_string_more_sigfig
     Incar.get_string = pretty_incar_string
     surfs = []
-    with pmg.matproj.rest.MPRester(os.environ['MAT_PROJ_KEY']) as m:
-        s = Poscar.from_file(material).structure
-        sf = surf.SlabGenerator(s, miller, depth, 1, primitive=True)
-        i=0
-        for s in sf.get_slabs():
-            if orth:
-                s = s.get_orthogonal_c_slab()
-            s = Add_Vac(s, 2, vacuum)
-            s.make_supercell([width,length,1])
-            s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
-            if vis:
-                Vis.view(s, program=vis)
-                use = raw_input('Use this structure (y/n) or break:  ')
-                if use == 'n':
-                    continue
-                elif use =='y':
-                    surfs.append(s)
-                    i+=1
-                elif use == 'break':
-                    break
-                else:
-                    i+=1
-                    print('Bad input, assuming yes')
-            else:
+    s = Poscar.from_file(material).structure
+    sf = surf.SlabGenerator(s, miller, depth, 1, primitive=True)
+    i=0
+    for s in sf.get_slabs():
+        if orth:
+            s = s.get_orthogonal_c_slab()
+        s = Add_Vac(s, 2, vacuum)
+        s.make_supercell([width,length,1])
+        s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
+        if vis:
+            Vis.view(s, program=vis)
+            use = raw_input('Use this structure (y/n) or break:  ')
+            if use == 'n':
+                continue
+            elif use =='y':
                 surfs.append(s)
                 i+=1
+            elif use == 'break':
+                break
+            else:
+                i+=1
+                print('Bad input, assuming yes')
+        else:
+            surfs.append(s)
+            i+=1
     return surfs
 
 def Add_Vac(structure, vector, vacuum):
@@ -145,7 +144,7 @@ parser.add_argument('-m', '--miller', help='Miller indecies of desired surface',
                     type=int, nargs=3, required='True')
 parser.add_argument('-b', '--bulk', help='Bulk structure of surface',
                     type=str, default='', nargs='?', required='True')
-parser.add_argument('-w', '--width', help='width of supercell (in # of unit cells)',
+parser.add_argument('-w', '--width', help='width of supercell (in # of unit cells) (default is 1)',
                     type=int, default=1)
 parser.add_argument('-l', '--length', help='length of supercell (defaults to width)',
                     type=int, default=0)
