@@ -167,7 +167,7 @@ if __name__ == '__main__':
         args.length = args.width
     surfs = Generate_Surface(args.bulk, args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal)
     i = 0
-    path_base = args.miller.join('_')
+    path_base = join'_'.join(args.miller)
     for surf in surfs:
         path = os.path.join(path_base, str(i).zfill(2))
         if args.selective_dynamics:
