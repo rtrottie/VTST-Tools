@@ -166,11 +166,16 @@ args = parser.parse_args()
 if __name__ == '__main__':
     if args.width == 0:
         args.width = -1
-    surfs = Generate_Surface(args.bulk, agrs.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal)
+    surfs = Generate_Surface(args.bulk, args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal)
     i = 0
+    path_base = args.miller.join('_')
     for surf in surfs:
+        path = os.path.join(path_base, str(i).zfill(2))
         if args.selective_dynamics:
             sd = get_SD_along_vector(surf, 2, args.selective_dynamics)
         else:
             sd = None
         p = Poscar(surf, selective_dynamics=sd)
+        if not os.path.exists():
+            os.makedirs(path)
+        p.write_file(os.path.join(path, 'POSCAR'))
