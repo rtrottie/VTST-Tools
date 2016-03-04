@@ -178,3 +178,4 @@ if __name__ == '__main__':
         if not os.path.exists(path):
             os.makedirs(path)
         p.write_file(os.path.join(path, 'POSCAR'))
+        i += 1
