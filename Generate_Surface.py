@@ -141,7 +141,7 @@ def get_SD_along_vector(structure, vector, range):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-m', 'miller', help='Miller indecies of desired surface',
+parser.add_argument('-m', '--miller', help='Miller indecies of desired surface',
                     type=int, nargs=3, required='True')
 parser.add_argument('-b', '--bulk', help='Bulk structure of surface',
                     type=str, default='', nargs='?', required='True')
