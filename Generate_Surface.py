@@ -163,8 +163,8 @@ parser.add_argument('-o', '--no_orthogonal', help='does not attempt to orthogona
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    if args.width == 0:
-        args.width = -1
+    if args.length == 0:
+        args.length = args.width
     surfs = Generate_Surface(args.bulk, args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal)
     i = 0
     path_base = args.miller.join('_')
