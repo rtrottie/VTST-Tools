@@ -213,10 +213,12 @@ if __name__ == '__main__':
     if args.nodes == 0:
         if 'AUTO_NODES' in incar:
             nodes = incar['AUTO_NODES']
-        else:
+        elif 'NPAR' in incar:
             nodes = int(incar['NPAR']) * int(incar['KPAR']) if 'KPAR' in incar else int(incar['NPAR'])
             if jobtype == 'NEB':
                 nodes = nodes * int(incar["IMAGES"])
+        else:
+            raise Exception('No Nodes specifying need 1 of the following (in order of decreasing priority): \n-o option, AUTO_NODES in INCAR, or NPAR in INCAR')
     else:
         nodes = args.nodes
 
