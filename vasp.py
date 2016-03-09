@@ -155,7 +155,10 @@ def get_queue(computer, jobtype, time, nodes):
         else:
             raise Exception('Peregrine Queue Configuration not Valid: ' + time + ' hours ' + nodes + ' nodes ')
     elif computer == "psiops":
-        return 'batch'
+        if nodes == 1:
+            return 'gb'
+        else:
+            return 'ib'
     elif computer == "rapunzel":
         return 'batch'
     else:
@@ -259,6 +262,7 @@ if __name__ == '__main__':
     else:
         queue_type = 'pbs'
         submit = 'qsub'
+
     if args.queue:
         queue = args.queue
     else:
