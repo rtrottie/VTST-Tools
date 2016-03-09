@@ -155,7 +155,7 @@ def get_queue(computer, jobtype, time, nodes):
         else:
             raise Exception('Peregrine Queue Configuration not Valid: ' + time + ' hours ' + nodes + ' nodes ')
     elif computer == "psiops":
-        if nodes == 1:
+        if nodes <= 2:
             return 'gb'
         else:
             return 'ib'
