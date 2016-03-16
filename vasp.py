@@ -185,6 +185,8 @@ parser.add_argument('-s', '--silent', help='display less information',
 parser.add_argument('-i', '--inplace', help='Run VASP without moving files to continue run',
                     action='store_true')
 parser.add_argument('-n', '--name', help='name of run (Default is SYSTEM_Jobtype')
+parser.add_argument('-g', '--gamma', help='force a gamma point run',
+                    action='store_true')
 
 args = parser.parse_args()
 
@@ -241,6 +243,12 @@ if __name__ == '__main__':
     else:
         auto_gamma = 'True'
 
+    if args.gamma:
+        vasp_kpts = os.environ["VASP_GAMMA"]
+    else:
+        vasp_kpts = os.environ["VASP_KPTS"]
+
+
     if 'AUTO_CORES' in incar:
         cores = incar['AUTO_CORES']
     elif 'VASP_MPI_PROCS' in os.environ:
@@ -286,7 +294,7 @@ if __name__ == '__main__':
                 'auto_gamma'    : auto_gamma,
                 'account'       : account,
                 'mpi'           : os.environ["VASP_MPI"],
-                'vasp_kpts'     : os.environ["VASP_KPTS"],
+                'vasp_kpts'     : vasp_kpts,
                 'vasp_gamma'    : os.environ["VASP_GAMMA"],
                 'jobtype'       : jobtype,
                 'tasks'         : nodes*int(os.environ["VASP_NCORE"]),
