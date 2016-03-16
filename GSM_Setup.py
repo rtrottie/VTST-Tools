@@ -126,7 +126,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
                         os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/CHGCAR'))
 
         final = ase.io.read(final_file)
-        final.wrap(center)
+        final.wrap(f_center)
         initial.append(final)
 
     ase.io.write('scratch/initial0000.temp.xyz', initial)
