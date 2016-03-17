@@ -14,7 +14,7 @@ args = parser.parse_args()
 poscar = Poscar.from_file('CONTCAR' if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0 else 'POSCAR')
 potcar = Potcar.from_file('POTCAR')
 incar = Incar.from_file('INCAR')
-kpoints = Incar.from_file('KPOINTS')
+kpoints = Kpoints.from_file('KPOINTS')
 
 if not os.path.exists('nupdown'):
     os.makedirs('nupdown')
