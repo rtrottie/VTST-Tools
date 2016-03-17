@@ -5,7 +5,7 @@ import argparse
 from Classes_Pymatgen import *
 
 parser = argparse.ArgumentParser()
-parser.add_argument('centered_nupdown', help='magmom to check values from',
+parser.add_argument('center', help='magmom to check values from',
                     type=int, default=0)
 parser.add_argument('radius', help='Number of values to check around (default = 3 (7 jobs)) OPTIONAL',
                     type=int, default=5, nargs='?')
