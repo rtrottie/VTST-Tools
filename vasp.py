@@ -2,9 +2,7 @@
 # A general catch all function that runs VASP with just one command.  Automatically determines number of nodes to run on,
 # based on NPAR and KPAR what type (NEB,Dimer,Standard) to run and sets up a submission script and runs it
 #TODO: make silent work
-#TODO: stop copying blank CONTCAR
 
-# Usage: VASP.py [time] [nodes] [log_file]
 
 from jinja2 import Environment, FileSystemLoader
 from Classes_Pymatgen import *
