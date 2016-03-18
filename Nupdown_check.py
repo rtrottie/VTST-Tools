@@ -27,6 +27,7 @@ if not os.path.exists('nupdown'):
 
 for i in range(args.center - args.radius, args.center + args.radius + 1):
     dir = os.path.join('nupdown', str(i).zfill(3))
+    print('Setting up run in ./' + dir)
     if not os.path.exists(dir):
         os.makedirs(dir)
 
@@ -36,5 +37,5 @@ for i in range(args.center - args.radius, args.center + args.radius + 1):
     kpoints.write_file(os.path.join(dir, 'KPOINTS'))
     poscar.write_file(os.path.join(dir, 'POSCAR'))
     potcar.write_file(os.path.join(dir, 'POTCAR'))
-    if args.wavecar and os.path.exists('../../WAVECAR'):
-        shutil.copy('../../WAVECAR', 'WAVECAR')
+    if args.wavecar and os.path.exists('WAVECAR'):
+        shutil.copy('WAVECAR', os.path.join(dir,'WAVECAR'))
