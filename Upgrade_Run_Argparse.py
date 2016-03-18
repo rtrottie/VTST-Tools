@@ -19,6 +19,8 @@ parser.add_argument('-p', '--parent-directories', help='Number of Parent directo
                     type=int, default=5)
 parser.add_argument('-v', '--compare-vasprun.xml', help='Compare entire INCAR and vasprun.xml instead of just checking updated values.  Will almost always result in a prompt to continue.',
                     action='store_true')
+parser.add_argument('-r', '--prompt-required', help='Always prompt for REQUIRED tag in CONVERGENCE file (default passes if present in INCAR)',
+                    action='store_true')
 
 convergence = parser.add_mutually_exclusive_group()
 convergence.add_argument('--convergence-auto', help='Checks for Convergence, automatically stops if run isn\'t fully converged',
@@ -188,9 +190,14 @@ for val in stage.keys():
             kpoints = Kpoints.monkhorst_automatic((int(kpt[-3]), int(kpt[-2]), int(kpt[-1]) ))
         else:
             raise Exception('Kpoint not formated correctly need [G/M] x y z [x_shift, y_shift, z_shift] or G')
+    elif val == 'REQUIRED':
+        for setting in stage[key]:
+            if key not in Incar.from_file('INCAR'):
+                raise Exception(key + ' must be in INCAR according to ' + conv_file)
 
 if prev_stage_name:
-    os.makedirs(os.path.join('backup', prev_stage_name))
+    if not os.path.exists(os.path.join('backup', prev_stage_name)):
+        os.makedirs(os.path.join('backup', prev_stage_name))
     for f in saved_files:
         if os.path.exists(f):
             shutil.copy(f,os.path.join('backup', prev_stage_name, f))
