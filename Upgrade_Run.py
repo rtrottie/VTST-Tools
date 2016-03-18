@@ -51,12 +51,6 @@ def parse_incar_update(f_string):
     dicts.append(this_stage)
     return dicts
 
-if args.initialize:
-    run = Vasprun
-    run.incar = Incar.from_file('INCAR')
-    run.incar['STAGE_NUMBER'] = -1
-    run.incar['STAGE_NAME'] = 'init'
-
 else:
     if args.convergence_ignore:
         try:
@@ -101,6 +95,13 @@ if conv_file == None or not os.path.exists(conv_file):
 updates = parse_incar_update(conv_file)
 incar = Incar.from_file("INCAR")
 
+
+if args.initialize:
+    run = Vasprun
+    run.incar = Incar.from_file('INCAR')
+    run.incar['STAGE_NUMBER'] = -1
+    run.incar['STAGE_NAME'] = 'init'
+
 if args.stage != -1:
     stage = updates[args.stage]
     if int(args.stage) > 0:
@@ -111,7 +112,7 @@ if args.stage != -1:
 else:
     stage = updates[int(run.incar['STAGE_NUMBER'])+1]
     prev_stage_name = run.incar['STAGE_NAME']
-    prev_stage = stage = updates[int(run.incar['STAGE_NUMBER'])]
+    prev_stage = updates[int(run.incar['STAGE_NUMBER'])]
 
 ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM']
 
