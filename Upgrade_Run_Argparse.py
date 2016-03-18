@@ -137,11 +137,21 @@ if args['compare-vasprun.xml']:
 else:
     err_msg = 'CONVERGENCE previous stage appears different than what is in the vasprun.xml.  Problems with: '
     error = False
-    for key in stage.keys:
+    for key in prev_stage.keys:
         if key not in ignored_keys:
             if key in run.incar:
-                if run.incar[key] != stage[key]:
-                    err_msg = err_msg + 'vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'INCAR : ' + str(incar[key])
+                if run.incar[key] != prev_stage[key]:
+                    err_msg = err_msg + '\n' + key + ':  vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'CONV : ' + str(incar[key])
+                    error = True
+            else:
+                err_msg = err_msg + '\n' + key + ':  vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'CONV : ' + str(incar[key])
+                error = True
+    if error:
+        cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
+        if cont == 1:
+            run.incar = incar
+        else:
+            sys.exit('Run will not be updated')
 
 
 
