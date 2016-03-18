@@ -147,7 +147,6 @@ elif prev_stage != None:
     for key in prev_stage.keys():
         if key not in ignored_keys:
             if key in run.incar:
-                print(key)
                 if Incar.proc_val(key, str(run.incar[key])) != Incar.proc_val(key, str(prev_stage[key])):
                     err_msg = err_msg + '\n' + key + ':  vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'CONV : ' + str(incar[key])
                     error = True
@@ -197,7 +196,7 @@ for val in stage.keys():
         else:
             raise Exception('Kpoint not formated correctly need [G/M] x y z [x_shift, y_shift, z_shift] or G')
     elif val == 'REQUIRED':
-        for setting in stage[key]:
+        for setting in stage[val]:
             if key not in Incar.from_file('INCAR'):
                 raise Exception(key + ' must be in INCAR according to ' + conv_file)
 
