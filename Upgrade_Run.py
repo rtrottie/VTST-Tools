@@ -117,7 +117,7 @@ else:
     else:
         prev_stage = None
 
-ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM']
+ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM', 'KPOINTS', 'REQUIRED', 'DELETE', 'REMOVE']
 
 if args.compare_vasprun:
     diff = incar.diff(run.incar)
@@ -151,7 +151,7 @@ elif prev_stage != None:
                     err_msg = err_msg + '\n' + key + ':  vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'CONV : ' + str(incar[key])
                     error = True
             else:
-                err_msg = err_msg + '\n' + key + ':  vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'CONV : ' + str(incar[key])
+                err_msg = err_msg + '\n' + key + ':  vasprun.xml :  NONE     ' + 'CONV : ' + str(incar[key])
                 error = True
     if error:
         cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
