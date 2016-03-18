@@ -169,7 +169,11 @@ elif prev_stage != None:
 
 kpoints = False
 for val in stage.keys():
-    if val in run.incar:
+    if val == 'REQUIRED':
+        for setting in stage.pop('REQUIRED').replace(',',' ').split():
+            if setting not in Incar.from_file('INCAR'):
+                raise Exception(setting + ' must be in INCAR according to ' + conv_file)
+    elif val in run.incar:
         run.incar.pop(val)
     elif val == 'REMOVE':
         to_remove = stage.pop('REMOVE').replace(',',' ').split()
@@ -195,10 +199,6 @@ for val in stage.keys():
             kpoints = Kpoints.monkhorst_automatic((int(kpt[-3]), int(kpt[-2]), int(kpt[-1]) ))
         else:
             raise Exception('Kpoint not formated correctly need [G/M] x y z [x_shift, y_shift, z_shift] or G')
-    elif val == 'REQUIRED':
-        for setting in stage[val]:
-            if key not in Incar.from_file('INCAR'):
-                raise Exception(key + ' must be in INCAR according to ' + conv_file)
 
 if prev_stage_name:
     if not os.path.exists(os.path.join('backup', prev_stage_name)):
