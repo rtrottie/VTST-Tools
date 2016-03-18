@@ -83,10 +83,15 @@ if args['file-convergence']:
 elif 'STAGE_FILE' in run.incar:
     conv_file = run.incar["STAGE_FILE"]
 else:
-    conv_file = "CONVERGENCE"
-for incar_adjust_file in [conv_file, '../' + conv_file, '../../' + conv_file, '../../../' + conv_file, '../../../../' + conv_file, '../../../../../' + conv_file]: # Look up at least three directories
-    if os.path.exists(incar_adjust_file):
-        break
+    conv_file = None
+    for i in range(args['parent-directories'] + 1):
+        conv_file_test = '../' * i + 'CONVERGENCE'
+        if os.path.exists(conv_file_test):
+            conv_file = conv_file_test
+            break
+
+if conv_file == None or not os.path.exists(conv_file):
+    raise Exception('CONVERGENCE File does not exist')
 
 updates = parse_incar_update(incar_adjust_file)
 
