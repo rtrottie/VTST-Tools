@@ -17,7 +17,7 @@ parser.add_argument('-f', '--file-convergence', help='Location of CONVERGENCE fi
                     type=str)
 parser.add_argument('-p', '--parent-directories', help='Number of Parent directories to look up into for CONVERGENCE file (DEFAULT: 5) overruled by -f option',
                     type=int, default=5)
-parser.add_argument('-v', '--compare-vasprun.xml', help='Compare entire INCAR and vasprun.xml instead of just checking updated values.  Will almost always result in a prompt to continue.',
+parser.add_argument('-v', '--compare-vasprun', help='Compare entire INCAR and vasprun.xml instead of just checking updated values.  Will almost always result in a prompt to continue.',
                     action='store_true')
 parser.add_argument('-r', '--prompt-required', help='Always prompt for REQUIRED tag in CONVERGENCE file (default passes if present in INCAR)',
                     action='store_true')
