@@ -148,7 +148,7 @@ elif prev_stage != None:
         if key not in ignored_keys:
             if key in run.incar:
                 print(key)
-                if Incar.proc_val(key, run.incar[key]) != Incar.proc_val(key, prev_stage[key]):
+                if Incar.proc_val(key, str(run.incar[key])) != Incar.proc_val(key, str(prev_stage[key])):
                     err_msg = err_msg + '\n' + key + ':  vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'CONV : ' + str(incar[key])
                     error = True
             else:
