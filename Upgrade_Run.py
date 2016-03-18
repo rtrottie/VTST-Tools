@@ -58,7 +58,7 @@ if args.initialize:
     run.incar['STAGE_NAME'] = 'init'
 
 else:
-    if args['convergence-ignore']:
+    if args.convergence_ignore:
         try:
             run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
         except:
