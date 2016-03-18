@@ -1,21 +1,24 @@
 #!/usr/bin/env python
-from Classes_Pymatgen import *
 from pymatgen.io.vasp.outputs import *
+from Classes_Pymatgen import *
 import os
 import sys
 import shutil
 import cfg
 import argparse
-import vasp
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--initialize', help='Initialize Vasp Run from CONVERGENCE file',
-                    type=int, action='store_true')
+                    action='store_true')
+parser.add_argument('-s', '--stage', help='Forces Upgrade to specified run',
+                    type=int, default=-1)
 parser.add_argument('-f', '--file-convergence', help='Location of CONVERGENCE file on disk',
-                            type=str)
+                    type=str)
 parser.add_argument('-p', '--parent-directories', help='Number of Parent directories to look up into for CONVERGENCE file (DEFAULT: 5) overruled by -f option',
-                            type=int, default=5)
+                    type=int, default=5)
+parser.add_argument('-v', '--compare-vasprun.xml', help='Compare entire INCAR and vasprun.xml instead of just checking updated values.  Will almost always result in a prompt to continue.',
+                    action='store_true')
 
 convergence = parser.add_mutually_exclusive_group()
 convergence.add_argument('--convergence-auto', help='Checks for Convergence, automatically stops if run isn\'t fully converged',
@@ -93,47 +96,59 @@ else:
 if conv_file == None or not os.path.exists(conv_file):
     raise Exception('CONVERGENCE File does not exist')
 
-updates = parse_incar_update(incar_adjust_file)
-
+updates = parse_incar_update(conv_file)
 incar = Incar.from_file("INCAR")
-diff = incar.diff(run.incar)
-for i in cfg.INCAR_format[-1][1]:
-    if i in diff["Different"].keys() or i in ['NPAR']:
-        diff["Different"].pop(i)
-if len(diff["Different"].keys()) > 0:
-    err_msg = 'INCAR appears different than the vasprun.xml.  Problems with: ' + ' '.join(diff["Different"].keys())
-    for key in diff["Different"].keys():
-        err_msg = err_msg + '\n  ' + key + '   '
-        if key in run.incar:
-            err_msg = err_msg + 'vasprun.xml :  ' + str(run.incar[key]) + '   '
-        else:
-            err_msg = err_msg + 'vasprun.xml :  N/A   '
-        if key in incar:
-                err_msg = err_msg + 'INCAR : ' + str(incar[key])
-        else:
-            err_msg = err_msg + 'INCAR :  N/A'
-    cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
-    if cont == 1:
-        run.incar = incar
-    else:
-        sys.exit('Run will not be updated')
 
-if 'STAGE_NUMBER' not in run.incar or (len(sys.argv) > 1 and sys.argv[1] == 'ask'):
-    prompt = 'Run does not appear to have been staged previously.\nWhat stage should be selected:\n'
-    stages = '\n'.join(list(map(lambda x: '    ' + str(x['STAGE_NUMBER']) + ' ' +x['STAGE_NAME'], updates)))
-    print(prompt+stages)
-    cont = input('    or cancel (c) :  ')
-    if cont == -1:
-        sys.exit('Canceled')
+if args.stage != -1:
+    stage = updates[args.stage]
+    if int(args.stage) > 0:
+        prev_stage_name = updates[int(cont)-1]['STAGE_NAME']
+        prev_stage = updates[args.stage - 1]
     else:
-        stage = updates[int(cont)]
-        if int(cont) > 0:
-            prev_stage_name = updates[int(cont)-1]['STAGE_NAME']
-        else:
-            prev_stage_name = None
+        prev_stage_name = 'init'
 else:
     stage = updates[int(run.incar['STAGE_NUMBER'])+1]
     prev_stage_name = run.incar['STAGE_NAME']
+
+ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM']
+
+if args['compare-vasprun.xml']:
+    diff = incar.diff(run.incar)
+    for i in cfg.INCAR_format[-1][1]:
+        if i in diff["Different"].keys() or i in ignored_keys:
+            diff["Different"].pop(i)
+    if len(diff["Different"].keys()) > 0:
+        err_msg = 'INCAR appears different than the vasprun.xml.  Problems with: ' + ' '.join(diff["Different"].keys())
+        for key in diff["Different"].keys():
+            err_msg = err_msg + '\n  ' + key + '   '
+            if key in run.incar:
+                err_msg = err_msg + 'vasprun.xml :  ' + str(run.incar[key]) + '   '
+            else:
+                err_msg = err_msg + 'vasprun.xml :  N/A   '
+            if key in incar:
+                    err_msg = err_msg + 'INCAR : ' + str(incar[key])
+            else:
+                err_msg = err_msg + 'INCAR :  N/A'
+        cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
+        if cont == 1:
+            run.incar = incar
+        else:
+            sys.exit('Run will not be updated')
+else:
+    err_msg = 'CONVERGENCE previous stage appears different than what is in the vasprun.xml.  Problems with: '
+    error = False
+    for key in stage.keys:
+        if key not in ignored_keys:
+            if key in run.incar:
+                if run.incar[key] != stage[key]:
+                    err_msg = err_msg + 'vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'INCAR : ' + str(incar[key])
+
+
+
+################
+### OLD CODE ###
+################
+
 
 kpoints = False
 for val in stage.keys():
