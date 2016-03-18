@@ -114,7 +114,7 @@ else:
 
 ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM']
 
-if args.compare_vasprun.xml:
+if args.compare_vasprun:
     diff = incar.diff(run.incar)
     for i in cfg.INCAR_format[-1][1]:
         if i in diff["Different"].keys() or i in ignored_keys:
