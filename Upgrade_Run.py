@@ -144,7 +144,7 @@ if args.compare_vasprun:
 elif prev_stage != None:
     err_msg = 'CONVERGENCE previous stage appears different than what is in the vasprun.xml.  Problems with: '
     error = False
-    for key in prev_stage.keys:
+    for key in prev_stage.keys():
         if key not in ignored_keys:
             if key in run.incar:
                 if run.incar[key] != prev_stage[key]:
