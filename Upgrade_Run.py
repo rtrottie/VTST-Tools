@@ -80,6 +80,8 @@ else:
                     pass
                 else:
                     sys.exit('Run will not be updated')
+    run.incar['STAGE_NUMBER'] = Incar.from_file('INCAR')['STAGE_NUMBER']
+    run.incar['STAGE_NAME'] = Incar.from_file('INCAR')['STAGE_NAME']
 
 
 if args.file_convergence:
