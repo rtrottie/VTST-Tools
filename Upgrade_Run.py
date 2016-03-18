@@ -111,6 +111,7 @@ if args.stage != -1:
 else:
     stage = updates[int(run.incar['STAGE_NUMBER'])+1]
     prev_stage_name = run.incar['STAGE_NAME']
+    prev_stage = stage = updates[int(run.incar['STAGE_NUMBER'])]
 
 ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM']
 
