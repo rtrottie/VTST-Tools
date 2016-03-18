@@ -1,10 +1,34 @@
 #!/usr/bin/env python
-from Classes_Pymatgen import *
 from pymatgen.io.vasp.outputs import *
+from Classes_Pymatgen import *
 import os
 import sys
 import shutil
 import cfg
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--initialize', help='Initialize Vasp Run from CONVERGENCE file',
+                    action='store_true')
+parser.add_argument('-s', '--stage', help='Forces Upgrade to specified run',
+                    type=int, default=-1)
+parser.add_argument('-f', '--file-convergence', help='Location of CONVERGENCE file on disk',
+                    type=str)
+parser.add_argument('-p', '--parent-directories', help='Number of Parent directories to look up into for CONVERGENCE file (DEFAULT: 5) overruled by -f option',
+                    type=int, default=5)
+parser.add_argument('-v', '--compare-vasprun.xml', help='Compare entire INCAR and vasprun.xml instead of just checking updated values.  Will almost always result in a prompt to continue.',
+                    action='store_true')
+parser.add_argument('-r', '--prompt-required', help='Always prompt for REQUIRED tag in CONVERGENCE file (default passes if present in INCAR)',
+                    action='store_true')
+
+convergence = parser.add_mutually_exclusive_group()
+convergence.add_argument('--convergence-auto', help='Checks for Convergence, automatically stops if run isn\'t fully converged',
+                         action='store_true')
+convergence.add_argument('--convergence-ignore', help='Makes no convergence check',
+                         action='store_true')
+
+args = parser.parse_args()
 
 saved_files = ['CONTCAR, vasprun.xml', 'OUTCAR', 'INCAR', 'KPOINTS', 'POSCAR', 'MODECAR', 'NEWMODECAR']
 
@@ -27,82 +51,116 @@ def parse_incar_update(f_string):
     dicts.append(this_stage)
     return dicts
 
-
-if len(sys.argv) == 1 or sys.argv[1] != '0':
-    try:
-        run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
-        if not run.converged:
-            cont = input('Run has not converged.  Continue? (1/0 = yes/no):  ')
-            if cont == 1:
-                pass
-            else:
-                sys.exit('Run will not be updated')
-    except:
-        print('Could Not Read vasprun.xml, continuing anyway?')
-        cont = input('Continue? (1/0 = yes/no):  ')
-        if cont == 1:
-            pass
-        else:
-            sys.exit('Run will not be updated')
-        run = Vasprun
-        run.incar = Incar.from_file('INCAR')
-
-else:
+if args.initialize:
     run = Vasprun
     run.incar = Incar.from_file('INCAR')
     run.incar['STAGE_NUMBER'] = -1
     run.incar['STAGE_NAME'] = 'init'
 
+else:
+    if args['convergence-ignore']:
+        try:
+            run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
+        except:
+            run = Vasprun
+            run.incar = Incar.from_file('INCAR')
+            run.converged = False
+    else:
+        try:
+            run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
+        except Exception as e:
+            if args['convergence-auto']:
+                raise e
+            run = Vasprun
+            run.incar = Incar.from_file('INCAR')
+            run.converged = False
+        finally:
+            if not run.converged:
+                cont = input('Run has not converged.  Continue? (1/0 = yes/no):  ')
+                if cont == 1:
+                    pass
+                else:
+                    sys.exit('Run will not be updated')
 
-if 'STAGE_FILE' in run.incar:
+
+if args['file-convergence']:
+    conv_file = args['file-convergence']
+elif 'STAGE_FILE' in run.incar:
     conv_file = run.incar["STAGE_FILE"]
 else:
-    conv_file = "CONVERGENCE"
-for incar_adjust_file in [conv_file, '../' + conv_file, '../../' + conv_file, '../../../' + conv_file, '../../../../' + conv_file, '../../../../../' + conv_file]: # Look up at least three directories
-    if os.path.exists(incar_adjust_file):
-        break
+    conv_file = None
+    for i in range(args['parent-directories'] + 1):
+        conv_file_test = '../' * i + 'CONVERGENCE'
+        if os.path.exists(conv_file_test):
+            conv_file = conv_file_test
+            break
 
-updates = parse_incar_update(incar_adjust_file)
+if conv_file == None or not os.path.exists(conv_file):
+    raise Exception('CONVERGENCE File does not exist')
 
+updates = parse_incar_update(conv_file)
 incar = Incar.from_file("INCAR")
-diff = incar.diff(run.incar)
-for i in cfg.INCAR_format[-1][1]:
-    if i in diff["Different"].keys() or i in ['NPAR']:
-        diff["Different"].pop(i)
-if len(diff["Different"].keys()) > 0:
-    err_msg = 'INCAR appears different than the vasprun.xml.  Problems with: ' + ' '.join(diff["Different"].keys())
-    for key in diff["Different"].keys():
-        err_msg = err_msg + '\n  ' + key + '   '
-        if key in run.incar:
-            err_msg = err_msg + 'vasprun.xml :  ' + str(run.incar[key]) + '   '
-        else:
-            err_msg = err_msg + 'vasprun.xml :  N/A   '
-        if key in incar:
-                err_msg = err_msg + 'INCAR : ' + str(incar[key])
-        else:
-            err_msg = err_msg + 'INCAR :  N/A'
-    cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
-    if cont == 1:
-        run.incar = incar
-    else:
-        sys.exit('Run will not be updated')
 
-if 'STAGE_NUMBER' not in run.incar or (len(sys.argv) > 1 and sys.argv[1] == 'ask'):
-    prompt = 'Run does not appear to have been staged previously.\nWhat stage should be selected:\n'
-    stages = '\n'.join(list(map(lambda x: '    ' + str(x['STAGE_NUMBER']) + ' ' +x['STAGE_NAME'], updates)))
-    print(prompt+stages)
-    cont = input('    or cancel (c) :  ')
-    if cont == -1:
-        sys.exit('Canceled')
+if args.stage != -1:
+    stage = updates[args.stage]
+    if int(args.stage) > 0:
+        prev_stage_name = updates[int(cont)-1]['STAGE_NAME']
+        prev_stage = updates[args.stage - 1]
     else:
-        stage = updates[int(cont)]
-        if int(cont) > 0:
-            prev_stage_name = updates[int(cont)-1]['STAGE_NAME']
-        else:
-            prev_stage_name = None
+        prev_stage_name = 'init'
 else:
     stage = updates[int(run.incar['STAGE_NUMBER'])+1]
     prev_stage_name = run.incar['STAGE_NAME']
+
+ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM']
+
+if args['compare-vasprun.xml']:
+    diff = incar.diff(run.incar)
+    for i in cfg.INCAR_format[-1][1]:
+        if i in diff["Different"].keys() or i in ignored_keys:
+            diff["Different"].pop(i)
+    if len(diff["Different"].keys()) > 0:
+        err_msg = 'INCAR appears different than the vasprun.xml.  Problems with: ' + ' '.join(diff["Different"].keys())
+        for key in diff["Different"].keys():
+            err_msg = err_msg + '\n  ' + key + '   '
+            if key in run.incar:
+                err_msg = err_msg + 'vasprun.xml :  ' + str(run.incar[key]) + '   '
+            else:
+                err_msg = err_msg + 'vasprun.xml :  N/A   '
+            if key in incar:
+                    err_msg = err_msg + 'INCAR : ' + str(incar[key])
+            else:
+                err_msg = err_msg + 'INCAR :  N/A'
+        cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
+        if cont == 1:
+            run.incar = incar
+        else:
+            sys.exit('Run will not be updated')
+else:
+    err_msg = 'CONVERGENCE previous stage appears different than what is in the vasprun.xml.  Problems with: '
+    error = False
+    for key in prev_stage.keys:
+        if key not in ignored_keys:
+            if key in run.incar:
+                if run.incar[key] != prev_stage[key]:
+                    err_msg = err_msg + '\n' + key + ':  vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'CONV : ' + str(incar[key])
+                    error = True
+            else:
+                err_msg = err_msg + '\n' + key + ':  vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'CONV : ' + str(incar[key])
+                error = True
+    if error:
+        cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
+        if cont == 1:
+            run.incar = incar
+        else:
+            sys.exit('Run will not be updated')
+
+
+
+################
+### OLD CODE ###
+################
+
 
 kpoints = False
 for val in stage.keys():
@@ -132,9 +190,14 @@ for val in stage.keys():
             kpoints = Kpoints.monkhorst_automatic((int(kpt[-3]), int(kpt[-2]), int(kpt[-1]) ))
         else:
             raise Exception('Kpoint not formated correctly need [G/M] x y z [x_shift, y_shift, z_shift] or G')
+    elif val == 'REQUIRED':
+        for setting in stage[key]:
+            if key not in Incar.from_file('INCAR'):
+                raise Exception(key + ' must be in INCAR according to ' + conv_file)
 
 if prev_stage_name:
-    os.makedirs(os.path.join('backup', prev_stage_name))
+    if not os.path.exists(os.path.join('backup', prev_stage_name)):
+        os.makedirs(os.path.join('backup', prev_stage_name))
     for f in saved_files:
         if os.path.exists(f):
             shutil.copy(f,os.path.join('backup', prev_stage_name, f))
