@@ -110,7 +110,10 @@ if args.stage != -1:
 else:
     stage = updates[int(run.incar['STAGE_NUMBER'])+1]
     prev_stage_name = run.incar['STAGE_NAME']
-    prev_stage = updates[int(run.incar['STAGE_NUMBER'])]
+    if not args.initialize:
+        prev_stage = updates[int(run.incar['STAGE_NUMBER'])]
+    else:
+        prev_stage = None
 
 ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM']
 
@@ -136,7 +139,7 @@ if args.compare_vasprun:
             run.incar = incar
         else:
             sys.exit('Run will not be updated')
-else:
+elif prev_stage != None:
     err_msg = 'CONVERGENCE previous stage appears different than what is in the vasprun.xml.  Problems with: '
     error = False
     for key in prev_stage.keys:
