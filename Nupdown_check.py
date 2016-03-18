@@ -12,7 +12,8 @@ parser.add_argument('center', help='magmom to check values from',
 parser.add_argument('radius', help='Number of values to check around (default = 4 (9 jobs)) OPTIONAL',
                     type=int, default=4, nargs='?')
 parser.add_argument('-s', '--system', help='Don\'t modify SYSTEM variable in INCAR.  By default NUPDOWN is prepended to this')
-parser.add_argument('-w', '--wavecar', help='Copy WAVECAR file')
+parser.add_argument('-w', '--wavecar', help='Copy WAVECAR file',
+                    action='store_true')
 args = parser.parse_args()
 
 poscar = Poscar.from_file('CONTCAR' if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0 else 'POSCAR')
