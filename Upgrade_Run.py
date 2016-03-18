@@ -69,7 +69,7 @@ else:
         try:
             run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
         except Exception as e:
-            if args['convergence-auto']:
+            if args.convergence_auto:
                 raise e
             run = Vasprun
             run.incar = Incar.from_file('INCAR')
@@ -83,13 +83,13 @@ else:
                     sys.exit('Run will not be updated')
 
 
-if args['file-convergence']:
-    conv_file = args['file-convergence']
+if args.file_convergence:
+    conv_file = args.file_convergence
 elif 'STAGE_FILE' in run.incar:
     conv_file = run.incar["STAGE_FILE"]
 else:
     conv_file = None
-    for i in range(args['parent-directories'] + 1):
+    for i in range(args.parent_directories + 1):
         conv_file_test = '../' * i + 'CONVERGENCE'
         if os.path.exists(conv_file_test):
             conv_file = conv_file_test
@@ -114,7 +114,7 @@ else:
 
 ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM']
 
-if args['compare-vasprun.xml']:
+if args.compare_vasprun.xml:
     diff = incar.diff(run.incar)
     for i in cfg.INCAR_format[-1][1]:
         if i in diff["Different"].keys() or i in ignored_keys:
