@@ -39,3 +39,5 @@ for i in range(args.center - args.radius, args.center + args.radius + 1):
     potcar.write_file(os.path.join(dir, 'POTCAR'))
     if args.wavecar and os.path.exists('WAVECAR'):
         shutil.copy('WAVECAR', os.path.join(dir,'WAVECAR'))
+        if os.path.exists('CHGCAR'):
+            shutil.copy('CHGCAR', os.path.join(dir, 'CHGCAR'))
