@@ -160,12 +160,7 @@ elif prev_stage != None:
         else:
             sys.exit('Run will not be updated')
 
-
-
-################
-### OLD CODE ###
-################
-
+incar = Incar.from_file('INCAR')
 
 kpoints = False
 for val in stage.keys():
@@ -173,13 +168,13 @@ for val in stage.keys():
         for setting in stage.pop('REQUIRED').replace(',',' ').split():
             if setting not in Incar.from_file('INCAR'):
                 raise Exception(setting + ' must be in INCAR according to ' + conv_file)
-    elif val in run.incar:
-        run.incar.pop(val)
+    elif val in incar:
+        incar.pop(val)
     elif val == 'REMOVE':
         to_remove = stage.pop('REMOVE').replace(',',' ').split()
         for item in to_remove:
             try:
-                run.incar.pop(item)
+                incar.pop(item)
             except:
                 print('Could not remove ' + item +' because it does not exist.')
     elif val == 'DELETE':
@@ -207,7 +202,7 @@ if prev_stage_name:
         if os.path.exists(f):
             shutil.copy(f,os.path.join('backup', prev_stage_name, f))
 
-new_incar = run.incar.__add__(Incar(stage))
+new_incar = incar.__add__(Incar(stage))
 new_incar.write_file('INCAR')
 if kpoints:
     kpoints.write_file('KPOINTS')
