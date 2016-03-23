@@ -31,8 +31,8 @@ if args.end:
     start = args.start if args.start < args.end else args.end
     end = args.end + 1 if args.start < args.end else args.start + 1
 else:
-    start = args.center - args.radius
-    end = args.center + args.radius + 1
+    start = args.start - args.radius
+    end = args.start + args.radius + 1
 
 for i in range(start, end):
     dir = os.path.join('nupdown', str(i).zfill(3))
