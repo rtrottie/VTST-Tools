@@ -16,7 +16,7 @@ grad2 = '../scratch/IMAGE.' + str(args.ts_image + 1).zfill(2)
 
 print('Copying Old Run')
 
-shutil.copy(ts, 'dim')
+shutil.copytree(ts, 'dim')
 os.chdir('dim')
 
 print('Setting up INCAR')
