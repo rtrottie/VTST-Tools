@@ -27,4 +27,4 @@ incar['NSW'] = 5000
 incar.write_file('INCAR')
 
 print('Making MODECAR')
-os.system('modemake.pl ' + grad1 + '/POSCAR ' + grad2 + '/POSCAR')
+os.system('modemake.pl ' + grad1 + '/POSCAR ' + grad2 + '/POSCAR &> /dev/null')
