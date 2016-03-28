@@ -6,7 +6,7 @@ import shutil
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('ts-image', help='Image of TS',
+parser.add_argument('ts_image', help='Image of TS',
                     type=int)
 args = parser.parse_args()
 
