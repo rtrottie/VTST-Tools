@@ -175,6 +175,8 @@ parser.add_argument('-t', '--time', help='walltime for run (integer number of ho
                     type=int, default=0)
 parser.add_argument('-o', '--nodes', help='nodes per run (default : KPAR*NPAR)',
                     type=int, default=0)
+parser.add_argument('-c', '--cores', help='cores per run (default : max allowed per system)',
+                    type=int)
 parser.add_argument('-q', '--queue', help='manually specify queue instead of auto determining')
 parser.add_argument('-b', '--backup', help='backup files, but don\'t execute vasp ',
                     action='store_true')
@@ -247,7 +249,9 @@ if __name__ == '__main__':
         vasp_kpts = os.environ["VASP_KPTS"]
 
 
-    if 'AUTO_CORES' in incar:
+    if args.cores:
+        cores = args.cores
+    elif 'AUTO_CORES' in incar:
         cores = incar['AUTO_CORES']
     elif 'VASP_MPI_PROCS' in os.environ:
         cores = os.environ["VASP_MPI_PROCS"]
