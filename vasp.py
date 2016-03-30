@@ -51,6 +51,7 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
     elif jobtype == 'GSM' or jobtype == 'SSM':
         instructions['backup'] = ['stringfile.xyz0000', 'inpfileq', 'scratch/initial0000.xyz', 'scratch/paragsm0000',
                                   'INCAR']
+        instructions['commands'].extend(['cp stringfile.xyz0000 restart.xyz0000'])
         if jobtype == 'SSM':
             instructions['backup'].append('scratch/ISOMERS0000')
     else:
