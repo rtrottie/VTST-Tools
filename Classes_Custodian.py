@@ -22,7 +22,7 @@ class DimerDivergingHandler(ErrorHandler):
             with open("DIMCAR") as f:
                 dimcar = list(map(lambda x: [x.split()], reversed(f.readlines())))
                 dimcar = list(reduce(lambda x,y: x if x[-1][0] == y[0][0] else x + y, dimcar))
-                if len(dimcar) <= 4:
+                if len(dimcar) <= 10:
                     return False
                 elif float(dimcar[0][1]) < 5:
                     return False
