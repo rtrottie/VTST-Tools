@@ -24,6 +24,7 @@ incar = Incar.from_file('INCAR')
 incar['ICHAIN'] = 2
 incar['EDIFF'] = 1e-7
 incar['NSW'] = 5000
+incar['SYSTEM'] = incar['SYSTEM'] + ' dim'
 incar.write_file('INCAR')
 
 print('Making MODECAR')
