@@ -12,7 +12,7 @@ from Classes_Pymatgen import *
 
 def check_dimer(directory, runP=True):
     os.chdir(directory)
-    os.system(os.path.join(cfg.VTST_DIR, 'dimmins.pl'))
+    os.system(os.path.join(os.environ['VTST_DIR'], 'dimmins.pl'))
     for m in ['min1', 'min2']:
         dir = os.path.join(directory, 'mins', m)
         shutil.copy(os.path.join(directory, 'WAVECAR'), dir)
