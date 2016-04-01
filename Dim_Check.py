@@ -8,6 +8,7 @@ import cfg
 import shutil
 import sys
 import subprocess
+import argparse
 from Classes_Pymatgen import *
 
 def check_dimer(directory, runP=True):
@@ -15,9 +16,19 @@ def check_dimer(directory, runP=True):
     os.system(os.path.join(os.environ['VTST_DIR'], 'dimmins.pl'))
     for m in ['min1', 'min2']:
         dir = os.path.join(directory, 'mins', m)
-        shutil.copy(os.path.join(directory, 'WAVECAR'), dir)
-        shutil.copy(os.path.join(directory, 'CHG'), dir)
-        shutil.copy(os.path.join(directory, 'CHGCAR'), dir)
+        try:
+            print('Copying WAVECAR to ' + m),
+            shutil.copy(os.path.join(directory, 'WAVECAR'), dir)
+            print('Done')
+        except:
+            print('Failed')
+        try:
+            print('Copying CHGCAR to ' + m),
+            shutil.copy(os.path.join(directory, 'CHGCAR'), dir)
+            print('Done')
+        except:
+            print('Failed')
+        print('Adjusting INCAR')
         incar = Incar.from_file(os.path.join(dir,'INCAR'))
         incar['EDIFF'] = 1e-5
         incar['EDIFFG'] = incar['EDIFFG']*1.2
@@ -32,5 +43,11 @@ def check_dimer(directory, runP=True):
             os.system('VASP.py ' + reduce(lambda x,y: str(x)+' '+str(y), sys.argv[1:], ''))
             os.chdir(directory)
 
-if os.path.basename(sys.argv[0]) == 'Dim_Check.py':
-    check_dimer(os.path.abspath(os.curdir))
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('directory', help='directory to check dimers in (Default: ".")',
+                        default='.', nargs='?')
+    parser.add_argument('-r', '--run', help='Run VASP once directory is copied',
+                        action='store_true')
+    args = parser.parse_args()
+    check_dimer(args.directory, args.run)
