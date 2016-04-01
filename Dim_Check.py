@@ -32,6 +32,7 @@ def check_dimer(directory, runP=False):
         incar = Incar.from_file(os.path.join(dir,'INCAR'))
         incar['EDIFF'] = 1e-5
         incar['EDIFFG'] = incar['EDIFFG']*1.2
+        incar['SYSTEM'] = m + ' ' + incar['SYSTEM']
         incar.pop('ICHAIN')
         incar['IOPT'] = 7
         if 'AUTO_TIME' in incar:
