@@ -45,7 +45,7 @@ def check_dimer(directory, runP=True):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('directory', help='directory to check dimers in (Default: ".")',
+    parser.add_argument('directory', help='directory to run script (Default: ".")',
                         default='.', nargs='?')
     parser.add_argument('-r', '--run', help='Run VASP once directory is copied',
                         action='store_true')
