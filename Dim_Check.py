@@ -20,7 +20,7 @@ def check_dimer(directory, runP=True):
         shutil.copy(os.path.join(directory, 'CHGCAR'), dir)
         incar = Incar.from_file(os.path.join(dir,'INCAR'))
         incar['EDIFF'] = 1e-5
-        incar['EDIFFG'] = -5e-2
+        incar['EDIFFG'] = incar['EDIFFG']*1.2
         incar.pop('ICHAIN')
         incar['IOPT'] = 7
         if 'AUTO_TIME' in incar:
