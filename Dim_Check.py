@@ -11,7 +11,7 @@ import subprocess
 import argparse
 from Classes_Pymatgen import *
 
-def check_dimer(directory, runP=True):
+def check_dimer(directory, runP=False):
     os.chdir(directory)
     os.system(os.path.join(os.environ['VTST_DIR'], 'dimmins.pl'))
     for m in ['min1', 'min2']:
@@ -40,7 +40,7 @@ def check_dimer(directory, runP=True):
         if runP:
             os.chdir(dir)
             os.system('touch ' + m + '-' + subprocess.check_output('basename $( ls ../../*.log )', shell=True).strip())
-            os.system('VASP.py ' + reduce(lambda x,y: str(x)+' '+str(y), sys.argv[1:], ''))
+            os.system('vasp.py ' + reduce(lambda x,y: str(x)+' '+str(y), sys.argv[1:], ''))
             os.chdir(directory)
 
 if __name__ == '__main__':
