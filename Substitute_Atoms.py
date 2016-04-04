@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Replaces specified atoms in the run.  Updates INCAR afterwards with values from the cfg.py.
-# TODO:  Stop this from messing with the MAGMOM
+# TODO:  Stop this from messing with the MAGMOM, U parameter
+# TODO: Stop from changing POTCAR _pv _s _sv, etc...
 
 # Usage: Substitute_Atoms.py Previous_Dir [This_Dir] Atom_#s New_Atom
 from pymatgen.transformations.site_transformations import ReplaceSiteSpeciesTransformation, RemoveSitesTransformation

@@ -239,12 +239,12 @@ if __name__ == '__main__':
     else:
         mem = 0
 
-    if 'AUTO_GAMMA' in incar:
-        auto_gamma = incar['AUTO_GAMMA']
-    else:
-        auto_gamma = 'True'
+
+    auto_gamma = 'True'
 
     if args.gamma:
+        vasp_kpts = os.environ["VASP_GAMMA"]
+    elif 'AUTO_GAMMA' in incar and 'true' in incar['AUTO_GAMMA'].lower():
         vasp_kpts = os.environ["VASP_GAMMA"]
     else:
         vasp_kpts = os.environ["VASP_KPTS"]
