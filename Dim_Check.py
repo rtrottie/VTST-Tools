@@ -41,14 +41,14 @@ def check_dimer(directory, runP=False):
         if runP:
             os.chdir(dir)
             os.system('touch ' + m + '-' + subprocess.check_output('basename $( ls ../../*.log )', shell=True).strip())
-            os.system('vasp.py ' + reduce(lambda x,y: str(x)+' '+str(y), sys.argv[1:], ''))
+            os.system('vasp.py ')
             os.chdir(directory)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('directory', help='directory to run script (Default: ".")',
                         default='.', nargs='?')
-    parser.add_argument('-r', '--run', help='Run VASP once directory is copied',
-                        action='store_true')
+    parser.add_argument('-r', '--run', help='Run VASP once directory is copied arguments provided here will be supplied to vasp.py',
+                        args='*')
     args = parser.parse_args()
     check_dimer(args.directory, args.run)
