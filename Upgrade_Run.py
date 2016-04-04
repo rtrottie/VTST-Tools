@@ -201,6 +201,7 @@ if prev_stage_name:
     for f in saved_files:
         if os.path.exists(f):
             shutil.copy(f,os.path.join('backup', prev_stage_name, f))
+    print('Upgraded ' + prev_stage_name +' (' + str(stage['STAGE_NUMBER'] - 1) + ') to ' + stage['STAGE_NAME'] + '(' + str(stage['STAGE_NUMBER']) + ')')
 
 new_incar = incar.__add__(Incar(stage))
 new_incar.write_file('INCAR')
