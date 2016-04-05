@@ -16,7 +16,8 @@ INCAR = {
               'Cr': 2,
               'V' : 2,
               'Sc': 2,
-              'Zn': 2
+              'Zn': 2,
+              'Ru': 2
               },
     'LDAUU': {'default': 0,
               'Fe': 3,
@@ -28,7 +29,8 @@ INCAR = {
               'Cr': 3,
               'V' : 3,
               'Sc': 3,
-              'Zn': 3
+              'Zn': 3,
+              'Ru': 3
               },
     'MAGMOM' : {'default': 0,
                 'Sc': 1,
@@ -40,7 +42,8 @@ INCAR = {
                 'Co': 3,
                 'Ni': 2,
                 'Cu': 1,
-                'Zn': 0
+                'Zn': 0,
+                'Ru': 0
                 }
 }
 
