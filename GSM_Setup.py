@@ -100,6 +100,10 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         shutil.copy(os.path.join(start_folder, 'CHGCAR'),
                     os.path.join(new_gsm_dir, 'scratch/IMAGE.01/CHGCAR'))
 
+    start = ase.io.read(start_file)
+    start.wrap(center)
+    initial = [start]
+
     if final: # is GSM
         if os.path.isfile(final):
             final_file = final
@@ -132,10 +136,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     with open('inpfileq', 'w') as f:
         template = env.get_template('inpfileq.jinja2')
         f.write(template.render(jinja_vars))
-
-    start = ase.io.read(start_file)
-    start.wrap(center)
-    initial = [start]
     os.chmod('grad.py', 0o755)
     os.chmod('status', 0o755)
     ase.io.write('scratch/initial0000.temp.xyz', initial)
