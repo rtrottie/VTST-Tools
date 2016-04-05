@@ -105,8 +105,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     with open('inpfileq', 'w') as f:
         template = env.get_template('inpfileq.jinja2')
         f.write(template.render(jinja_vars))
-    os.chmod('grad.py', 0o755)
-    os.chmod('status', 0o755)
 
     start = ase.io.read(start_file)
     start.wrap(center)
@@ -137,6 +135,8 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         final.wrap(f_center)
         initial.append(final)
     os.chdir(new_gsm_dir)
+    os.chmod('grad.py', 0o755)
+    os.chmod('status', 0o755)
     ase.io.write('scratch/initial0000.temp.xyz', initial)
     poscar = Poscar.from_file('POSCAR.start')
     if poscar.selective_dynamics:
