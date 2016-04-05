@@ -136,7 +136,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         final = ase.io.read(final_file)
         final.wrap(f_center)
         initial.append(final)
-
+    os.chdir(new_gsm_dir)
     ase.io.write('scratch/initial0000.temp.xyz', initial)
     poscar = Poscar.from_file('POSCAR.start')
     if poscar.selective_dynamics:
