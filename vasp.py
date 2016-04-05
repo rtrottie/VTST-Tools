@@ -239,9 +239,6 @@ if __name__ == '__main__':
     else:
         mem = 0
 
-
-    auto_gamma = 'True'
-
     if args.gamma:
         vasp_kpts = os.environ["VASP_GAMMA"]
     elif 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
@@ -296,7 +293,6 @@ if __name__ == '__main__':
                 'cores'         : cores,
                 'logname'       : name + '.log',
                 'mem'           : mem,
-                'auto_gamma'    : auto_gamma,
                 'account'       : account,
                 'mpi'           : os.environ["VASP_MPI"],
                 'vasp_kpts'     : vasp_kpts,
