@@ -129,6 +129,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         final.wrap(f_center)
         initial.append(final)
 
+    currdir = os.path.abspath('.')
     os.chdir(new_gsm_dir)
     with open('grad.py', 'w') as f:
         template = env.get_template('grad.jinja2.py')
@@ -152,6 +153,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         os.remove('scratch/initial0000.temp.xyz')
     else:
         shutil.move('scratch/initial0000.temp.xyz', 'scratch/initial0000.xyz')
+    os.chdir(currdir)
 
 
 
