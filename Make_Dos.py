@@ -6,25 +6,6 @@ from pymatgen.io.vasp import *
 import numpy as np
 import argparse
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('vasprun', help='Location of vasprun.xml file (default: ./vasprun.xml)',
-                        default='vasprun.xml')
-    parser.add_argument('-g', '--group', help='Each instance of the -g flag will combine all provided elements into a column.  Example : -g O 1-3:d 6:s,p will have a summed DOS of : (all orbitals of Oxygen Atoms) and (d orbitals of atoms 1, 2, 3, and 4) and (s and p orbitals of atom 6)',
-                        action='append', nargs='*')
-    parser.add_argument('-s', help='same as group, but automatically does s orbitals',
-                        action='append', nargs='*')
-    parser.add_argument('-p', help='same as group, but automatically does p orbitals',
-                        action='append', nargs='*')
-    parser.add_argument('-d', help='same as group, but automatically does d orbitals',
-                        action='append', nargs='*')
-    parser.add_argument('-f', help='same as group, but automatically does f orbitals',
-                        action='append', nargs='*')
-    parser.add_argument('-e', '--eg', help='same as group, but automatically does eg orbitals',
-                        action='append', nargs='*')
-    parser.add_argument('-t', '--t2g', help='same as group, but automatically does t2g orbitals',
-                        action='append', nargs='*')
-    args = parser.parse_args()
 
 def make_dos(vasprun, groups=[], output='DOS.csv'):
     v = Vasprun(vasprun, parse_eigen=False)
@@ -92,10 +73,6 @@ def make_dos(vasprun, groups=[], output='DOS.csv'):
         with open(output, 'w') as f:
             f.write(csv_str)
 
-
-
-
-
 def sum_orbitals(pdos, atoms, orbitals=['all']):
     pdos_reduced = list(map(lambda x: pdos[x], atoms))
     if orbitals == ['all']:
@@ -153,6 +130,29 @@ def get_dos(dos, site, orbital='all'):
 
 
 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('vasprun', help='Location of vasprun.xml file (default: ./vasprun.xml)',
+                        default='vasprun.xml')
+    parser.add_argument('-g', '--group', help='Each instance of the -g flag will combine all provided elements into a column.  Example : -g O 1-3:d 6:s,p will have a summed DOS of : (all orbitals of Oxygen Atoms) and (d orbitals of atoms 1, 2, 3, and 4) and (s and p orbitals of atom 6)',
+                        action='append', nargs='*')
+    parser.add_argument('-s', help='same as group, but automatically does s orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-p', help='same as group, but automatically does p orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-d', help='same as group, but automatically does d orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-f', help='same as group, but automatically does f orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-e', '--eg', help='same as group, but automatically does eg orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-t', '--t2g', help='same as group, but automatically does t2g orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-o', '--output', help='Output file location (default: ./DOS.csv)',
+                        default='DOS.csv')
+    args = parser.parse_args()
+
+    make_dos(args.vasprun, args.groups, )
 
 
 
