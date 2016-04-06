@@ -150,8 +150,11 @@ elif prev_stage != None:
                 if Incar.proc_val(key, str(run.incar[key])) != Incar.proc_val(key, str(prev_stage[key])):
                     err_msg = err_msg + '\n' + key + ':  vasprun.xml :  ' + str(run.incar[key]) + '     ' + 'CONV : ' + str(incar[key])
                     error = True
-            else:
+            elif key in incar:
                 err_msg = err_msg + '\n' + key + ':  vasprun.xml :  NONE     ' + 'CONV : ' + str(incar[key])
+                error = True
+            else:
+                err_msg = err_msg + '\n' + key + ':  vasprun.xml :  NONE     ' + 'CONV : NONE'
                 error = True
     if error:
         cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
