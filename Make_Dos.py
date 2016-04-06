@@ -10,7 +10,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('vasprun', help='Location of vasprun.xml file (default: ./vasprun.xml)',
                         default='vasprun.xml')
-    parser.add_argument('-g', '--group', help='Each instance of the -g flag will combine all provided elements into a column.  Example : -g O 1-3:d 6:s,p will have a summed DOS of :\nall Oxygen Atoms\nd orbitals of atoms 1, 2, 3, and 4\ns and p orbitals of atom 6',
+    parser.add_argument('-g', '--group', help='Each instance of the -g flag will combine all provided elements into a column.  Example : -g O 1-3:d 6:s,p will have a summed DOS of : (all orbitals of Oxygen Atoms) and (d orbitals of atoms 1, 2, 3, and 4) and (s and p orbitals of atom 6)',
                         action='append', nargs='*')
     parser.add_argument('-s', help='same as group, but automatically does s orbitals',
                         action='append', nargs='*')
