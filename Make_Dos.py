@@ -152,7 +152,7 @@ if __name__ == '__main__':
                         default='DOS.csv')
     args = parser.parse_args()
 
-    make_dos(args.vasprun, args.groups, )
+    make_dos(args.vasprun, args.group, args.output)
 
 
 
