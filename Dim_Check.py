@@ -49,6 +49,6 @@ if __name__ == '__main__':
     parser.add_argument('directory', help='directory to run script (Default: ".")',
                         default='.', nargs='?')
     parser.add_argument('-r', '--run', help='Run VASP once directory is copied arguments provided here will be supplied to vasp.py',
-                        args='*')
+                        nargs='*')
     args = parser.parse_args()
     check_dimer(args.directory, args.run)
