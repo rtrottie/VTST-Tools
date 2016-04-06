@@ -4,14 +4,95 @@ import csv
 import sys
 from pymatgen.io.vasp import *
 import numpy as np
+import argparse
 
-v = Vasprun('vasprun.xml', parse_eigen=False)
-tdos = v.complete_dos
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('vasprun', help='Location of vasprun.xml file (default: ./vasprun.xml)',
+                        default='vasprun.xml')
+    parser.add_argument('-g', '--group', help='Each instance of the -g flag will combine all provided elements into a column.  Example : -g O 1-3:d 6:s,p will have a summed DOS of all Oxygen Atoms and, d orbitals of atoms 1, 2, 3, and 4, and s and p orbitals of atom 6',
+                        action='append', nargs='*')
+    parser.add_argument('-s', help='same as group, but automatically does s orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-p', help='same as group, but automatically does p orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-d', help='same as group, but automatically does d orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-f', help='same as group, but automatically does f orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-e', '--eg', help='same as group, but automatically does eg orbitals',
+                        action='append', nargs='*')
+    parser.add_argument('-t', '--t2g', help='same as group, but automatically does t2g orbitals',
+                        action='append', nargs='*')
 
-unformated_doss = sys.argv[1:]
+def make_dos(vasprun, groups=[], output='DOS.csv'):
+    v = Vasprun(vasprun, parse_eigen=False)
+    tdos = v.complete_dos
+    dos = []
+    energies = list(map(lambda x: x-tdos.efermi, tdos.energies.tolist()))
+    m = determine_scale_of_frontier_bands(energies, tdos.densities[1], tdos.densities[-1])
+    scaling_factors = [1.5/m]
+    columns = [energies, list(map(lambda x: x/m*1.5, tdos.densities[1])), list(map(lambda x: -x/m*1.5, tdos.densities[-1]))]
+    title = ['Energy', 'Total +', 'Total -']
+    for group in groups:
+        atom_orbital = []
+        for set in group:
+            atom_indices = []
+            if ':' in set:   # Determine which orbitals to add
+                orbitals = set.split(':')[1].split(',')
+                atoms = set.split(':')[0]
+            else:
+                orbitals = ['all']
+                atoms = set
 
-dos = []
-headers = []
+            if '-' in set:  # Determine what atom indicies to work with
+                start_end = set.split('-')
+                atom_indices = range(int(start_end[0]), int(start_end[1])+1)
+            else:
+                try:
+                    atom_indices = [int(set)-1]
+                except:
+                    atom_indices = np.where(np.array(v.atomic_symbols) == set)[0].tolist()
+
+            for orbital in orbitals:  #  Set up atom_orbital argument for later use
+                atom_orbital = atom_orbital + list(map(lambda x : (x, orbital), atom_indices))
+
+        up_down = list(map(lambda site: get_dos(tdos, site, orbital), atom_orbital))
+        up = list(map(lambda dos: dos.densities[1].tolist(), up_down))
+        up = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), up)
+        down = list(map(lambda dos: dos.densities[-1].tolist(), up_down))
+        down = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), down)
+        m = determine_scale_of_frontier_bands(energies, up, down)
+        scaling_factors.append(1/m)
+        norm_up = list(map(lambda x: x/m, up))
+        norm_down = list(map(lambda x: -x/m, down))
+        title.append(' '.join(group) + ' +')
+        title.append(' '.join(group) + ' -')
+        columns.append(norm_up); columns.append(norm_down)
+
+
+
+
+        csv_list = range(len(columns[0]))
+        title.append('Scaling Factors')
+        columns.append(scaling_factors)
+        csv_str = ','.join(title)
+
+        for i in range(len(columns[0])):
+            csv_str = csv_str + '\n'
+            for j in range(len(columns)):
+                try:
+                    csv_str = csv_str + str(columns[j][i])
+                    if j != len(columns)-1:
+                        csv_str = csv_str + ','
+                except:
+                    pass
+
+        with open(output, 'w') as f:
+            f.write(csv_str)
+
+
+
 
 
 def sum_orbitals(pdos, atoms, orbitals=['all']):
@@ -68,63 +149,9 @@ def get_dos(dos, site, orbital='all'):
         return dos.get_site_spd_dos(dos.structure.sites[site])[orbital.upper()]
     else:
         return dos.get_site_orbital_dos(dos.structure.sites[site], orbital)
-energies = list(map(lambda x: x-tdos.efermi, tdos.energies.tolist()))
-m = determine_scale_of_frontier_bands(energies, tdos.densities[1], tdos.densities[-1])
-scaling_factors = [1.5/m]
-columns = [energies, list(map(lambda x: x/m*1.5, tdos.densities[1])), list(map(lambda x: -x/m*1.5, tdos.densities[-1]))]
-title = ['Energy', 'Total +', 'Total -']
-
-for unformated_dos in unformated_doss:
-    if ':' in unformated_dos:
-        unformated_dos = unformated_dos.split(':')
-        orbitals = unformated_dos[1].split(',')
-        unformated_dos = unformated_dos[0]
-    else:
-        orbitals = ['all']
-    unformated_atoms = unformated_dos.split(',')
-    atoms = []
-    for orbital in orbitals:
-        for atom in unformated_atoms:
-            if '-' in atom:
-                start_end = atom.split('-')
-                for a in range(int(start_end[0]), int(start_end[1])+1):
-                    atoms.append(a-1)
-            else:
-                try:
-                    atoms.append(int(atom)-1)
-                except:
-                    atoms = atoms + np.where(np.array(v.atomic_symbols) == atom)[0].tolist()
-        headers.append(unformated_dos +':' + orbital + ' +')
-        headers.append(unformated_dos +':' + orbital + ' -')
-        up_down = list(map(lambda site: get_dos(tdos, site, orbital), atoms))
-        up = list(map(lambda dos: dos.densities[1].tolist(), up_down))
-        up = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), up)
-        down = list(map(lambda dos: dos.densities[-1].tolist(), up_down))
-        down = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), down)
-        m = determine_scale_of_frontier_bands(energies, up, down)
-        scaling_factors.append(1/m)
-        norm_up = list(map(lambda x: x/m, up))
-        norm_down = list(map(lambda x: -x/m, down))
-        title.append(unformated_dos.replace(',','-') + ':' + orbital + ' +')
-        title.append(unformated_dos.replace(',','-') + ':' + orbital + ' -')
-        columns.append(norm_up); columns.append(norm_down)
 
 
 
-csv_list = range(len(columns[0]))
-title.append('Scaling Factors')
-columns.append(scaling_factors)
-csv_str = ','.join(title)
 
-for i in range(len(columns[0])):
-    csv_str = csv_str + '\n'
-    for j in range(len(columns)):
-        try:
-            csv_str = csv_str + str(columns[j][i])
-            if j != len(columns)-1:
-                csv_str = csv_str + ','
-        except:
-            pass
 
-with open('DOS.csv', 'w') as f:
-    f.write(csv_str)
+
