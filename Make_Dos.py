@@ -24,6 +24,7 @@ if __name__ == '__main__':
                         action='append', nargs='*')
     parser.add_argument('-t', '--t2g', help='same as group, but automatically does t2g orbitals',
                         action='append', nargs='*')
+    args = parser.parse_args()
 
 def make_dos(vasprun, groups=[], output='DOS.csv'):
     v = Vasprun(vasprun, parse_eigen=False)
