@@ -18,7 +18,7 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False):
 
     p1 = Poscar.from_file(start_POSCAR)
     p2 = Poscar.from_file(final_POSCAR)
-    structures = p1.structure.interpolate(p2, images, autosort_tol=tolerance)
+    structures = p1.structure.interpolate(p2.structure, images, autosort_tol=tolerance)
 
     incar['ICHAIN'] = 0
     incar['IMAGES'] = images
