@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     parser.add_argument('initial', help='Structure or VASP run folder of initial state')
     parser.add_argument('final', help='Structure or VASP run folder of final state')
-    parser.add_argument('-n', '--nodes', help='Number of nodes on string (Default: 7)',
+    parser.add_argument('-i', '--images', help='Number of images on string (Default: 7)',
                         type=int, default=7)
     parser.add_argument('-t', '--tolerance', help='attempts to match structures (useful for vacancy migrations) (default: 0)',
                         type=float, default=0)
