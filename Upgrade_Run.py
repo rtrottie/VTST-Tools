@@ -23,7 +23,7 @@ parser.add_argument('-r', '--prompt-required', help='Always prompt for REQUIRED 
                     action='store_true')
 parser.add_argument('-u', '--upgrade-from', help='Only upgrade if on Specified Stage',
                     type=int, default=-1)
-parser.add_argument('-v', '--run-vasp', help='execute vasp (from vasp.py) once upgraded',
+parser.add_argument('-e', '--execute-vasp', help='execute vasp (from vasp.py) once upgraded',
                     action='store_true')
 
 convergence = parser.add_mutually_exclusive_group()
