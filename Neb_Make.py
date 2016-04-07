@@ -21,7 +21,7 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False):
     structures = p1.structure.interpolate(p2.structure, images, autosort_tol=tolerance)
 
     incar['ICHAIN'] = 0
-    incar['IMAGES'] = images
+    incar['IMAGES'] = images-1
     incar['LCLIMB'] = ci
 
     i=0
@@ -49,4 +49,4 @@ if __name__ == '__main__':
                         default='.')
     parser.add_argument('-c', '--climbing_image', help='use CI', action = 'store_true')
     args = parser.parse_args()
-    nebmake(args.directory, args.initial, args.final, args.images, args.tolerance, args.climbing_image)
+    nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image)
