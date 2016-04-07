@@ -27,6 +27,7 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False):
     i=0
     for s in structures:
         folder = os.path.join(directory, str(i).zfill(2))
+        os.mkdir(folder)
         Poscar(s, selective_dynamics=p1.selective_dynamics).write_file(os.path.join(folder, 'POSCAR'))
         i += 1
 
