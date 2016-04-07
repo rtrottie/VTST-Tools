@@ -10,68 +10,63 @@ import argparse
 def make_dos(vasprun, groups=[], output='DOS.csv'):
     v = Vasprun(vasprun, parse_eigen=False)
     tdos = v.complete_dos
-    dos = []
     energies = list(map(lambda x: x-tdos.efermi, tdos.energies.tolist()))
-    m = determine_scale_of_frontier_bands(energies, tdos.densities[1], tdos.densities[-1])
+    m = determine_scale_of_frontier_bands(energies, tdos.densities[Spin.up], tdos.densities[Spin.down])
     scaling_factors = [1.5/m]
-    columns = [energies, list(map(lambda x: x/m*1.5, tdos.densities[1])), list(map(lambda x: -x/m*1.5, tdos.densities[-1]))]
+    columns = [energies, list(map(lambda x: x/m*1.5, tdos.densities[Spin.up])), list(map(lambda x: -x/m*1.5, tdos.densities[Spin.down]))]
     title = ['Energy', 'Total +', 'Total -']
     for group in groups:
         atom_orbital = []
         for set in group:
             atom_indices = []
-            if ':' in set:   # Determine which orbitals to add
+            if type(set) == type('') and ':' in set:   # Determine which orbitals to add
                 orbitals = set.split(':')[1].split(',')
                 atoms = set.split(':')[0]
             else:
                 orbitals = ['all']
                 atoms = set
 
-            if '-' in set:  # Determine what atom indicies to work with
+            if type(set) == type('') and '-' in set:  # Determine what atom indicies to work with
                 start_end = set.split('-')
-                atom_indices = range(int(start_end[0]), int(start_end[1])+1)
+                atom_indices += range(int(start_end[0])-1, int(start_end[1]))
             else:
                 try:
-                    atom_indices = [int(set)-1]
+                    atom_indices += [int(set)-1]
                 except:
-                    atom_indices = np.where(np.array(v.atomic_symbols) == set)[0].tolist()
+                    atom_indices += np.where(np.array(v.atomic_symbols) == set)[0].tolist()
 
             for orbital in orbitals:  #  Set up atom_orbital argument for later use
                 atom_orbital = atom_orbital + list(map(lambda x : (x, orbital), atom_indices))
 
-        up_down = list(map(lambda site: get_dos(tdos, site, orbital), atom_orbital))
-        up = list(map(lambda dos: dos.densities[1].tolist(), up_down))
+        up_down = list(map(lambda (site,orbital): get_dos(tdos, site, orbital), atom_orbital))
+        up = list(map(lambda dos: dos.densities[Spin.up].tolist(), up_down))
         up = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), up)
-        down = list(map(lambda dos: dos.densities[-1].tolist(), up_down))
+        down = list(map(lambda dos: dos.densities[Spin.down].tolist(), up_down))
         down = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), down)
         m = determine_scale_of_frontier_bands(energies, up, down)
         scaling_factors.append(1/m)
         norm_up = list(map(lambda x: x/m, up))
         norm_down = list(map(lambda x: -x/m, down))
-        title.append(' '.join(group) + ' +')
-        title.append(' '.join(group) + ' -')
+        title.append(' '.join(map(str, group)) + ' +')
+        title.append(' '.join(map(str, group)) + ' -')
         columns.append(norm_up); columns.append(norm_down)
 
+    title.append('Scaling Factors')
+    columns.append(scaling_factors)
+    csv_str = ','.join(title)
 
+    for i in range(len(columns[0])):
+        csv_str = csv_str + '\n'
+        for j in range(len(columns)):
+            try:
+                csv_str = csv_str + str(columns[j][i])
+                if j != len(columns)-1:
+                    csv_str = csv_str + ','
+            except:
+                pass
 
-
-        csv_list = range(len(columns[0]))
-        title.append('Scaling Factors')
-        columns.append(scaling_factors)
-        csv_str = ','.join(title)
-
-        for i in range(len(columns[0])):
-            csv_str = csv_str + '\n'
-            for j in range(len(columns)):
-                try:
-                    csv_str = csv_str + str(columns[j][i])
-                    if j != len(columns)-1:
-                        csv_str = csv_str + ','
-                except:
-                    pass
-
-        with open(output, 'w') as f:
-            f.write(csv_str)
+    with open(output, 'w') as f:
+        f.write(csv_str)
 
 def sum_orbitals(pdos, atoms, orbitals=['all']):
     pdos_reduced = list(map(lambda x: pdos[x], atoms))

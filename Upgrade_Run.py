@@ -21,6 +21,10 @@ parser.add_argument('-v', '--compare-vasprun', help='Compare entire INCAR and va
                     action='store_true')
 parser.add_argument('-r', '--prompt-required', help='Always prompt for REQUIRED tag in CONVERGENCE file (default passes if present in INCAR)',
                     action='store_true')
+parser.add_argument('-u', '--upgrade-from', help='Only upgrade if on Specified Stage',
+                    type=int, default=-1)
+parser.add_argument('-v', '--run-vasp', help='execute vasp (from vasp.py) once upgraded',
+                    action='store_true')
 
 convergence = parser.add_mutually_exclusive_group()
 convergence.add_argument('--convergence-auto', help='Checks for Convergence, automatically stops if run isn\'t fully converged',
@@ -116,6 +120,9 @@ else:
         prev_stage = updates[int(run.incar['STAGE_NUMBER'])]
     else:
         prev_stage = None
+
+if args.upgrade_from != -1 and int(run.incar['STAGE_NUMBER']) != args.upgrade_from:
+    print
 
 ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM', 'KPOINTS', 'REQUIRED', 'DELETE', 'REMOVE']
 
