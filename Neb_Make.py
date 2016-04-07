@@ -6,7 +6,7 @@ import os
 
 
 
-def nebmake(directory, start, final, nodes, tolerance=0):
+def nebmake(directory, start, final, images, tolerance=0):
     start_POSCAR = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) and os.path.getsize(os.path.join(start, 'CONTCAR')) > 0 else os.path.join(start, 'POSCAR')
     final_POSCAR = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) and os.path.getsize(os.path.join(final, 'CONTCAR')) > 0 else os.path.join(final, 'POSCAR')
 
@@ -18,7 +18,12 @@ def nebmake(directory, start, final, nodes, tolerance=0):
 
     p1 = Poscar.from_file(start_POSCAR)
     p2 = Poscar.from_file(final_POSCAR)
-    structures = p1.structure.interpolate(p2, nodes, autosort_tol=tolerance)
+    structures = p1.structure.interpolate(p2, images, autosort_tol=tolerance)
+
+    incar['ICHAIN'] = 0
+    incar['IMAGES'] = images
+
+    for
 
 
 if __name__ == '__main__':
