@@ -6,7 +6,7 @@ import os
 
 
 
-def nebmake(directory, start, final, images, tolerance=0):
+def nebmake(directory, start, final, images, tolerance=0, ci=False):
     start_POSCAR = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) and os.path.getsize(os.path.join(start, 'CONTCAR')) > 0 else os.path.join(start, 'POSCAR')
     final_POSCAR = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) and os.path.getsize(os.path.join(final, 'CONTCAR')) > 0 else os.path.join(final, 'POSCAR')
 
@@ -22,8 +22,17 @@ def nebmake(directory, start, final, images, tolerance=0):
 
     incar['ICHAIN'] = 0
     incar['IMAGES'] = images
+    incar['LCLIMB'] = ci
 
-    for
+    i=0
+    for s in structures:
+        folder = os.path.join(directory, str(i).zfill(2))
+        Poscar(s, selective_dynamics=p1.selective_dynamics).write_file(os.path.join(folder, 'POSCAR'))
+        i += 1
+
+    incar.write_file(os.path.join(directory, 'INCAR'))
+    kpoints.write_file(os.path.join(directory, 'KPOINTS'))
+    potcar.write_file(os.path.join(directory, 'POTCAR'))
 
 
 if __name__ == '__main__':
