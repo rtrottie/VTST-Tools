@@ -3,7 +3,7 @@
 import argparse
 from Classes_Pymatgen import *
 import os
-
+import shutil
 
 
 def nebmake(directory, start, final, images, tolerance=0, ci=False):
@@ -29,6 +29,10 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False):
         folder = os.path.join(directory, str(i).zfill(2))
         os.mkdir(folder)
         Poscar(s, selective_dynamics=p1.selective_dynamics).write_file(os.path.join(folder, 'POSCAR'))
+        if i == 0:
+            shutil.copy(start_OUTCAR, os.path.join(folder, 'OUTCAR'))
+        if i == images:
+            shutil.copy(final_OUTCAR, os.path.join(folder, 'OUTCAR'))
         i += 1
 
     incar.write_file(os.path.join(directory, 'INCAR'))
