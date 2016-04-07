@@ -44,4 +44,8 @@ if __name__ == '__main__':
                         type=int, default=7)
     parser.add_argument('-t', '--tolerance', help='attempts to match structures (useful for vacancy migrations) (default: 0)',
                         type=float, default=0)
+    parser.add_argument('-d', '--directory', help='where to create neb (default: ".")',
+                        default='.')
+    parser.add_argument('-c', '--climbing_image', help='use CI', action = 'store_true')
     args = parser.parse_args()
+    nebmake(args.directory, args.initial, args.final, args.images, args.tolerance, args.climbing_image)
