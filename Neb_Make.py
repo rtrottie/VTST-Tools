@@ -10,8 +10,8 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False):
     start_POSCAR = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) and os.path.getsize(os.path.join(start, 'CONTCAR')) > 0 else os.path.join(start, 'POSCAR')
     final_POSCAR = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) and os.path.getsize(os.path.join(final, 'CONTCAR')) > 0 else os.path.join(final, 'POSCAR')
 
-    start_OUTCAR = os.path.join('OUTCAR')
-    final_OUTCAR = os.path.join('OUTCAR')
+    start_OUTCAR = os.path.join(start, 'OUTCAR')
+    final_OUTCAR = os.path.join(final, 'OUTCAR')
     incar = Incar.from_file(os.path.join(start, 'INCAR'))
     kpoints = Kpoints.from_file(os.path.join(start, 'KPOINTS'))
     potcar = Potcar.from_file(os.path.join(start, 'POTCAR'))
