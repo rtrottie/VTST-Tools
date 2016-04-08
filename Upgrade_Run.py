@@ -55,6 +55,11 @@ def parse_incar_update(f_string):
     dicts.append(this_stage)
     return dicts
 
+
+if args.upgrade_from != -1 and int(Incar.from_file('INCAR')['STAGE_NUMBER']) != args.upgrade_from:
+    print('Not at correct stage, current stage is : ' + str(Incar.from_file('INCAR')['STAGE_NUMBER']) + ' need : ' + str(args.upgrade_from))
+    exit(0)
+
 if args.initialize:
     run = Vasprun
     run.incar = Incar.from_file('INCAR')
@@ -120,10 +125,6 @@ else:
         prev_stage = updates[int(run.incar['STAGE_NUMBER'])]
     else:
         prev_stage = None
-
-if args.upgrade_from != -1 and int(run.incar['STAGE_NUMBER']) != args.upgrade_from:
-    print('Not at correct stage, current stage is : ' + str(run.incar['STAGE_NUMBER']) + ' need : ' + str(args.upgrade_from))
-    exit(0)
 
 ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM', 'KPOINTS', 'REQUIRED', 'DELETE', 'REMOVE']
 
