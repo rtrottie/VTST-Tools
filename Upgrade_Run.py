@@ -122,7 +122,8 @@ else:
         prev_stage = None
 
 if args.upgrade_from != -1 and int(run.incar['STAGE_NUMBER']) != args.upgrade_from:
-    print
+    print('Not at correct stage, current stage is : ' + str(run.incar['STAGE_NUMBER']) + ' need : ' + str(args.upgrade_from))
+    exit(0)
 
 ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM', 'KPOINTS', 'REQUIRED', 'DELETE', 'REMOVE']
 
