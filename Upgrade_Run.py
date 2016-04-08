@@ -218,3 +218,5 @@ new_incar = incar.__add__(Incar(stage))
 new_incar.write_file('INCAR')
 if kpoints:
     kpoints.write_file('KPOINTS')
+if args.execute_vasp:
+    os.system('vasp.py')
