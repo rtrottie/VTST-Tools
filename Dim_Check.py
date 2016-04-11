@@ -51,4 +51,4 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--execute', help='Run VASP once directory is copied arguments provided here will be supplied to vasp.py',
                         action='store_true')
     args = parser.parse_args()
-    check_dimer(args.directory, args.run)
+    check_dimer(args.directory, args.execute)
