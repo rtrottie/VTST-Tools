@@ -161,5 +161,15 @@ class DimerJob(VaspJob):
         if self.settings_override is not None:
             VaspModder().apply_actions(self.settings_override)
 
+    def postprocess(self):
+        VaspJob.postprocess(self)
+        try:
+            v = Vasprun(self.output_filename)
+            if v.converged and len(v.ionic_steps) == 1:
+                return True
+        except:
+            pass
+
+
 
 StandardJob = VaspJob
