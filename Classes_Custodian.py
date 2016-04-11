@@ -61,7 +61,7 @@ class DimerCheckMins(ErrorHandler):
     def check(self):
         try:
             v = Vasprun(self.output_filename)
-            if v.converged:
+            if v.converged and len(v.ionic_steps) == 1:
                 return True
         except:
             pass
@@ -69,7 +69,7 @@ class DimerCheckMins(ErrorHandler):
 
     def correct(self):
         Dim_Check.check_dimer(os.path.abspath('.'))
-        return {"errors": ['checking minima'], 'actions' : None}
+        return {"errors": ['creating minima'], 'actions' : None}
 
 class NEBJob(VaspJob):
     def run(self):
