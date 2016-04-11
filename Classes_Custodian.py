@@ -166,6 +166,7 @@ class DimerJob(VaspJob):
         try:
             v = Vasprun(self.output_filename)
             if v.converged and len(v.ionic_steps) <= 5:
+                print('Creatin Mins')
                 Dim_Check.check_dimer(os.path.abspath('.'))
         except:
             pass
