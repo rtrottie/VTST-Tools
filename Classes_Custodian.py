@@ -61,15 +61,16 @@ class DimerCheckMins(ErrorHandler):
     def check(self):
         try:
             v = Vasprun(self.output_filename)
-            if v.converged and len(v.ionic_steps) == 1:
-                return True
+            if v.converged and len(v.ionic_steps) <= 5:
+                Dim_Check.check_dimer(os.path.abspath('.'))
+                return False
         except:
             pass
-        return False
+        return True
 
     def correct(self):
         Dim_Check.check_dimer(os.path.abspath('.'))
-        return {"errors": ['creating minima'], 'actions' : None}
+        return {"errors": ['no minima created'], 'actions' : None}
 
 class NEBJob(VaspJob):
     def run(self):
