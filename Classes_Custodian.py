@@ -69,7 +69,7 @@ class DimerCheckMins(ErrorHandler):
         return True
 
     def correct(self):
-        Dim_Check.check_dimer(os.path.abspath('.'))
+        Dim_Check.check_dimer(os.path.abspath('.'), True)
         return {"errors": ['no minima created'], 'actions' : None}
 
 class NEBJob(VaspJob):
