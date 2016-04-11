@@ -77,7 +77,9 @@ def getJobType(dir):
         return 'Standard'
 
 def getComputerName():
-    if 'psiops' in socket.gethostname():
+    if 'VASP_COMPUTER' in os.environ:
+        return os.environ['VASP_COMPUTER']
+    elif 'psiops' in socket.gethostname():
         return 'psiops'
     elif '.rc.' in socket.gethostname():
         return 'janus'
