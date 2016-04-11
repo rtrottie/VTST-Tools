@@ -12,6 +12,7 @@ import argparse
 from Classes_Pymatgen import *
 
 def check_dimer(directory, runP=False):
+    directory = os.path.abspath(directory)
     os.chdir(directory)
     os.system(os.path.join(os.environ['VTST_DIR'], 'dimmins.pl'))
     for m in ['min1', 'min2']:
