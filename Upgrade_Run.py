@@ -142,7 +142,7 @@ else:
     else:
         prev_stage = None
 
-ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM', 'KPOINTS', 'REQUIRED', 'DELETE', 'REMOVE']
+ignored_keys = ['NPAR', 'KPAR', 'AUTO_TIME', 'AUTO_GAMMA', 'AUTO_MEM', 'KPOINTS', 'REQUIRED', 'DELETE', 'REMOVE', 'LORBIT']
 
 if args.compare_vasprun:
     diff = incar.diff(run.incar)
