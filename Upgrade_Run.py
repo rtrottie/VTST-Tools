@@ -6,6 +6,7 @@ import sys
 import shutil
 import cfg
 import argparse
+import subprocess
 
 
 parser = argparse.ArgumentParser()
@@ -91,7 +92,7 @@ else:
                     if args.execute_vasp:
                         cont = input('Run vasp anyway? (1/0 = yes/no)')
                         if cont == 1:
-                            os.system('vasp.py')
+                            subprocess.Popen(['vasp.py'])
                     sys.exit('Run will not be updated')
     run.incar['STAGE_NUMBER'] = Incar.from_file('INCAR')['STAGE_NUMBER']
     run.incar['STAGE_NAME'] = Incar.from_file('INCAR')['STAGE_NAME']
