@@ -26,6 +26,8 @@ parser.add_argument('-u', '--upgrade-from', help='Only upgrade if on Specified S
                     type=int, default=-1)
 parser.add_argument('-e', '--execute-vasp', help='execute vasp (from vasp.py) once upgraded',
                     action='store_true')
+parser.add_argument('-c', '--check-convergence', help='Check if run has converged at specified stage',
+                    type=int, default=-1)
 
 convergence = parser.add_mutually_exclusive_group()
 convergence.add_argument('--convergence-auto', help='Checks for Convergence, automatically stops if run isn\'t fully converged',
@@ -123,6 +125,13 @@ if args.stage != -1:
         prev_stage = updates[args.stage - 1]
     else:
         prev_stage_name = 'init'
+elif args.check_convergence != -1:
+    stage = updates[int(run.incar['STAGE_NUMBER'])]
+    prev_stage_name = run.incar['STAGE_NAME']
+    if not args.initialize:
+        prev_stage = updates[int(run.incar['STAGE_NUMBER'])]
+    else:
+        prev_stage = None
 else:
     stage = updates[int(run.incar['STAGE_NUMBER'])+1]
     prev_stage_name = run.incar['STAGE_NAME']
