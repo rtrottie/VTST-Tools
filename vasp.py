@@ -264,11 +264,11 @@ if __name__ == '__main__':
     if args.cores:
         cores = args.cores
     elif 'AUTO_CORES' in incar:
-        cores = incar['AUTO_CORES']
+        cores = int(incar['AUTO_CORES'])
     elif 'VASP_MPI_PROCS' in os.environ:
-        cores = os.environ["VASP_MPI_PROCS"]
+        cores = int(os.environ["VASP_MPI_PROCS"])
     else:
-        cores = os.environ["VASP_NCORE"]
+        cores = int(os.environ["VASP_NCORE"])
 
     if 'VASP_DEFAULT_ALLOCATION' in os.environ:
         account = os.environ['VASP_DEFAULT_ALLOCATION']
@@ -301,7 +301,7 @@ if __name__ == '__main__':
                 'time'          : time,
                 'nodes'         : nodes,
                 'name'          : name,
-                'ppn'           : os.environ["VASP_NCORE"],
+                'ppn'           : cores,
                 'cores'         : cores,
                 'logname'       : name + '.log',
                 'mem'           : mem,
@@ -310,7 +310,7 @@ if __name__ == '__main__':
                 'vasp_kpts'     : vasp_kpts,
                 'vasp_gamma'    : os.environ["VASP_GAMMA"],
                 'jobtype'       : jobtype,
-                'tasks'         : nodes*int(os.environ["VASP_NCORE"]),
+                'tasks'         : nodes*cores,
                 'openmp'        : openmp}
 
     env = Environment(loader=FileSystemLoader(template_dir))
