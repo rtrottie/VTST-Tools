@@ -199,7 +199,7 @@ if __name__ == '__main__':
         run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
         if run.converged:
             exit('Run is already converged')
-        elif args.finish_convergence != []
+        elif args.finish_convergence != []:
             stage = Incar.from_file('INCAR')['STAGE_NUMBER']
             if stage not in args.finish_convergence:
                 exit('Not correct stage')
