@@ -185,7 +185,7 @@ elif prev_stage != None:
             else:
                 err_msg = err_msg + '\n' + key + ':  vasprun.xml :  NONE     ' + 'CONV : NONE'
                 error = True
-    if error:
+    if error and args.check_convergence != -1:
         cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
         if cont == 1:
             run.incar = incar
@@ -195,6 +195,14 @@ elif prev_stage != None:
                 if cont == 1:
                     os.system('vasp.py')
             sys.exit('Run will not be updated')
+    elif error:
+        cont = input(err_msg +'\n  Run vasp anyway? (1/0 = yes/no)')
+        if cont == 1:
+            os.system('vasp.py')
+        exit('Run was not identical to spec')
+
+if args.check_convergence != -1:
+    exit('No Problems found')
 
 incar = Incar.from_file('INCAR')
 
