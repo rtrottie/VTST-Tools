@@ -153,6 +153,10 @@ if args.compare_vasprun:
         if cont == 1:
             run.incar = incar
         else:
+            if args.execute_vasp:
+                cont = input('Run vasp anyway? (1/0 = yes/no)')
+                if cont == 1:
+                    os.system('vasp.py')
             sys.exit('Run will not be updated')
 elif prev_stage != None:
     err_msg = 'CONVERGENCE previous stage appears different than what is in the vasprun.xml.  Problems with: '
@@ -174,6 +178,10 @@ elif prev_stage != None:
         if cont == 1:
             run.incar = incar
         else:
+            if args.execute_vasp:
+                cont = input('Run vasp anyway? (1/0 = yes/no)')
+                if cont == 1:
+                    os.system('vasp.py')
             sys.exit('Run will not be updated')
 
 incar = Incar.from_file('INCAR')
