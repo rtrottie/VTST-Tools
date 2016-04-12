@@ -116,7 +116,7 @@ class DimerJob(VaspJob):
         """
         files = os.listdir(".")
         num_structures = 0
-        if not set(files).issuperset({"INCAR", "POSCAR", "POTCAR", "KPOINTS", "MODECAR"}):
+        if not set(files).issuperset({"INCAR", "POSCAR", "POTCAR", "KPOINTS"}):
             for f in files:
                 try:
                     struct = read_structure(f)
