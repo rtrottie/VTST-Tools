@@ -186,8 +186,8 @@ parser.add_argument('-s', '--silent', help='display less information',
                     action='store_true')
 parser.add_argument('-i', '--inplace', help='Run VASP without moving files to continue run',
                     action='store_true')
-parser.add_argument('-f', '--finish_convergence', help='Only run vasp if run has not converged',
-                    action='store_true')
+parser.add_argument('-f', '--finish_convergence', help='Only run vasp if run has not converged.  Can supply numbers to only uprgrade from specified stages',
+                    type=int, nargs='*')
 parser.add_argument('-n', '--name', help='name of run (Default is SYSTEM_Jobtype')
 parser.add_argument('-g', '--gamma', help='force a gamma point run',
                     action='store_true')
@@ -195,10 +195,15 @@ parser.add_argument('-g', '--gamma', help='force a gamma point run',
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    if args.finish_convergence:
+    if args.finish_convergence != None:
         run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
         if run.converged:
             exit('Run is already converged')
+        elif args.finish_convergence != []
+            stage = Incar.from_file('INCAR')['STAGE_NUMBER']
+            if stage not in args.finish_convergence:
+                exit('Not correct stage')
+
     jobtype = getJobType('.')
     incar = Incar.from_file('INCAR')
     computer = getComputerName()
