@@ -126,6 +126,8 @@ if args.stage != -1:
     else:
         prev_stage_name = 'init'
 elif args.check_convergence != -1:
+    if int(run.incar['STAGE_NUMBER']) != args.check_convergence:
+        exit('Run not at desired stage')
     stage = updates[int(run.incar['STAGE_NUMBER'])]
     prev_stage_name = run.incar['STAGE_NAME']
     if not args.initialize:
