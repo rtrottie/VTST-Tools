@@ -165,7 +165,7 @@ class DimerJob(VaspJob):
         print('Postprocessing')
         VaspJob.postprocess(self)
         try:
-            v = Vasprun(self.output_file)
+            v = Vasprun('vasprun.xml')
             if v.converged and len(v.ionic_steps) <= 5:
                 print('Creating Mins')
                 Dim_Check.check_dimer(os.path.abspath('.'))
