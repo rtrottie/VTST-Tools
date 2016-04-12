@@ -40,6 +40,8 @@ def check_dimer(directory, runP=False):
             incar.pop('AUTO_TIME')
         incar.write_file(os.path.join(dir,'INCAR'))
         if runP:
+            if 'PBS_O_WORKDIR' in os.environ:
+                os.environ.pop('PBS_O_WORKDIR')
             os.chdir(dir)
             os.system('touch ' + m + '-' + subprocess.check_output('basename $( ls ../../*.log )', shell=True).strip())
             os.system('vasp.py ')

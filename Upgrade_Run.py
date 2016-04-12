@@ -92,7 +92,7 @@ else:
                     if args.execute_vasp:
                         cont = input('Run vasp anyway? (1/0 = yes/no)')
                         if cont == 1:
-                            os.system('cd . ; vasp.py')
+                            os.system('vasp.py')
                     sys.exit('Run will not be updated')
     run.incar['STAGE_NUMBER'] = Incar.from_file('INCAR')['STAGE_NUMBER']
     run.incar['STAGE_NAME'] = Incar.from_file('INCAR')['STAGE_NAME']
@@ -157,7 +157,7 @@ if args.compare_vasprun:
             if args.execute_vasp:
                 cont = input('Run vasp anyway? (1/0 = yes/no)')
                 if cont == 1:
-                    os.system('cd . ; vasp.py')
+                    os.system('vasp.py')
             sys.exit('Run will not be updated')
 elif prev_stage != None:
     err_msg = 'CONVERGENCE previous stage appears different than what is in the vasprun.xml.  Problems with: '
@@ -182,7 +182,7 @@ elif prev_stage != None:
             if args.execute_vasp:
                 cont = input('Run vasp anyway? (1/0 = yes/no)')
                 if cont == 1:
-                    os.system('cd . ; vasp.py')
+                    os.system('vasp.py')
             sys.exit('Run will not be updated')
 
 incar = Incar.from_file('INCAR')
@@ -233,4 +233,4 @@ new_incar.write_file('INCAR')
 if kpoints:
     kpoints.write_file('KPOINTS')
 if args.execute_vasp:
-    os.system('cd . ; vasp.py')
+    os.system('vasp.py')
