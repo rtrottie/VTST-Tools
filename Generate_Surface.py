@@ -138,31 +138,27 @@ def get_SD_along_vector(structure, vector, range):
 
     return sd
 
-
-parser = argparse.ArgumentParser()
-parser.add_argument('-m', '--miller', help='Miller indecies of desired surface',
-                    type=int, nargs=3, required='True')
-parser.add_argument('-b', '--bulk', help='Bulk structure of surface',
-                    type=str, default='', nargs='?', required='True')
-parser.add_argument('-w', '--width', help='width of supercell (in # of unit cells) (default is 1)',
-                    type=int, default=1)
-parser.add_argument('-l', '--length', help='length of supercell (defaults to width)',
-                    type=int, default=0)
-parser.add_argument('-d', '--depth', help='minimum depth of slab (in Angstroms) (default = 6) Note:  cell will be larger to ensure stoichiometry is preserved',
-                    type=float, default=6)
-parser.add_argument('-v', '--vacuum', help='vacuum above slab (in Angstroms) (default = 12)',
-                    type=float, default=12)
-parser.add_argument('-s', '--selective_dynamics', help='Freezes all atoms along the c vector with cordinates in between or equal to the two provided fractional coordinates',
-                    type=float, nargs=2)
-parser.add_argument('--vis', help='Visualize structures and determine which ones to save (only doable on a local computer with proper environment set up)',
-                    action='store_true')
-parser.add_argument('-o', '--no_orthogonal', help='does not attempt to orthogonalize cell.  Not recommended (less efficient, marginally harder to visualize)',
-                    action='store_false')
-
-
-args = parser.parse_args()
-
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--miller', help='Miller indecies of desired surface',
+                        type=int, nargs=3, required='True')
+    parser.add_argument('-b', '--bulk', help='Bulk structure of surface',
+                        type=str, default='', nargs='?', required='True')
+    parser.add_argument('-w', '--width', help='width of supercell (in # of unit cells) (default is 1)',
+                        type=int, default=1)
+    parser.add_argument('-l', '--length', help='length of supercell (defaults to width)',
+                        type=int, default=0)
+    parser.add_argument('-d', '--depth', help='minimum depth of slab (in Angstroms) (default = 6) Note:  cell will be larger to ensure stoichiometry is preserved',
+                        type=float, default=6)
+    parser.add_argument('-v', '--vacuum', help='vacuum above slab (in Angstroms) (default = 12)',
+                        type=float, default=12)
+    parser.add_argument('-s', '--selective_dynamics', help='Freezes all atoms along the c vector with cordinates in between or equal to the two provided fractional coordinates',
+                        type=float, nargs=2)
+    parser.add_argument('--vis', help='Visualize structures and determine which ones to save (only doable on a local computer with proper environment set up)',
+                        action='store_true')
+    parser.add_argument('-o', '--no_orthogonal', help='does not attempt to orthogonalize cell.  Not recommended (less efficient, marginally harder to visualize)',
+                        action='store_false')
+    args = parser.parse_args()
     if args.length == 0:
         args.length = args.width
     surfs = Generate_Surface(args.bulk, args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal)
