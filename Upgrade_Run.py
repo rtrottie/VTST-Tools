@@ -196,7 +196,7 @@ elif prev_stage != None:
                     os.system('vasp.py')
             sys.exit('Run will not be updated')
     elif error:
-        cont = input(err_msg +'\n  Run vasp anyway? (1/0 = yes/no)')
+        cont = input(err_msg +'\n  Run vasp ? (1/0 = yes/no)')
         if cont == 1:
             os.system('vasp.py')
         exit('Run was not identical to spec')
