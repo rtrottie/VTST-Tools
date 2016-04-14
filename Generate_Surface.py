@@ -131,7 +131,7 @@ def get_SD_along_vector(structure, vector, range):
     """
     sd = []
     for site in structure.sites:
-        if range[0] <= site.frac_coords[vector] and site.frac_coords[vector] <= range[1]:
+        if min(range) <= site.frac_coords[vector] and site.frac_coords[vector] <= max(range):
             sd.append([False, False, False])
         else:
             sd.append([True, True, True])
