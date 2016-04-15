@@ -26,7 +26,7 @@ def make_dos(vasprun, groups=[], output=False):
                 orbitals = ['all']
                 atoms = set
 
-            if type(set) == type('') and '-' in atoms:  # Determine what atom indicies to work with
+            if type(atoms) == type('') and '-' in atoms:  # Determine what atom indicies to work with
                 start_end = atoms.split('-')
                 atom_indices += range(int(start_end[0])-1, int(start_end[1]))
             else:
@@ -122,7 +122,7 @@ def get_dos(dos, site, orbital='all'):
             orbital = 'e_g'
         return dos.get_site_t2g_eg_resolved_dos(dos.structure.sites[site])[orbital]
     elif orbital == 's' or orbital == 'p' or orbital == 'd':
-        return dos.get_site_spd_dos(dos.structure.sites[site])[orbital.upper()]
+        return dos.get_site_spd_dos(dos.structure.sites[site])[OrbitalType[orbital]]
     else:
         return dos.get_site_orbital_dos(dos.structure.sites[site], orbital)
 
