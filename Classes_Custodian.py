@@ -177,6 +177,10 @@ class DimerJob(VaspJob):
         if os.path.exists('AECCAR0') and os.path.exists('AECCAR2') and os.path.exists('CHGCAR'):
             os.system('chgsum.pl AECCAR0 AECCAR2 ; bader CHGCAR -ref CHGCAR_sum')
 
+class StandardJob(VaspJob):
+    def postprocess(self):
+        VaspJob.postprocess(self)
+        if os.path.exists('AECCAR0') and os.path.exists('AECCAR2') and os.path.exists('CHGCAR'):
+            os.system('chgsum.pl AECCAR0 AECCAR2 ; bader CHGCAR -ref CHGCAR_sum')
 
 
-StandardJob = VaspJob
