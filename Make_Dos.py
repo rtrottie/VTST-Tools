@@ -26,14 +26,14 @@ def make_dos(vasprun, groups=[], output=False):
                 orbitals = ['all']
                 atoms = set
 
-            if type(set) == type('') and '-' in set:  # Determine what atom indicies to work with
-                start_end = set.split('-')
+            if type(set) == type('') and '-' in atoms:  # Determine what atom indicies to work with
+                start_end = atoms.split('-')
                 atom_indices += range(int(start_end[0])-1, int(start_end[1]))
             else:
                 try:
-                    atom_indices += [int(set)-1]
+                    atom_indices += [int(atoms)-1]
                 except:
-                    atom_indices += np.where(np.array(v.atomic_symbols) == set)[0].tolist()
+                    atom_indices += np.where(np.array(v.atomic_symbols) == atoms)[0].tolist()
 
             for orbital in orbitals:  #  Set up atom_orbital argument for later use
                 atom_orbital = atom_orbital + list(map(lambda x : (x, orbital), atom_indices))
