@@ -28,6 +28,8 @@ parser.add_argument('-e', '--execute-vasp', help='execute vasp (from vasp.py) on
                     action='store_true')
 parser.add_argument('-c', '--check-convergence', help='Check if run has converged at specified stage',
                     type=int, default=-1)
+parser.add_argument('-f', help='flags to send to vasp when executed with -e.  Use + instead of -',
+                    type=str)
 
 convergence = parser.add_mutually_exclusive_group()
 convergence.add_argument('--convergence-auto', help='Checks for Convergence, automatically stops if run isn\'t fully converged',
@@ -37,7 +39,7 @@ convergence.add_argument('--convergence-ignore', help='Makes no convergence chec
 
 args = parser.parse_args()
 
-saved_files = ['CONTCAR, vasprun.xml', 'OUTCAR', 'INCAR', 'KPOINTS', 'POSCAR', 'MODECAR', 'NEWMODECAR']
+saved_files = ['CONTCAR, vasprun.xml', 'OUTCAR', 'INCAR', 'KPOINTS', 'POSCAR', 'MODECAR', 'NEWMODECAR', 'POTCAR']
 
 def parse_incar_update(f_string):
     with open(f_string) as f:
@@ -94,7 +96,7 @@ else:
                     if args.execute_vasp:
                         cont = input('Run vasp anyway? (1/0 = yes/no)')
                         if cont == 1:
-                            os.system('vasp.py')
+                            os.system('vasp.py '+ args.f.replace('+', '-'))
                     sys.exit('Run will not be updated')
     run.incar['STAGE_NUMBER'] = Incar.from_file('INCAR')['STAGE_NUMBER']
     run.incar['STAGE_NAME'] = Incar.from_file('INCAR')['STAGE_NAME']
@@ -168,7 +170,7 @@ if args.compare_vasprun:
             if args.execute_vasp:
                 cont = input('Run vasp anyway? (1/0 = yes/no)')
                 if cont == 1:
-                    os.system('vasp.py')
+                    os.system('vasp.py '+ args.f.replace('+', '-'))
             sys.exit('Run will not be updated')
 elif prev_stage != None:
     err_msg = 'CONVERGENCE previous stage appears different than what is in the vasprun.xml.  Problems with: '
@@ -193,12 +195,12 @@ elif prev_stage != None:
             if args.execute_vasp:
                 cont = input('Run vasp anyway? (1/0 = yes/no)')
                 if cont == 1:
-                    os.system('vasp.py')
+                    os.system('vasp.py '+ args.f.replace('+', '-'))
             sys.exit('Run will not be updated')
     elif error:
         cont = input(err_msg +'\n  Run vasp ? (1/0 = yes/no)')
         if cont == 1:
-            os.system('vasp.py')
+            os.system('vasp.py '+ args.f.replace('+', '-'))
         exit('Run was not identical to spec')
 
 if args.check_convergence != -1:
@@ -252,4 +254,4 @@ new_incar.write_file('INCAR')
 if kpoints:
     kpoints.write_file('KPOINTS')
 if args.execute_vasp:
-    os.system('vasp.py')
+    os.system('vasp.py '+ args.f.replace('+', '-'))
