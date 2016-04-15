@@ -7,7 +7,7 @@ import numpy as np
 import argparse
 
 
-def make_dos(vasprun, groups=[], output='DOS.csv'):
+def make_dos(vasprun, groups=[], output=False):
     v = Vasprun(vasprun, parse_eigen=False)
     tdos = v.complete_dos
     energies = list(map(lambda x: x-tdos.efermi, tdos.energies.tolist()))
@@ -51,22 +51,25 @@ def make_dos(vasprun, groups=[], output='DOS.csv'):
         title.append(' '.join(map(str, group)) + ' -')
         columns.append(norm_up); columns.append(norm_down)
 
-    title.append('Scaling Factors')
-    columns.append(scaling_factors)
-    csv_str = ','.join(title)
 
-    for i in range(len(columns[0])):
-        csv_str = csv_str + '\n'
-        for j in range(len(columns)):
-            try:
-                csv_str = csv_str + str(columns[j][i])
-                if j != len(columns)-1:
-                    csv_str = csv_str + ','
-            except:
-                pass
 
-    with open(output, 'w') as f:
-        f.write(csv_str)
+    if output:
+        title.append('Scaling Factors')
+        columns.append(scaling_factors)
+        csv_str = ','.join(title)
+        for i in range(len(columns[0])):
+            csv_str = csv_str + '\n'
+            for j in range(len(columns)):
+                try:
+                    csv_str = csv_str + str(columns[j][i])
+                    if j != len(columns) - 1:
+                        csv_str = csv_str + ','
+                except:
+                    pass
+        with open(output, 'w') as f:
+            f.write(csv_str)
+    else:
+        return (title, columns, scaling_factors)
 
 def sum_orbitals(pdos, atoms, orbitals=['all']):
     pdos_reduced = list(map(lambda x: pdos[x], atoms))
