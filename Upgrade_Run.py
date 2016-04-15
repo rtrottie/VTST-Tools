@@ -14,7 +14,7 @@ parser.add_argument('-i', '--initialize', help='Initialize Vasp Run from CONVERG
                     action='store_true')
 parser.add_argument('-s', '--stage', help='Forces Upgrade to specified run',
                     type=int, default=-1)
-parser.add_argument('-f', '--file-convergence', help='Location of CONVERGENCE file on disk',
+parser.add_argument('--file-convergence', help='Location of CONVERGENCE file on disk',
                     type=str)
 parser.add_argument('-p', '--parent-directories', help='Number of Parent directories to look up into for CONVERGENCE file (DEFAULT: 5) overruled by -f option',
                     type=int, default=5)
