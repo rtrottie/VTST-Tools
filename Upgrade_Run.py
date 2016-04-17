@@ -29,7 +29,7 @@ parser.add_argument('-e', '--execute-vasp', help='execute vasp (from vasp.py) on
 parser.add_argument('-c', '--check-convergence', help='Check if run has converged at specified stage',
                     type=int, default=-1)
 parser.add_argument('-f', help='flags to send to vasp when executed with -e.  Use + instead of -',
-                    type=str)
+                    type=str, default='')
 
 convergence = parser.add_mutually_exclusive_group()
 convergence.add_argument('--convergence-auto', help='Checks for Convergence, automatically stops if run isn\'t fully converged',
