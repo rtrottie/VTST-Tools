@@ -69,7 +69,7 @@ def parse_stage_update(stage, dir='.'):
                     '_unset': unset}}
     ]
     if required:
-        settings.append({'required' : required)
+        settings.append({'required' : required})
     return settings
 
 if __name__ == '__main__':
