@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    saved_files = ['CONTCAR, vasprun.xml', 'OUTCAR', 'INCAR', 'KPOINTS', 'POSCAR', 'MODECAR', 'NEWMODECAR', 'POTCAR']
+    saved_files = ['CONTCAR, vasprun.xml', 'OUTCAR', 'INCAR', 'KPOINTS', 'POSCAR', 'MODECAR', 'NEWMODECAR']
 
     if args.upgrade_from != -1 and int(Incar.from_file('INCAR')['STAGE_NUMBER']) != args.upgrade_from:
         print('Not at correct stage, current stage is : ' + str(Incar.from_file('INCAR')['STAGE_NUMBER']) + ' need : ' + str(args.upgrade_from))
