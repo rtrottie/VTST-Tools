@@ -164,7 +164,9 @@ def get_queue(computer, jobtype, time, nodes):
     else:
         raise Exception('Unrecognized Computer')
 
-def get_template(computer, jobtype):
+def get_template(computer, jobtype, special=None):
+    if special == 'multi':
+        return(os.environ["VASP_TEMPLATE_DIR"], 'VASP.multistep.sh.jinja2')
     if jobtype == 'GSM' or jobtype == 'SSM':
         return(os.environ["VASP_TEMPLATE_DIR"], 'VASP.gsm.sh.jinja2')
     else:
@@ -191,6 +193,8 @@ parser.add_argument('-f', '--finish_convergence', help='Only run vasp if run has
 parser.add_argument('-n', '--name', help='name of run (Default is SYSTEM_Jobtype')
 parser.add_argument('-g', '--gamma', help='force a gamma point run',
                     action='store_true')
+parser.add_argument('-m', '--multi-step', help='Vasp will execute multipe runs based on specified CONVERGENCE file',
+                    type=str)
 
 args = parser.parse_args()
 
@@ -291,7 +295,15 @@ if __name__ == '__main__':
         queue = args.queue
     else:
         queue = get_queue(computer, jobtype, time, nodes)
-    (template_dir, template) = get_template(computer, jobtype)
+
+    additional_keywords = {}
+    special = None
+    if args.multi_step != None:
+        additional_keywords['CONVERGENCE'] = args.multi_step
+        special = 'multi'
+
+
+    (template_dir, template) = get_template(computer, jobtype, special)
     script = 'vasp_standard.sh'
 
     keywords = {'queue_type'    : queue_type,
