@@ -52,13 +52,13 @@ def parse_stage_update(stage, dir='.'):
             kpt = stage.pop('KPOINTS').replace(',', ' ').split()
             if len(kpt) == 1 and kpt[0] == 'G':
                 settings.append({'dict' : 'KPOINTS',
-                                 'action' : {'_set' : {'kpoints' : [1,1,1]}}})
+                                 'action' : {'_set' : {'kpoints' : [[1,1,1]]}}})
             elif len(kpt) == 3 or (len(kpt) == 4 and kpt[0] == 'G'):
                 settings.append({'dict' : 'KPOINTS',
-                                 'action' : {'_set' : {'kpoints' : [int(kpt[-3]), int(kpt[-2]), int(kpt[-1])]}}})
+                                 'action' : {'_set' : {'kpoints' : [[int(kpt[-3]), int(kpt[-2]), int(kpt[-1])]]}}})
             elif (len(kpt) == 4 and kpt[0] == 'M'):
                 settings.append({'dict' : 'KPOINTS',
-                                 'action' : {'_set' : {'kpoints' : [int(kpt[-3]), int(kpt[-2]), int(kpt[-1])]}}})
+                                 'action' : {'_set' : {'kpoints' : [[int(kpt[-3]), int(kpt[-2]), int(kpt[-1])]]}}})
             else:
                 raise Exception('Kpoint not formated correctly need [G/M] x y z [x_shift, y_shift, z_shift] or G')
         else:
