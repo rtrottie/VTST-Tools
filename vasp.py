@@ -324,6 +324,7 @@ if __name__ == '__main__':
                 'jobtype'       : jobtype,
                 'tasks'         : nodes*cores,
                 'openmp'        : openmp}
+    keywords.update(additional_keywords)
 
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template)
