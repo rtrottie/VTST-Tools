@@ -29,7 +29,7 @@ def parse_incar_update(f_string):
     dicts.append(this_stage)
     return dicts
 
-def parse_stage_update(stage, dir='.'):
+def parse_stage_update(stage, incar, dir='.'):
     os.chdir(dir)
     settings = []
     required = []
@@ -43,7 +43,8 @@ def parse_stage_update(stage, dir='.'):
         elif val == 'REMOVE':
             to_remove = stage.pop('REMOVE').replace(',', ' ').split()
             for item in to_remove:
-                unset[item] = None
+                if item in incar:
+                    unset[item] = None
         elif val == 'DELETE':
             to_delete = stage.pop('DELETE').replace(',', ' ').split()
             for item in to_delete:
