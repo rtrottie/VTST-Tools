@@ -31,14 +31,15 @@ def parse_incar_update(f_string):
 
 def parse_stage_update(stage, dir='.'):
     os.chdir(dir)
-    settings = [{'required' : []}]
+    settings = []
+    required = []
     set = {}
     unset = {}
     for val in stage.keys():
         if val == 'REQUIRED':
             for setting in stage.pop('REQUIRED').replace(',', ' ').split():
                 if setting not in Incar.from_file('INCAR'):
-                    settings['required'].append(setting)
+                    required.append(setting)
         elif val == 'REMOVE':
             to_remove = stage.pop('REMOVE').replace(',', ' ').split()
             for item in to_remove:
@@ -67,6 +68,8 @@ def parse_stage_update(stage, dir='.'):
          'action': {'_set': set,
                     '_unset': unset}}
     ]
+    if required:
+        settings.append({'required' : required)
     return settings
 
 if __name__ == '__main__':
