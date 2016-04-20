@@ -166,7 +166,9 @@ def get_queue(computer, jobtype, time, nodes):
 
 def get_template(computer, jobtype, special=None):
     if special == 'multi':
-        return(os.environ["VASP_TEMPLATE_DIR"], 'VASP.multistep.sh.jinja2')
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.multistep.sh.jinja2')
+    if special == 'encut':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.encut.sh.jinja2')
     if jobtype == 'GSM' or jobtype == 'SSM':
         return(os.environ["VASP_TEMPLATE_DIR"], 'VASP.gsm.sh.jinja2')
     else:
@@ -195,6 +197,8 @@ parser.add_argument('-g', '--gamma', help='force a gamma point run',
                     action='store_true')
 parser.add_argument('-m', '--multi-step', help='Vasp will execute multipe runs based on specified CONVERGENCE file',
                     type=str)
+parser.add_argument('-e', '--encut', help='find ENCUT that will converge to within specified eV/atom for 50 ENCUT',
+                    type=float)
 
 args = parser.parse_args()
 
@@ -301,6 +305,9 @@ if __name__ == '__main__':
     if args.multi_step != None:
         additional_keywords['CONVERGENCE'] = args.multi_step
         special = 'multi'
+    elif args.encut:
+        additional_keywords['target'] = args.encut
+        special = 'encut'
 
 
     (template_dir, template) = get_template(computer, jobtype, special)
