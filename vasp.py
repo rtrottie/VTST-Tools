@@ -326,7 +326,7 @@ if __name__ == '__main__':
                 'mem'           : mem,
                 'account'       : account,
                 'mpi'           : os.environ["VASP_MPI"],
-                'vasp_kpts'     : vasp_kpts,
+                'vasp_kpts'     : os.environ["VASP_KPTS"],
                 'vasp_gamma'    : os.environ["VASP_GAMMA"],
                 'jobtype'       : jobtype,
                 'tasks'         : nodes*cores,
