@@ -167,14 +167,14 @@ class DimerJob(VaspJob):
         make = False
         try:
             v = Vasprun('vasprun.xml')
-            if v.converged and len(v.ionic_steps) <= 5:
+            if v.converged and len(v.ionic_steps) <= 5 and self.final:
                 make = True
         except:
             pass
         if make:
             print('Creating Mins')
             Dim_Check.check_dimer(os.path.abspath('.'), True)
-        if os.path.exists('AECCAR0') and os.path.exists('AECCAR2') and os.path.exists('CHGCAR') and self.final:
+        if os.path.exists('AECCAR0') and os.path.exists('AECCAR2') and os.path.exists('CHGCAR'):
             os.system('chgsum.pl AECCAR0 AECCAR2')
             if Incar.from_file('INCAR')['ISPIN'] == 2:
                 os.system('chgsplit.pl CHGCAR ; bader CHGCAR_mag -ref CHGCAR_sum')
