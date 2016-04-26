@@ -1,5 +1,6 @@
 # a quick way to visualize structures and molecules made in pymatgen.  current set up to run only on my virtual box
 import os
+import subprocess
 
 def open_in_VESTA(molecule,type='cif'):
     vesta = os.path.join(os.environ['VESTA_DIR'], 'VESTA')
@@ -9,13 +10,13 @@ def open_in_VESTA(molecule,type='cif'):
     os.system(vesta + ' ' + SCRATCH)
 
 def open_in_Jmol(molecule,type='cif'):
-    JMOL_DIR = os.path.join(os.environ['JMOL_DIR'], 'jmol')
+    JMOL_DIR = os.path.join(os.environ['JMOL_DIR'], 'jmol') if 'JMOL_DIR' in os.environ else 'jmol'
     if isinstance(molecule, basestring):
         os.system(JMOL_DIR + ' ' + molecule)
     else:
         SCRATCH = '/home/ryan/scratch/scratch.' + type
         molecule.to(type, SCRATCH)
-        os.system(JMOL_DIR + ' ' + SCRATCH)
+        subprocess.Popen([JMOL_DIR, SCRATCH])
 
 def view(molecule, program='jmol', type='cif'):
     if program == True or program.lower() == 'jmol':

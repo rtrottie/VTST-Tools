@@ -174,7 +174,7 @@ class DimerJob(VaspJob):
         if make:
             print('Creating Mins')
             Dim_Check.check_dimer(os.path.abspath('.'), True)
-        if os.path.exists('AECCAR0') and os.path.exists('AECCAR2') and os.path.exists('CHGCAR'):
+        if os.path.exists('AECCAR0') and os.path.exists('AECCAR2') and os.path.exists('CHGCAR') and self.final:
             os.system('chgsum.pl AECCAR0 AECCAR2')
             if Incar.from_file('INCAR')['ISPIN'] == 2:
                 os.system('chgsplit.pl CHGCAR ; bader CHGCAR_mag -ref CHGCAR_sum')
