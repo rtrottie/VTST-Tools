@@ -106,7 +106,8 @@ class NEBJob(VaspJob):
         self._images = incar["IMAGES"]
         for i in xrange(self._images):
             if not os.path.isfile(os.path.join(str(i).zfill(2),'POSCAR')):
-                raise RuntimeError("Expected file at : " + os.path.join(str(i).zfill(2),'POSCAR'))
+                raise RuntimeError("Expected file at : " + os.path.join(str(i).zfill(2),'POSCAR'))if self.settings_override is not None:
+        VaspModder().apply_actions(self.settings_override)
 
 class DimerJob(VaspJob):
     def setup(self):
