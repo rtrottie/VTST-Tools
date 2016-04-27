@@ -12,11 +12,11 @@ def open_in_VESTA(molecule,type='cif'):
 def open_in_Jmol(molecule,type='cif'):
     JMOL_DIR = os.path.join(os.environ['JMOL_DIR'], 'jmol') if 'JMOL_DIR' in os.environ else 'jmol'
     if isinstance(molecule, basestring):
-        os.system(JMOL_DIR + ' ' + molecule)
+        return subprocess.Popen([JMOL_DIR, SCRATCH])
     else:
         SCRATCH = '/home/ryan/scratch/scratch.' + type
         molecule.to(type, SCRATCH)
-        subprocess.Popen([JMOL_DIR, SCRATCH])
+        return subprocess.Popen([JMOL_DIR, SCRATCH])
 
 def view(molecule, program='jmol', type='cif'):
     if program == True or program.lower() == 'jmol':
