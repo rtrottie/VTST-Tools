@@ -48,7 +48,7 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
             raise Exception('Need valid INCAR')
     elif jobtype == 'Dimer':
         instructions['backup'] = ['OUTCAR', 'POSCAR', 'INCAR', 'KPOINTS', 'MODECAR', 'DIMCAR']
-        instructions['move'] = [('CENTCAR', 'POSCAR'), ('NEWMODECAR', 'MODECAR')]
+        instructions['move'] = [('CONTCAR', 'POSCAR'), ('NEWMODECAR', 'MODECAR')]
     elif jobtype == 'GSM' or jobtype == 'SSM':
         instructions['backup'] = ['stringfile.xyz0000', 'inpfileq', 'scratch/initial0000.xyz', 'scratch/paragsm0000',
                                   'INCAR']
