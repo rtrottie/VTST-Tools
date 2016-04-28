@@ -103,12 +103,15 @@ class NEBJob(VaspJob):
         if not set(files).issuperset(['KPOINTS','INCAR','POTCAR']):
             raise RuntimeError("Necessary files missing.  Need: KPOINTS, INCAR, and POTCAR.  Unable to continue.")
         incar = Incar.from_file('INCAR')
+        kpoints = Kpoints.from_file('KPOINTS')
+        poscar = Poscar.from_file('00/POSCAR')
+        potcar = Potcar.from_file('POTCAR')
         self._images = incar["IMAGES"]
         for i in xrange(self._images):
             if not os.path.isfile(os.path.join(str(i).zfill(2),'POSCAR')):
                 raise RuntimeError("Expected file at : " + os.path.join(str(i).zfill(2),'POSCAR'))
         if self.settings_override is not None:
-            VaspModder().apply_actions(self.settings_override)
+            VaspModder(vi=VaspInput(incar, kpoints, poscar, potcar)).apply_actions(self.settings_override)
 
 class DimerJob(VaspJob):
     def setup(self):
