@@ -13,7 +13,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('neb_dir', help='location of the neb dir')
 parser.add_argument('dim_dir', help='location of desired dimer dir (defaults to ".")',
-                    default='.')
+                    default='.', nargs='?')
 args = parser.parse_args()
 
 dimer_dir = os.path.abspath(args.dimer_dir)
