@@ -4,6 +4,7 @@
 import os
 import subprocess
 from pymatgen.core.structure import *
+from pymatgen.analysis.transition_state import NEBAnalysis
 import cfg
 import socket
 import shutil
@@ -17,10 +18,11 @@ def xfrange(start, stop, step):
 
 def neb2dim(neb_dir, dimer_dir):
     dimer_dir = os.path.abspath(dimer_dir)
-    os.chdir(neb_dir)
-    os.system(os.path.join(os.environ['VTST_DIR'],'nebspline.pl'))
     if not os.path.exists(dimer_dir):
         os.makedirs(dimer_dir)
+
+    os.chdir(neb_dir)
+    os.system(os.path.join(os.environ['VTST_DIR'],'nebspline.pl'))
     os.system(os.path.join(os.environ['VTST_DIR'],'neb2dim.pl') + ' > /dev/null')
     if os.path.abspath(os.path.join(os.path.abspath(neb_dir), 'dim')) != os.path.abspath(dimer_dir):
         for f in os.listdir('dim'):
