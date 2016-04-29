@@ -23,7 +23,7 @@ try:
     energies = NEBAnalysis.from_dir(neb_dir).energies
 except:
     if raw_input('Failed, do: rm ' + neb_dir + '*/*.xyz and try again? (y)') == 'y':
-        os.system('rm ' + neb_dir + '*/*.xyz')
+        os.system('rm ' + neb_dir + '/*/*.xyz')
         energies = NEBAnalysis.from_dir(neb_dir).energies
     else:
         raise Exception('Could not read NEB dir')
