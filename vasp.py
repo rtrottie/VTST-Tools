@@ -278,7 +278,9 @@ if __name__ == '__main__':
     else:
         cores = int(os.environ["VASP_NCORE"])
 
-    if 'VASP_DEFAULT_ALLOCATION' in os.environ:
+    if 'AUTO_ALLOCATION' in incar:
+        account = incar['AUTO_ALLOCATION']
+    elif 'VASP_DEFAULT_ALLOCATION' in os.environ:
         account = os.environ['VASP_DEFAULT_ALLOCATION']
     else:
         account = ''
