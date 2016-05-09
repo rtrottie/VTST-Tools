@@ -29,11 +29,8 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
     vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
     vasp['POSCAR'].selective_dynamics = sd
 
-    # Creating new POTCAR
-    vasp['POTCAR'] = Potcar(vasp['POSCAR'].site_symbols)
-
     # Modifying INCAR
-    update_incar(vasp['POSCAR'].structure, vasp['INCAR'])
+    #update_incar(vasp['POSCAR'].structure, vasp['INCAR'])
     vasp["INCAR"]['MAGMOM'] = mm
 
     vasp.write_input(this_dir)
