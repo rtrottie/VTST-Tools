@@ -43,7 +43,7 @@ def neb2dim(neb_dir, dimer_dir):
     for neb_setting in ['IMAGES', 'LCLIMB']:
         if neb_setting in incar:
             del incar[neb_setting]
-    incar.write_file('INCAR')
+    incar.write_file(os.path.join(dimer_dir, 'INCAR'))
 
     print('Making MODECAR')
     mode1 = os.path.join(neb_dir, str(ts_i - 1).zfill(2))
