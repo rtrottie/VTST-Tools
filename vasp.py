@@ -169,6 +169,8 @@ def get_template(computer, jobtype, special=None):
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.multistep.sh.jinja2')
     if special == 'encut':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.encut.sh.jinja2')
+    if special == 'kpoints':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.kpoints.sh.jinja2')
     if jobtype == 'GSM' or jobtype == 'SSM':
         return(os.environ["VASP_TEMPLATE_DIR"], 'VASP.gsm.sh.jinja2')
     else:
@@ -198,6 +200,8 @@ parser.add_argument('-g', '--gamma', help='force a gamma point run',
 parser.add_argument('-m', '--multi-step', help='Vasp will execute multipe runs based on specified CONVERGENCE file',
                     type=str)
 parser.add_argument('-e', '--encut', help='find ENCUT that will converge to within specified eV/atom for 50 ENCUT',
+                    type=float)
+parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to within specified eV/atom',
                     type=float)
 
 args = parser.parse_args()
@@ -310,6 +314,9 @@ if __name__ == '__main__':
     elif args.encut:
         additional_keywords['target'] = args.encut
         special = 'encut'
+    elif args.kpoints:
+        additional_keywords['target'] = args.kpoints
+        special = 'kpoints'
 
 
     (template_dir, template) = get_template(computer, jobtype, special)
