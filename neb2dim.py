@@ -10,6 +10,8 @@ from Classes_Pymatgen import Incar
 import argparse
 
 def neb2dim(neb_dir, dimer_dir):
+    neb_dir = os.path.abspath(neb_dir)
+    dimer_dir = os.path.abspath(dimer_dir)
     try:
         energies = NEBAnalysis.from_dir(neb_dir).energies
     except:
@@ -46,7 +48,10 @@ def neb2dim(neb_dir, dimer_dir):
     print('Making MODECAR')
     mode1 = os.path.join(neb_dir, str(ts_i - 1).zfill(2))
     mode2 = os.path.join(neb_dir, str(ts_i + 1).zfill(2))
+    cwd = os.path.abspath('.')
+    os.chdir(dimer_dir)
     os.system('modemake.pl ' + mode1 + '/CONTCAR ' + mode2 + '/CONTCAR &> /dev/null')
+    os.chdir(cwd)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -55,6 +60,6 @@ if __name__ == '__main__':
                         default='.', nargs='?')
     args = parser.parse_args()
 
-    dimer_dir = os.path.abspath(args.dimer_dir)
-    neb_dir = os.path.abspath(args.neb_dir)
+    dimer_dir = args.dimer_dir
+    neb_dir = args.neb_dir
     neb2dim(neb_dir, dimer_dir)
