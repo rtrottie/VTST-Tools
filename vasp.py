@@ -52,7 +52,7 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
     elif jobtype == 'GSM' or jobtype == 'SSM':
         instructions['backup'] = ['stringfile.xyz0000', 'inpfileq', 'scratch/initial0000.xyz', 'scratch/paragsm0000',
                                   'INCAR']
-        instructions['commands'].extend(['cp stringfile.xyz0000 restart.xyz0000'])
+        instructions['move'] = ('stringfile.xyz0000', 'restart.xyz0000')
         if jobtype == 'SSM':
             instructions['backup'].append('scratch/ISOMERS0000')
     else:
@@ -125,7 +125,7 @@ def restart_vasp(dir):
             print('Unable to move ' + old_file + ' to ' + new_file)
     if jobtype == 'SSM':
         raise Exception('Make SSM run into GSM run')
-    elif jobtype == 'GSM':
+    elif jobtype == 'GSM' and os.path.exists('restart.xyz0000'):
         with open('inpfileq') as inpfileq:
             lines = inpfileq.readlines()
             gsm_settings = list(map(lambda x: (x + ' 1').split()[0], lines))
