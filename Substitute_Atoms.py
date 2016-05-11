@@ -17,7 +17,10 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
 
     # Modifying POSCAR
     sd = vasp['POSCAR'].selective_dynamics
-    mm = vasp["INCAR"]['MAGMOM']
+    if 'MAGMOM' in vasp['INCAR']:
+        mm = vasp["INCAR"]['MAGMOM']
+    else:
+        mm = False
     atom_nums.sort(reverse=True)
     if sd:
         for i in atom_nums:
