@@ -168,7 +168,7 @@ if __name__ == '__main__':
     if args.stage != -1:
         stage = updates[args.stage]
         if int(args.stage) > 0:
-            prev_stage_name = updates[int(cont)-1]['STAGE_NAME']
+            prev_stage_name = updates[int(args.stage)-1]['STAGE_NAME']
             prev_stage = updates[args.stage - 1]
         else:
             prev_stage_name = 'init'
