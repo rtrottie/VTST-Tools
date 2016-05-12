@@ -95,11 +95,9 @@ if __name__ == '__main__':
                         type=int, default=-1)
     parser.add_argument('-f', help='flags to send to vasp when executed with -e.  Use + instead of -',
                         type=str, default='')
-
-    convergence = parser.add_mutually_exclusive_group()
-    convergence.add_argument('--convergence-auto', help='Checks for Convergence, automatically stops if run isn\'t fully converged',
+    parser.add_argument('--convergence-auto', help='Checks for Convergence, automatically stops if run isn\'t fully converged',
                              action='store_true')
-    convergence.add_argument('--convergence-ignore', help='Makes no convergence check',
+    parser.add_argument('--convergence-ignore', help='Makes no convergence check',
                              action='store_true')
 
     args = parser.parse_args()
