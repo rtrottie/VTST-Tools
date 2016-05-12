@@ -168,8 +168,8 @@ if __name__ == '__main__':
     if args.stage != -1:
         stage = updates[args.stage]
         if int(args.stage) > 0:
-            prev_stage_name = updates[int(args.stage)-1]['STAGE_NAME']
-            prev_stage = updates[args.stage - 1]
+            prev_stage_name = run.incar['STAGE_NAME']
+            prev_stage = updates[int(run.incar['STAGE_NUMBER'])]
         else:
             prev_stage_name = 'init'
     elif args.check_convergence != -1:
