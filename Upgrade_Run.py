@@ -215,7 +215,7 @@ if __name__ == '__main__':
                     if cont == 1:
                         os.system('vasp.py '+ args.f.replace('+', '-'))
                 sys.exit('Run will not be updated')
-    elif prev_stage != None:
+    elif prev_stage != None and not args.convergence_ignore:
         err_msg = 'CONVERGENCE previous stage appears different than what is in the vasprun.xml.  Problems with: '
         error = False
         for key in prev_stage.keys():
