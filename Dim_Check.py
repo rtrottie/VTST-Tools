@@ -14,6 +14,9 @@ from Classes_Pymatgen import *
 def check_dimer(directory, runP=False):
     directory = os.path.abspath(directory)
     os.chdir(directory)
+    if os.path.exists('mins'):
+        print 'mins already exists'
+        return
     os.system(os.path.join(os.environ['VTST_DIR'], 'dimmins.pl'))
     for m in ['min1', 'min2']:
         dir = os.path.join(directory, 'mins', m)
