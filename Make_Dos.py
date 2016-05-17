@@ -124,9 +124,10 @@ def get_dos(dos, site, orbital='all'):
     elif orbital == 's' or orbital == 'p' or orbital == 'd':
         return dos.get_site_spd_dos(dos.structure.sites[site])[OrbitalType[orbital]]
     else:
-        return dos.get_site_orbital_dos(dos.structure.sites[site], orbital)
+        return dos.get_site_orbital_dos(dos.structure.sites[site], Orbital[orbital])
 
-
+def get_center(energies, dos):
+    return np.average(energies, weights=dos)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

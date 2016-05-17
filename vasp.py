@@ -166,7 +166,7 @@ def get_queue(computer, jobtype, time, nodes):
 
 def get_template(computer, jobtype, special=None):
     if special == 'multi':
-        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.multistep.sh.jinja2')
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.multistep.jinja2.py')
     if special == 'encut':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.encut.sh.jinja2')
     if special == 'kpoints':
