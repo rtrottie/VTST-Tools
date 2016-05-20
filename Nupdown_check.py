@@ -39,8 +39,8 @@ else:
 
 for i in range(start, end):
     dir = os.path.join('nupdown', str(i).zfill(3))
-    print('Setting up run in ./' + dir)
     if not os.path.exists(dir):
+        print('Setting up run in ./' + dir)
         os.makedirs(dir)
 
         incar['NUPDOWN'] = i
