@@ -43,13 +43,13 @@ for i in range(start, end):
     if not os.path.exists(dir):
         os.makedirs(dir)
 
-    incar['NUPDOWN'] = i
-    incar['SYSTEM'] = str(i) + ' ' + system
-    incar.write_file(os.path.join(dir, 'INCAR'))
-    kpoints.write_file(os.path.join(dir, 'KPOINTS'))
-    poscar.write_file(os.path.join(dir, 'POSCAR'))
-    potcar.write_file(os.path.join(dir, 'POTCAR'))
-    if args.wavecar and os.path.exists('WAVECAR'):
-        shutil.copy('WAVECAR', os.path.join(dir,'WAVECAR'))
-        if os.path.exists('CHGCAR'):
-            shutil.copy('CHGCAR', os.path.join(dir, 'CHGCAR'))
+        incar['NUPDOWN'] = i
+        incar['SYSTEM'] = str(i) + ' ' + system
+        incar.write_file(os.path.join(dir, 'INCAR'))
+        kpoints.write_file(os.path.join(dir, 'KPOINTS'))
+        poscar.write_file(os.path.join(dir, 'POSCAR'))
+        potcar.write_file(os.path.join(dir, 'POTCAR'))
+        if args.wavecar and os.path.exists('WAVECAR'):
+            shutil.copy('WAVECAR', os.path.join(dir,'WAVECAR'))
+            if os.path.exists('CHGCAR'):
+                shutil.copy('CHGCAR', os.path.join(dir, 'CHGCAR'))
