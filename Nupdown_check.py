@@ -53,3 +53,5 @@ for i in range(start, end):
             shutil.copy('WAVECAR', os.path.join(dir,'WAVECAR'))
             if os.path.exists('CHGCAR'):
                 shutil.copy('CHGCAR', os.path.join(dir, 'CHGCAR'))
+    else:
+        print('Folder exists:  ' + dir)
