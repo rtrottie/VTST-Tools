@@ -8,7 +8,7 @@ from Classes_Pymatgen import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('start', help='magmom to check values from',
-                    type=int, default=0)
+                    type=int, nargs='?')
 parser.add_argument('end', help='magmom to check values to (inclusive)',
                     type=int, nargs='?')
 parser.add_argument('-r', '--radius', help='Number of values to check around (default = 4 (9 jobs)) Only used if two values aren\'t specified',
@@ -30,6 +30,9 @@ if not os.path.exists('nupdown'):
 if args.end:
     start = args.start if args.start < args.end else args.end
     end = args.end + 1 if args.start < args.end else args.start + 1
+elif not args.start:
+    start = Incar.from_file('INCAR')['NUPDOWN'] - args.radius
+    end = start + args.radius*2 + 1
 else:
     start = args.start - args.radius
     end = args.start + args.radius + 1
