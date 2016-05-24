@@ -12,7 +12,7 @@ parser.add_argument('ts_image', help='Image of TS (will try to find if not given
 args = parser.parse_args()
 
 if args.ts_image < 0:
-    energies = subprocess.check_output(['grep', 'V_profile', '|', 'tail', '-n', '1'], shell=True)
+    energies = subprocess.check_output(['grep V_profile scratch/paragsm0000 | tail -n 1'], shell=True)
     energies = [ float(x) for x in energies.split()[1:] ]
     args.ts_image = energies.index(max(energies)) + 1
     print 'TS Image Determined to be:  ' + str(args.ts_image)
