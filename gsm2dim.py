@@ -8,7 +8,7 @@ import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument('ts_image', help='Image of TS (will try to find if not given)',
-                    type=int, default=-1)
+                    type=int, default=-1, nargs='?')
 args = parser.parse_args()
 
 if args.ts_image < 0:
