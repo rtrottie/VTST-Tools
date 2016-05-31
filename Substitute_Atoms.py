@@ -69,9 +69,10 @@ def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
 
     # Modifying POSCAR
     sd = vasp['POSCAR'].selective_dynamics
-    vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCAR'].structure)
-    vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
-    vasp['POSCAR'].selective_dynamics = sd
+    if sd:
+        vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCAR'].structure)
+        vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
+        vasp['POSCAR'].selective_dynamics = sd
 
     # Creating new POTCAR
     vasp['POTCAR'] = Potcar(vasp['POSCAR'].site_symbols)
