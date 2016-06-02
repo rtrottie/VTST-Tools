@@ -72,6 +72,8 @@ class DimerCheckMins(ErrorHandler):
         return {"errors": ['no minima created'], 'actions' : None}
 
 class NEBJob(VaspJob):
+    is_terminating = False
+
     def run(self):
         """
         Perform the actual VASP run.
