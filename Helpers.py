@@ -12,7 +12,7 @@ from Classes_Pymatgen import *
 
 def get_nelect(outcar):
     line = subprocess.check_output(['grep', 'NELECT', outcar])
-    nelect = int(line.split()[2])
+    nelect = int(line.split()[2].split('.')[0])
     return nelect
 
 
