@@ -10,6 +10,12 @@ import socket
 import shutil
 from Classes_Pymatgen import *
 
+def get_nelect(outcar):
+    line = subprocess.check_output(['grep', 'NELECT', outcar])
+    nelect = int(line.split()[2])
+    return nelect
+
+
 def xfrange(start, stop, step):
     start = float(start)
     while start < stop:
