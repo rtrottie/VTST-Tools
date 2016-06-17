@@ -28,7 +28,7 @@ base_nelect = get_nelect(os.path.join(args.folder, 'OUTCAR'))
 
 for i in range(args.start, args.end+1):
     dir = os.path.join(str(i))
-    if dir[0] = '-':
+    if dir[0] == '-':
         dir[0] = 'n'
     if not os.path.exists(dir):
         print('Setting up run in ./' + dir)
