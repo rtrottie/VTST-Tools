@@ -25,22 +25,22 @@ incar = Incar.from_file(os.path.join(args.folder, 'INCAR'))
 kpoints = Kpoints.from_file(os.path.join(args.folder, 'KPOINTS'))
 system = incar["SYSTEM"]
 base_nelect = get_nelect(os.path.join(args.folder, 'OUTCAR'))
+base_sys = incar['SYSTEM'].split()
 
 for i in range(args.start, args.end+1):
     dir = os.path.join(str(i))
-    dir.replace('-', 'n')
+    dir = dir.replace('-', 'n')
     if not os.path.exists(dir):
         print('Setting up run in ./' + dir)
         os.makedirs(dir)
 
         incar['NELECT'] = base_nelect - i + args.charge
         sys = incar['SYSTEM']
-        if sys[-1] == '0':
+        if base_sys[-1] == '0':
             sys[-1] = dir
         else:
             sys = sys + [' ', dir]
         incar['SYSTEM'] = sys
-
         incar.write_file(os.path.join(dir, 'INCAR'))
         kpoints.write_file(os.path.join(dir, 'KPOINTS'))
         poscar.write_file(os.path.join(dir, 'POSCAR'))
