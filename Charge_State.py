@@ -35,8 +35,8 @@ for i in range(args.start, args.end+1):
         os.makedirs(dir)
 
         incar['NELECT'] = base_nelect - i + args.charge
-        sys = incar['SYSTEM']
         if base_sys[-1] == '0':
+            sys = base_sys
             sys[-1] = dir
         else:
             sys = base_sys + [dir]
