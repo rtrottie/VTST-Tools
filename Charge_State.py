@@ -33,7 +33,7 @@ for i in range(args.start, args.end):
         os.makedirs(dir)
 
         incar['NELECT'] = base_nelect - i + args.charge
-        sys = incar['SYSTEM'].split()
+        sys = incar['SYSTEM']
         if sys[-1] == '0':
             sys[-1] = dir
             ' '.join(sys)
