@@ -2,6 +2,7 @@
 
 
 import argparse
+import copy
 import os
 import shutil
 from Classes_Pymatgen import *
@@ -36,7 +37,7 @@ for i in range(args.start, args.end+1):
 
         incar['NELECT'] = base_nelect - i + args.charge
         if base_sys[-1] == '0':
-            sys = base_sys
+            sys = copy.copy(base_sys)
             sys[-1] = dir
         else:
             sys = base_sys + [dir]
