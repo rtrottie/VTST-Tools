@@ -36,9 +36,9 @@ for i in range(args.start, args.end):
         sys = incar['SYSTEM'].split()
         if sys[-1] == '0':
             sys[-1] = dir
-            sys.join(' ')
+            ' '.join(sys)
         else:
-            sys.join(' ') + ' ' + dir
+            ' '.join(sys) + ' ' + dir
         incar['SYSTEM'] = sys
 
         incar.write_file(os.path.join(dir, 'INCAR'))
