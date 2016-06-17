@@ -39,7 +39,7 @@ for i in range(args.start, args.end+1):
         if base_sys[-1] == '0':
             sys[-1] = dir
         else:
-            sys = base_sys + [' ', dir]
+            sys = base_sys + [dir]
 
         incar['SYSTEM'] = ' '.join(sys)
         incar.write_file(os.path.join(dir, 'INCAR'))
