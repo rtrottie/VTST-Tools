@@ -8,6 +8,6 @@ if __name__ == '__main__':
     parser.add_argument('vasprun', help='filename of vasprun.xml file (default: vasprun.xml',
                         nargs='?', default='vasprun.xml')
     args = parser.parse_args()
-    v = Vasprun(args.vasprun, parse_dos=False, parse_eigen=False)
+    v = Vasprun(args.vasprun)
     bs = v.get_band_structure()
     print bs.get_band_gap()
