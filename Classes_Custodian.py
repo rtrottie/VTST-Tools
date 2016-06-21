@@ -208,5 +208,3 @@ class StandardJob(VaspJob):
                     pass
             os.system('bader CHGCAR -ref CHGCAR_sum &>> bader_info')
 
-exitcode = 0
-
