@@ -182,13 +182,16 @@ class DimerJob(VaspJob):
             print('Creating Mins')
             Dim_Check.check_dimer(os.path.abspath('.'), True)
         if os.path.exists('AECCAR0') and os.path.exists('AECCAR2') and os.path.exists('CHGCAR'):
-            os.system('chgsum.pl AECCAR0 AECCAR2')
+            os.system('chgsum.pl AECCAR0 AECCAR2 &> bader_info')
             if Incar.from_file('INCAR')['ISPIN'] == 2:
-                os.system('chgsplit.pl CHGCAR ; bader CHGCAR_mag -ref CHGCAR_sum')
-                shutil.copy('ACF.dat', 'ACF_mag.dat')
-                shutil.copy('AVF.dat', 'AVF_mag.dat')
-                shutil.copy('BCF.dat', 'BCF_mag.dat')
-            os.system('bader CHGCAR -ref CHGCAR_sum')
+                os.system('chgsplit.pl CHGCAR &>> bader_info ; bader CHGCAR_mag -ref CHGCAR_sum &>> bader_info')
+                try:
+                    shutil.copy('ACF.dat', 'ACF_mag.dat')
+                    shutil.copy('AVF.dat', 'AVF_mag.dat')
+                    shutil.copy('BCF.dat', 'BCF_mag.dat')
+                except:
+                    pass
+            os.system('bader CHGCAR -ref CHGCAR_sum &>> bader_info')
 
 class StandardJob(VaspJob):
     def postprocess(self):
