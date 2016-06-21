@@ -205,4 +205,5 @@ class StandardJob(VaspJob):
                 shutil.copy('BCF.dat', 'BCF_mag.dat')
             os.system('bader CHGCAR -ref CHGCAR_sum')
 
+exitcode = 0
 
