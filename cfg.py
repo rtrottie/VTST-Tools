@@ -55,7 +55,7 @@ INCAR_format = [
     ('HSE', ['LHFCALC', 'HFSCREEN', 'PRECFOCK', 'AEXX']),
     ('ALGORITHM - IONIC', ['IBRION', 'NSW', 'POTIM', 'EDIFFG', 'ISIF', 'ISYM']),
     ('INPUT', ['ISTART', 'ICHARG', 'KSPACING']),
-    ('OUTPUT', ['NWRITE', 'LORBIT', 'LAECHG', 'LWAVE', 'LCHARG']),
+    ('OUTPUT', ['NWRITE', 'LORBIT', 'LAECHG', 'LWAVE', 'LCHARG', 'LVTOT']),
     ('NEB', ['IMAGES', 'SPRING']),
     ('VTST', ['ICHAIN', 'IOPT', 'LCLIMB']),
     ('SETUP', ['AUTO_TIME', 'AUTO_NODES', 'AUTO_MEM', 'AUTO_GAMMA', 'STAGE_NUMBER', 'STAGE_NAME', 'STAGE_FILE']) # must be last
