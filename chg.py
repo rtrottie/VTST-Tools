@@ -10,5 +10,5 @@ args = parser.parse_args()
 
 c = Chgcar.from_file(args.file)
 for v in range(3):
-    with open(args.f.lower() + '.' + str(v) + '.txt', 'w') as f:
+    with open(args.file.lower() + '.' + str(v) + '.txt', 'w') as f:
         f.writelines([ str(x) + '\n' for x in c.get_average_along_axis(v) ])
