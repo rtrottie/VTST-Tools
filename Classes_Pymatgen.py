@@ -1,6 +1,7 @@
 # functions to improve Pymatgen Classes and output setup
 # Not meant to be called from command line
 from pymatgen.io.vasp.inputs import *
+from pymatgen.io.vasp.outputs import *
 import pymatgen as pmg
 import numpy as np
 import cfg

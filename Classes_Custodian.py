@@ -3,7 +3,7 @@
 from custodian.vasp.jobs import *
 from custodian.vasp.handlers import *
 from monty.os.path import which
-from pymatgen.io.vaspio.vasp_input import *
+from pymatgen.io.vasp.inputs import *
 import Dim_Check
 
 class NEBNotTerminating(FrozenJobErrorHandler):
