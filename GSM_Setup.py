@@ -100,7 +100,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         shutil.copy(os.path.join(start_folder, 'CHGCAR'),
                     os.path.join(new_gsm_dir, 'scratch/IMAGE.01/CHGCAR'))
 
-    start = ase.io.read(start_file)
+    start = ase.io.read(start_file, format='vasp')
     start.wrap(center)
     initial = [start]
 
@@ -125,7 +125,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             shutil.copy(os.path.join(final_folder, 'CHGCAR'),
                         os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/CHGCAR'))
 
-        final = ase.io.read(final_file)
+        final = ase.io.read(final_file, format='vasp')
         final.wrap(f_center)
         initial.append(final)
 
