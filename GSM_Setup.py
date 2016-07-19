@@ -144,10 +144,10 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     if poscar.selective_dynamics:
         with open('scratch/initial0000.temp.xyz', 'r') as f:
             sd = Poscar.from_file('POSCAR.start').selective_dynamics
-            sd = map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd)
+            sd = list(map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd))
             to_zip = (['\n', '\n'] + sd) * len(initial)
             zipped = zip(f.readlines(), to_zip)
-            xyz = map(lambda (x,y) : x.rstrip()+y, zipped)
+            xyz = list(map(lambda (x,y) : x.rstrip()+y, zipped))
             with open('scratch/initial0000.xyz', 'w') as f:
                 f.writelines(xyz)
         #os.remove('scratch/initial0000.temp.xyz')
