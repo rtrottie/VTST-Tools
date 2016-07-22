@@ -1,10 +1,10 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import argparse
 import subprocess
 import numpy as np
 import sys
 from pymatgen.io.vasp.outputs import Chgcar
-from __future__ import print_function
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
