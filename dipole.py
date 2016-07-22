@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     p = subprocess.Popen(['chgsum.pl', 'AECCAR0', 'AECCAR2'])
     p.wait()
-    p = subprocess.Popen(['bader CHGCAR_sum -p sum_atom '] + [str(x) for x in args.atoms])
+    p = subprocess.Popen(['bader', 'CHGCAR_sum', '-p', 'sum_atom'] + [str(x) for x in args.atoms])
     p.wait()
 
     # Getting info about the cell
