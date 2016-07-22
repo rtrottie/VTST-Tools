@@ -12,12 +12,15 @@ if __name__ == '__main__':
                         type=int, nargs=3)
     parser.add_argument('-a', '--atoms', help='Atoms to add up',
                         type=int, nargs='*')
+    parser.add_argument('-n', '--no-calc', help='Don\'t bader volumes',
+                        action='store_false')
     args = parser.parse_args()
 
-    p = subprocess.Popen(['chgsum.pl', 'AECCAR0', 'AECCAR2'])
-    p.wait()
-    p = subprocess.Popen(['bader', 'CHGCAR_sum', '-p', 'sum_atom'] + [str(x) for x in args.atoms])
-    p.wait()
+    if not args.no_calc:
+        p = subprocess.Popen(['chgsum.pl', 'AECCAR0', 'AECCAR2'])
+        p.wait()
+        p = subprocess.Popen(['bader', 'CHGCAR_sum', '-p', 'sum_atom'] + [str(x) for x in args.atoms])
+        p.wait()
 
     # Getting info about the cell
     print('Getting Electron Densities...', end='')
