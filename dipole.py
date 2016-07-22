@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser.add_argument('-a', '--atoms', help='Atoms to add up',
                         type=int, nargs='*')
     parser.add_argument('-n', '--no-calc', help='Don\'t bader volumes',
-                        action='store_false')
+                        action='store_true')
     args = parser.parse_args()
 
     if not args.no_calc:
