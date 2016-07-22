@@ -9,7 +9,7 @@ from pymatgen.io.vasp.outputs import Chgcar
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('axis', help='Axis to average along (x,y,z)',
-                        type=int, nargs=3)
+                        type=float, nargs=3)
     parser.add_argument('-a', '--atoms', help='Atoms to add up',
                         type=int, nargs='*')
     parser.add_argument('-n', '--no-calc', help='Don\'t bader volumes',
