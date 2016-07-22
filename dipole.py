@@ -10,6 +10,6 @@ if __name__ == '__main__':
                         type=int, nargs='*')
     args = parser.parse_args()
 
-    p = subprocess.Popen('chgsum.pl AECCAR0 AECCAR2')
+    p = subprocess.Popen(['chgsum.pl', 'AECCAR0', 'AECCAR2'])
     p.wait()
-    p = subprocess.Popen('bader CHGCAR_sum')
+    p = subprocess.Popen(['bader', 'CHGCAR_sum'])
