@@ -31,7 +31,7 @@ if __name__ == '__main__':
     print('done')
 
     # Adding ionic centers to cell
-    print('Adding Ions to Cell...', end='', flush=True)
+    print('Adding Ions to Cell...', end='')
     for atom in args.atoms:   # iterating over ion centers
         site = s.sites[atom - 1]
         charge = site.species_and_occu.elements[0].number
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     print('done')
 
     # Make correction for charged species
-    print('Calculating Correction for Charged Species...', end='', flush=True)
+    print('Calculating Correction for Charged Species...', end='')
     element_charge = sum(sum(sum(d)))
     bader_gridpts = len(np.nonzero(d)[2])# number of gridpoints in bader volume
     correction = -element_charge / bader_gridpts  # normalization constant to account for charged species
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     print('\nCharge = ' + str(element_charge) + ' e-\n')
 
     # integrate over charge density
-    print('Calculating Dipole...', end='', flush=True)
+    print('Calculating Dipole...', end='')
     dipole = 0
     for a in range(lengths[0]):
         for b in range(lengths[1]):
