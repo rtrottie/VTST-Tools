@@ -21,6 +21,7 @@ if __name__ == '__main__':
 
     # Getting info about the cell
     print('Getting Electron Densities...', end='')
+    sys.stdout.flush()
     chg = Chgcar.from_file('BvAt_summed.dat')
     s = chg.structure
     d = chg.data['total'] / chg.ngridpts   # get charge density in e-/A^2
@@ -32,6 +33,7 @@ if __name__ == '__main__':
 
     # Adding ionic centers to cell
     print('Adding Ions to Cell...', end='')
+    sys.stdout.flush()
     for atom in args.atoms:   # iterating over ion centers
         site = s.sites[atom - 1]
         charge = site.species_and_occu.elements[0].number
@@ -41,6 +43,7 @@ if __name__ == '__main__':
 
     # Make correction for charged species
     print('Calculating Correction for Charged Species...', end='')
+    sys.stdout.flush()
     element_charge = sum(sum(sum(d)))
     bader_gridpts = len(np.nonzero(d)[2])# number of gridpoints in bader volume
     correction = -element_charge / bader_gridpts  # normalization constant to account for charged species
@@ -50,6 +53,7 @@ if __name__ == '__main__':
 
     # integrate over charge density
     print('Calculating Dipole...', end='')
+    sys.stdout.flush()
     dipole = 0
     for a in range(lengths[0]):
         for b in range(lengths[1]):
@@ -58,4 +62,5 @@ if __name__ == '__main__':
                 if x != 0:
                     dipole += (x + correction) * np.dot(axis, np.array([chg.get_axis_grid(0)[a], chg.get_axis_grid(1)[b], chg.get_axis_grid(2)[c]]))
     print('done')
-    print(str(dipole))
+    print('Dipole = ' + str(dipole))
+    sys.stdout.flush()
