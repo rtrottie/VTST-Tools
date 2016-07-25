@@ -5,6 +5,7 @@ import subprocess
 import numpy as np
 import sys
 from pymatgen.io.vasp.outputs import Chgcar
+from Classes_Pymatgen import Poscar, Potcar
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -19,7 +20,7 @@ if __name__ == '__main__':
     if not args.no_calc:
         p = subprocess.Popen(['chgsum.pl', 'AECCAR0', 'AECCAR2'])
         p.wait()
-        p = subprocess.Popen(['bader', 'CHGCAR_sum', '-p', 'sum_atom'] + [str(x) for x in args.atoms])
+        p = subprocess.Popen(['bader', 'CHGCAR', '-ref', 'CHGCAR_sum', '-p', 'sum_atom'] + [str(x) for x in args.atoms])
         p.wait()
 
     # Getting info about the cell
@@ -37,11 +38,17 @@ if __name__ == '__main__':
     # Adding ionic centers to cell
     print('Adding Ions to Cell...', end='')
     sys.stdout.flush()
+    poscar = Poscar.from_file('POSCAR')
+    potcar = Potcar.from_file('POTCAR')
+    natoms = poscar.natoms
+    cumm_natoms = np.array([ sum(natoms[0:i]) for i in range(len(natoms)) ])
     for atom in args.atoms:   # iterating over ion centers
+        potcarsingle = potcar[np.argmax(cumm_natoms>=atom)] # get Potcarsingle for each atom
+        charge = potcarsingle.nelectrons
         site = s.sites[atom - 1]
-        charge = site.species_and_occu.elements[0].number
+        # number = site.species_and_occu.elements[0].number
         i = np.round(np.array([site.a, site.b, site.c]) * lengths)  # getting indecies to place atomic charges in cell
-        d[i[0]][i[1]][i[2]] -= charge  # placing ionic centers in cell
+        d[i[0]][i[1]][i[2]] -= (charge)  # placing ionic centers in cell
     print('done')
 
     # Make correction for charged species
