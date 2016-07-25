@@ -41,7 +41,7 @@ if __name__ == '__main__':
     poscar = Poscar.from_file('POSCAR')
     potcar = Potcar.from_file('POTCAR')
     natoms = poscar.natoms
-    cumm_natoms = np.array([ sum(natoms[0:i]) for i in range(len(natoms)) ])
+    cumm_natoms = np.array([ sum(natoms[0:i+1]) for i in range(len(natoms)) ])
     for atom in args.atoms:   # iterating over ion centers
         potcarsingle = potcar[np.argmax(cumm_natoms>=atom)] # get Potcarsingle for each atom
         charge = potcarsingle.nelectrons
