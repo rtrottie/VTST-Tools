@@ -45,7 +45,7 @@ if __name__ == '__main__':
     for atom in args.atoms:   # iterating over ion centers
         potcarsingle = potcar[np.argmax(cumm_natoms>=atom)] # get Potcarsingle for each atom
         charge = potcarsingle.nelectrons
-        site = s.sites[atom - 1]
+        site = s.sites[atom - 1] # atoms are 1 indexed
         # number = site.species_and_occu.elements[0].number
         i = np.round(np.array([site.a, site.b, site.c]) * lengths)  # getting indecies to place atomic charges in cell
         d[i[0]][i[1]][i[2]] -= (charge)  # placing ionic centers in cell
