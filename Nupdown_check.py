@@ -38,7 +38,7 @@ else:
     end = args.start + args.radius + 1
 
 for i in range(start, end):
-    dir = os.path.join('nupdown', str(i).zfill(3))
+    dir = os.path.join('nupdown', str(i).zfill(3).replace('-', 'n'))
     if not os.path.exists(dir):
         print('Setting up run in ./' + dir)
         os.makedirs(dir)
