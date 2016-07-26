@@ -44,7 +44,7 @@ for i in range(start, end):
         os.makedirs(dir)
 
         incar['NUPDOWN'] = i
-        incar['SYSTEM'] = str(i) + ' ' + system
+        incar['SYSTEM'] = str(i).replace('-', 'n') + ' ' + system
         incar.write_file(os.path.join(dir, 'INCAR'))
         kpoints.write_file(os.path.join(dir, 'KPOINTS'))
         poscar.write_file(os.path.join(dir, 'POSCAR'))
