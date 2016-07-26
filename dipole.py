@@ -15,6 +15,8 @@ if __name__ == '__main__':
                         type=int, nargs='*')
     parser.add_argument('-n', '--no-calc', help='Don\'t bader volumes',
                         action='store_true')
+    parser.add_argument('-o', '--origin', help='Set Origin (helps with wrap around errors)',
+                        type=int, nargs=3, default=[0,0,0])
     args = parser.parse_args()
 
     if not args.no_calc:
@@ -65,12 +67,17 @@ if __name__ == '__main__':
     print('Calculating Dipole...', end='')
     sys.stdout.flush()
     dipole = 0
+    mod_a = np.round(lengths[0] * args.origin[0])
+    mod_b = np.round(lengths[1] * args.origin[1])
+    mod_c = np.round(lengths[2] * args.origin[2])
     for a in range(lengths[0]):
         for b in range(lengths[1]):
             for c in range(lengths[2]):
                 x = d[a][b][c]
                 if x != 0:
-                    dipole += (x + correction) * np.dot(axis, np.array([chg.get_axis_grid(0)[a], chg.get_axis_grid(1)[b], chg.get_axis_grid(2)[c]]))
+                    dipole += (x + correction) * np.dot(axis, np.array([chg.get_axis_grid(0)[a + mod_a % lengths[0]],
+                                                                        chg.get_axis_grid(1)[b + mod_b % lengths[1]],
+                                                                        chg.get_axis_grid(2)[c + mod_c % lengths[2]]]))
     print('done')
     print('Dipole = ' + str(dipole))
     sys.stdout.flush()
