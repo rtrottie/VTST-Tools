@@ -67,9 +67,9 @@ if __name__ == '__main__':
     print('Calculating Dipole...', end='')
     sys.stdout.flush()
     dipole = 0
-    mod_a = np.round(lengths[0] * args.origin[0])
-    mod_b = np.round(lengths[1] * args.origin[1])
-    mod_c = np.round(lengths[2] * args.origin[2])
+    mod_a = int(np.round(lengths[0] * args.origin[0]))
+    mod_b = int(np.round(lengths[1] * args.origin[1]))
+    mod_c = int(np.round(lengths[2] * args.origin[2]))
     for a in range(lengths[0]):
         for b in range(lengths[1]):
             for c in range(lengths[2]):
