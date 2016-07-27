@@ -16,7 +16,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--no-calc', help='Don\'t bader volumes',
                         action='store_true')
     parser.add_argument('-o', '--origin', help='Set Origin (helps with wrap around errors)',
-                        type=int, nargs=3, default=[0,0,0])
+                        type=float, nargs=3, default=[0,0,0])
     args = parser.parse_args()
 
     if not args.no_calc:
