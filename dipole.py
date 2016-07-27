@@ -85,6 +85,6 @@ if __name__ == '__main__':
                                                                         b_axis[(b + mod_b) % len_b],
                                                                         c_axis[(c + mod_c) % len_c]]))
     print('done')
-    print('Dipole = ' + str(dipole)) + ' eA'
-    print('Dipole = ' + str(dipole / 0.20819434)) + ' D'
+    print('Dipole = ' + str(dipole) + ' eA')
+    print('Dipole = ' + str(dipole / 0.20819434) + ' D')
     sys.stdout.flush()
