@@ -70,14 +70,20 @@ if __name__ == '__main__':
     mod_a = int(np.round(lengths[0] * args.origin[0]))
     mod_b = int(np.round(lengths[1] * args.origin[1]))
     mod_c = int(np.round(lengths[2] * args.origin[2]))
+    a_axis = chg.get_axis_grid(0)
+    b_axis = chg.get_axis_grid(1)
+    c_axis = chg.get_axis_grid(2)
+    len_a = len(chg.get_axis_grid(0))
+    len_b = len(chg.get_axis_grid(1))
+    len_c = len(chg.get_axis_grid(2))
     for a in range(lengths[0]):
         for b in range(lengths[1]):
             for c in range(lengths[2]):
                 x = d[a][b][c]
                 if x != 0:
-                    dipole += (x + correction) * np.dot(axis, np.array([chg.get_axis_grid(0)[a + mod_a % lengths[0]],
-                                                                        chg.get_axis_grid(1)[b + mod_b % lengths[1]],
-                                                                        chg.get_axis_grid(2)[c + mod_c % lengths[2]]]))
+                    dipole += (x + correction) * np.dot(axis, np.array([a_axis[a + mod_a % len_a],
+                                                                        b_axis[b + mod_b % len_b],
+                                                                        c_axis[c + mod_c % len_c]]))
     print('done')
     print('Dipole = ' + str(dipole))
     sys.stdout.flush()
