@@ -67,15 +67,15 @@ if __name__ == '__main__':
     print('Calculating Dipole...', end='')
     sys.stdout.flush()
     dipole = 0
-    mod_a = int(np.round(lengths[0] * args.origin[0]))
-    mod_b = int(np.round(lengths[1] * args.origin[1]))
-    mod_c = int(np.round(lengths[2] * args.origin[2]))
     a_axis = chg.get_axis_grid(0)
     b_axis = chg.get_axis_grid(1)
     c_axis = chg.get_axis_grid(2)
     len_a = len(a_axis)
     len_b = len(b_axis)
     len_c = len(c_axis)
+    mod_a = int(np.round(len_a * args.origin[0]))
+    mod_b = int(np.round(len_b * args.origin[1]))
+    mod_c = int(np.round(len_c * args.origin[2]))
     for a in range(lengths[0]):
         for b in range(lengths[1]):
             for c in range(lengths[2]):
