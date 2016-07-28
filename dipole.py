@@ -83,7 +83,7 @@ if __name__ == '__main__':
         b = float(b_i) / len_b
         c = float(c_i) / len_c
         cart_vector = np.matrix([a, b, c]) * s.lattice.matrix
-        return np.dot(cart_vector, unit_vector) * (x + correction)
+        return float(np.dot(cart_vector, unit_vector)) * (x + correction)
 
     # integrate over charge density
     print('Calculating Dipole...', end='')
