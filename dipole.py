@@ -86,10 +86,12 @@ if __name__ == '__main__':
         return float(np.dot(cart_vector, unit_vector)) * (x + correction)
 
     # integrate over charge density
-    print('Calculating Dipole...', end='')
+    print('Calculating Dipole... ', end='')
     sys.stdout.flush()
     dipole = 0
     for a in range(lengths[0]):
+        sys.stdout.write('\r%d' % int(a * 100 / len_a))
+        sys.stdout.flush()
         for b in range(lengths[1]):
             for c in range(lengths[2]):
                 x = d[a][b][c]
