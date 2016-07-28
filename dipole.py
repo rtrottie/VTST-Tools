@@ -79,9 +79,9 @@ if __name__ == '__main__':
         a_i = (a + mod_a) % len_a
         b_i = (b + mod_b) % len_b
         c_i = (c + mod_c) % len_c
-        a = a_i / len_a
-        b = b_i / len_b
-        c = c_i / len_c
+        a = float(a_i) / len_a
+        b = float(b_i) / len_b
+        c = float(c_i) / len_c
         cart_vector = np.matrix([a, b, c]) * s.lattice.matrix
         return np.dot(cart_vector, unit_vector) * (x + correction)
 
