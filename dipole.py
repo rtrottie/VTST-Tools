@@ -59,14 +59,13 @@ if __name__ == '__main__':
     element_charge = sum(sum(sum(d)))
     bader_gridpts = len(np.nonzero(d)[2])# number of gridpoints in bader volume
     correction = -element_charge / bader_gridpts  # normalization constant to account for charged species
-    axis = np.array(args.axis) / np.linalg.norm(np.array(args.axis))
     print('done')
     print('\nCharge = ' + str(element_charge) + ' e-\n')
 
-    # integrate over charge density
-    print('Calculating Dipole...', end='')
-    sys.stdout.flush()
-    dipole = 0
+    # Calculating lattice
+    #axis = np.array(args.axis) # / np.linalg.norm(np.array(args.axis))
+    cart_axis = s.lattice.matrix * np.matrix(args.axis).transpose
+    unit_vector = cart_axis / np.linalg.norm((cart_axis))
     a_axis = chg.get_axis_grid(0)
     b_axis = chg.get_axis_grid(1)
     c_axis = chg.get_axis_grid(2)
@@ -76,14 +75,26 @@ if __name__ == '__main__':
     mod_a = int(np.round(len_a * args.origin[0]))
     mod_b = int(np.round(len_b * args.origin[1]))
     mod_c = int(np.round(len_c * args.origin[2]))
+    def get_first_moment(a, b, c, x):
+        a_i = (a + mod_a) % len_a
+        b_i = (b + mod_b) % len_b
+        c_i = (c + mod_c) % len_c
+        a = a_i / len_a
+        b = b_i / len_b
+        c = c_i / len_c
+        cart_vector = np.matrix([a, b, c]) * s.lattice.matrix
+        return np.dot(cart_vector, unit_vector) * (x + correction)
+
+    # integrate over charge density
+    print('Calculating Dipole...', end='')
+    sys.stdout.flush()
+    dipole = 0
     for a in range(lengths[0]):
         for b in range(lengths[1]):
             for c in range(lengths[2]):
                 x = d[a][b][c]
                 if x != 0:
-                    dipole += (x + correction) * np.dot(axis, np.array([a_axis[(a + mod_a) % len_a],
-                                                                        b_axis[(b + mod_b) % len_b],
-                                                                        c_axis[(c + mod_c) % len_c]]))
+                    dipole += get_first_moment(a, b, c, x)
     print('done')
     print('Dipole = ' + str(dipole) + ' eA')
     print('Dipole = ' + str(dipole / 0.20819434) + ' D')
