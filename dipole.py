@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     # Calculating lattice
     #axis = np.array(args.axis) # / np.linalg.norm(np.array(args.axis))
-    cart_axis = s.lattice.matrix * np.matrix(args.axis).transpose()
+    cart_axis = np.matrix(args.axis) * s.lattice.matrix
     unit_vector = cart_axis / np.linalg.norm((cart_axis))
     a_axis = chg.get_axis_grid(0)
     b_axis = chg.get_axis_grid(1)
