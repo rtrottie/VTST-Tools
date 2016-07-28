@@ -72,9 +72,9 @@ if __name__ == '__main__':
     len_a = len(a_axis)
     len_b = len(b_axis)
     len_c = len(c_axis)
-    mod_a = int(np.round(len_a * args.origin[0]))
-    mod_b = int(np.round(len_b * args.origin[1]))
-    mod_c = int(np.round(len_c * args.origin[2]))
+    mod_a = int(np.round(float(len_a) * args.origin[0]))
+    mod_b = int(np.round(float(len_b) * args.origin[1]))
+    mod_c = int(np.round(float(len_c) * args.origin[2]))
     def get_first_moment(a, b, c, x):
         a_i = (a + mod_a) % len_a
         b_i = (b + mod_b) % len_b
