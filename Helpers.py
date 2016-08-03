@@ -88,7 +88,7 @@ def getComputerName():
         return os.environ['VASP_COMPUTER']
     elif 'psiops' in socket.gethostname():
         return 'psiops'
-    elif '.rc.' in socket.gethostname():
+    elif 'login0' in socket.gethostname():
         return 'janus'
     elif 'rapunzel' in socket.gethostname():
         return 'rapunzel'
