@@ -8,9 +8,9 @@ from Classes_Pymatgen import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('start', help='magmom to check values from',
-                    type=int, nargs='?')
+                    type=int, nargs='?', default=False)
 parser.add_argument('end', help='magmom to check values to (inclusive)',
-                    type=int, nargs='?')
+                    type=int, nargs='?', default=False)
 parser.add_argument('-r', '--radius', help='Number of values to check around (default = 4 (9 jobs)) Only used if two values aren\'t specified',
                     type=int, default=4)
 parser.add_argument('-s', '--system', help='Don\'t modify SYSTEM variable in INCAR.  By default NUPDOWN is prepended to this')
@@ -27,10 +27,10 @@ system = incar["SYSTEM"]
 if not os.path.exists('nupdown'):
     os.makedirs('nupdown')
 
-if args.end:
+if type(args.end) == bool and args.end:
     start = args.start if args.start < args.end else args.end
     end = args.end + 1 if args.start < args.end else args.start + 1
-elif not args.start:
+elif not (args.start and type(args.end) == bool):
     start = Incar.from_file('INCAR')['NUPDOWN'] - args.radius
     end = start + args.radius*2 + 1
 else:
