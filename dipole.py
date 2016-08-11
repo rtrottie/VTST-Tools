@@ -59,9 +59,9 @@ if __name__ == '__main__':
     element_charge = sum(sum(sum(d)))
     bader_gridpts = len(np.nonzero(d)[2])# number of gridpoints in bader volume
     correction = -element_charge / bader_gridpts  # normalization constant to account for charged species
-    print(correction)
     print('done')
     print('\nCharge = ' + str(element_charge) + ' e-\n')
+    print('\nCorrection = ' + str(correction) + ' e-\n')
 
     # Calculating lattice
     #axis = np.array(args.axis) # / np.linalg.norm(np.array(args.axis))
