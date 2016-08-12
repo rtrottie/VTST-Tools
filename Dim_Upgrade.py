@@ -35,10 +35,10 @@ def check_dimer(directory, runP=False):
             except:
                 print('Failed')
             try:
-                mep_min_folder = os.path.join(mep_dir, '0000')
-                os.mkdir(mep_min_folder)
+                mep_ts_folder = os.path.join(mep_dir, '0000')
+                os.mkdir(mep_ts_folder)
                 print('Copying TS' + f + ' for ' + m),
-                shutil.copy(f, os.path.join(mep_min_folder, f))
+                shutil.copy(f, os.path.join(mep_ts_folder, f))
                 print('Done')
             except:
                 print('Failed')
