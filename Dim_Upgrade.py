@@ -14,48 +14,46 @@ from Classes_Pymatgen import *
 def check_dimer(directory, runP=False):
     directory = os.path.abspath(directory)
     os.chdir(directory)
-    if os.path.exists('mins'):
-        print 'mins already exists'
+    if os.path.exists('meps'):
+        print 'meps already exists'
         return
-    os.system(os.path.join(os.environ['VTST_DIR'], 'dimmins.pl'))
-    for m in ['min1', 'min2']:
-        dir = os.path.join(directory, 'mins', m)
-        try:
-            print('Copying WAVECAR to ' + m),
-            shutil.copy(os.path.join(directory, 'WAVECAR'), dir)
-            print('Done')
-        except:
-            print('Failed')
-        try:
-            print('Copying CHGCAR to ' + m),
-            shutil.copy(os.path.join(directory, 'CHGCAR'), dir)
-            print('Done')
-        except:
-            print('Failed')
+    else:
+        os.mkdir('meps')
+    for m in ['1', '2']:
+        min_dir = os.path.join(directory, 'mins', 'min' + m)
+        mep_dir = os.path.join(directory, 'meps', 'mep' + m)
+        os.mkdir(mep_dir)
+        for f in ['WAVECAR', 'CHGCAR']:
+            try:
+                print('Copying' + f + ' for ' + m),
+                shutil.copy(os.path.join(min_dir, f), os.path.join(mep_dir, f))
+                print('Done')
+            except:
+                print('Failed')
+
         print('Adjusting INCAR')
-        incar = Incar.from_file(os.path.join(dir,'INCAR'))
-        incar['EDIFF'] = 1e-5
-        incar['EDIFFG'] = max(incar['EDIFFG']*1.5, -0.05)
-        incar['SYSTEM'] = m + ' ' + incar['SYSTEM']
+        incar = Incar.from_file('INCAR')
+        incar['EDIFFG'] = -1000000
+        incar['SYSTEM'] = 'mep' + m + ' ' + incar['SYSTEM']
         incar.pop('ICHAIN')
-        incar['IOPT'] = 4
         if 'AUTO_TIME' in incar:
             incar.pop('AUTO_TIME')
-        incar.write_file(os.path.join(dir,'INCAR'))
+        incar.write_file(os.path.join(mep_dir,'INCAR'))
         if runP:
             if 'PBS_O_WORKDIR' in os.environ:
                 os.environ.pop('PBS_O_WORKDIR')
-            os.chdir(dir)
+            os.chdir(mep_dir)
             os.system('touch ' + m + '-' + subprocess.check_output('basename $( ls ../../*.log )', shell=True).strip())
-            os.system('vasp.py ')
+            os.system('Upgrade_Run.py -i ' + runP)
+            os.system('vasp.py --ts')
             os.chdir(directory)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('directory', help='directory to run script (Default: ".")',
                         default='.', nargs='?')
-    parser.add_argument('-e', '--execute', help='Run VASP once directory is copied arguments provided here will be supplied to vasp.py',
-                        action='store_true')
+    parser.add_argument('-e', '--execute', help='Run VASP once directory is copied must provide dir to initialize',
+                        type=str, default='')
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
         shutil.move('CONTCAR', 'POSCAR')
     if os.path.exists('NEWMODECAR') and os.path.getsize('NEWMODECAR') > 0:
