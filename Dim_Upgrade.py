@@ -47,6 +47,8 @@ def check_dimer(directory, runP=False):
         print('Copying vasprun for ' + m),
         shutil.copy(os.path.join(min_dir, 'vasprun.xml'), os.path.join(mep_dir, 'MEP.xml'))
         print('done')
+        for file in ['POTCAR', 'KPOINTS']:
+            shutil.copy(file, os.path.join(mep_dir, file))
         print('Adjusting INCAR')
         incar = Incar.from_file('INCAR')
         incar['EDIFFG'] = -1000000
