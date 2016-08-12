@@ -26,18 +26,18 @@ def check_dimer(directory, runP=False):
         min_vasprun = Vasprun(os.path.join(min_dir, 'vasprun.xml'))
         os.mkdir(mep_dir)
         for f in ['WAVECAR', 'CHGCAR']:
+            print('Copying Min ' + f + ' for ' + m),
             try:
                 mep_min_folder = os.path.join(mep_dir, str(len(min_vasprun.structures)).zfill(4))
                 os.mkdir(mep_min_folder)
-                print('Copying Min' + f + ' for ' + m),
                 shutil.copy(os.path.join(min_dir, f), os.path.join(mep_min_folder, f))
                 print('Done')
             except:
                 print('Failed')
+            print('Copying TS ' + f + ' for ' + m),
             try:
                 mep_ts_folder = os.path.join(mep_dir, '0000')
                 os.mkdir(mep_ts_folder)
-                print('Copying TS' + f + ' for ' + m),
                 shutil.copy(f, os.path.join(mep_ts_folder, f))
                 print('Done')
             except:
