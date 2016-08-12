@@ -171,8 +171,10 @@ def get_template(computer, jobtype, special=None):
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.encut.sh.jinja2')
     if special == 'kpoints':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.kpoints.sh.jinja2')
+    if special == 'hse_ts':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.hse.sh.jinja2')
     if jobtype == 'GSM' or jobtype == 'SSM':
-        return(os.environ["VASP_TEMPLATE_DIR"], 'VASP.gsm.sh.jinja2')
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.gsm.sh.jinja2')
     else:
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.standard.sh.jinja2')
 
@@ -203,6 +205,8 @@ parser.add_argument('-e', '--encut', help='find ENCUT that will converge to with
                     type=float)
 parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to within specified eV/atom',
                     type=float)
+parser.add_argument('--ts', help='find ts along path specified in MEP.xml (from vasprun.xml)',
+                    action='store_true')
 
 args = parser.parse_args()
 
@@ -317,6 +321,9 @@ if __name__ == '__main__':
     elif args.kpoints:
         additional_keywords['target'] = args.kpoints
         special = 'kpoints'
+    elif args.ts:
+        additional_keywords['target'] = args.ts
+        special = 'hse_ts'
 
 
     (template_dir, template) = get_template(computer, jobtype, special)
