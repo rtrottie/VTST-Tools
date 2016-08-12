@@ -14,6 +14,7 @@ from Classes_Pymatgen import *
 def check_dimer(directory, runP=False):
     directory = os.path.abspath(directory)
     os.chdir(directory)
+    ts_vasprun = Vasprun('vasprun.xml')
     if os.path.exists('meps'):
         print 'meps already exists'
         return
@@ -22,15 +23,28 @@ def check_dimer(directory, runP=False):
     for m in ['1', '2']:
         min_dir = os.path.join(directory, 'mins', 'min' + m)
         mep_dir = os.path.join(directory, 'meps', 'mep' + m)
+        min_vasprun = Vasprun(os.path.join(min_dir, 'vasprun.xml'))
         os.mkdir(mep_dir)
         for f in ['WAVECAR', 'CHGCAR']:
             try:
-                print('Copying' + f + ' for ' + m),
-                shutil.copy(os.path.join(min_dir, f), os.path.join(mep_dir, f))
+                mep_min_folder = os.path.join(mep_dir, str(len(min_vasprun.structures)).zfill(4))
+                os.mkdir(mep_min_folder)
+                print('Copying Min' + f + ' for ' + m),
+                shutil.copy(os.path.join(min_dir, f), os.path.join(mep_min_folder, f))
                 print('Done')
             except:
                 print('Failed')
-
+            try:
+                mep_min_folder = os.path.join(mep_dir, '0000')
+                os.mkdir(mep_min_folder)
+                print('Copying TS' + f + ' for ' + m),
+                shutil.copy(f, os.path.join(mep_min_folder, f))
+                print('Done')
+            except:
+                print('Failed')
+        print('Copying ' + f + ' for ' + m),
+        shutil.copy(os.path.join(min_dir, 'vasprun.xml'), os.path.join(mep_dir, 'MEP.xml'))
+        print('done')
         print('Adjusting INCAR')
         incar = Incar.from_file('INCAR')
         incar['EDIFFG'] = -1000000
