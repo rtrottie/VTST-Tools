@@ -91,7 +91,7 @@ def determine_scale_of_frontier_bands(energies, up, down):
     bg = True
     for i in range(fermi_i, -1, -1):
         if up[i] < m/1000 and down[i] < m/1000:
-            if counter == 5:
+            if counter == 5 and abs(energies[i]) >= 5:
                 break
             elif bg:
                 pass
