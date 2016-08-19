@@ -8,8 +8,10 @@ import argparse
 
 
 def make_dos(vasprun, groups=[], output=False):
-    if type(v) == str:
+    if type(vasprun) == str:
         v = Vasprun(vasprun, parse_eigen=False)
+    else:
+        v = vasprun
     tdos = v.complete_dos
     energies = list(map(lambda x: x-tdos.efermi, tdos.energies.tolist()))
     m = determine_scale_of_frontier_bands(energies, tdos.densities[Spin.up], tdos.densities[Spin.down])
