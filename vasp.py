@@ -16,6 +16,7 @@ import cfg
 import socket
 import random
 import argparse
+import subprocess
 
 def get_instructions_for_backup(jobtype, incar='INCAR'):
     '''
@@ -353,7 +354,7 @@ if __name__ == '__main__':
     template = env.get_template(template)
     with open(script, 'w+') as f:
         f.write(template.render(keywords))
-    os.system(submit + ' ' + script)
+    subprocess.call([submit, script])
     print('Submitted ' + name + ' to ' + queue)
 
 
