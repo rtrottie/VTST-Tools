@@ -252,7 +252,7 @@ if __name__ == '__main__':
     incar = Incar.from_file('INCAR')
 
     kpoints = False
-    for val in stage.keys():
+    for val in list(stage.keys()):
         if val == 'REQUIRED':
             for setting in stage.pop('REQUIRED').replace(',',' ').split():
                 if setting not in Incar.from_file('INCAR'):
