@@ -35,7 +35,7 @@ def parse_stage_update(stage, incar, dir='.'):
     required = []
     set = {}
     unset = {}
-    for val in stage.keys():
+    for val in list(stage.keys()):
         if val == 'REQUIRED':
             for setting in stage.pop('REQUIRED').replace(',', ' ').split():
                 if setting not in Incar.from_file('INCAR'):
