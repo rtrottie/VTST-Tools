@@ -16,7 +16,7 @@ def check_dimer(directory, runP=False):
     os.chdir(directory)
     ts_vasprun = Vasprun('vasprun.xml')
     if os.path.exists('meps'):
-        print 'meps already exists'
+        print('meps already exists')
         return
     else:
         os.mkdir('meps')
