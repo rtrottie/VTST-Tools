@@ -55,7 +55,7 @@ if __name__ == '__main__':
     parser.add_argument('directory', help='directory to run script (Default: ".")',
                         default='.', nargs='?')
     parser.add_argument('-e', '--execute', help='Run VASP once directory is copied arguments provided here will be supplied to vasp.py',
-                        type='store_true')
+                        action='store_true')
     if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
         shutil.move('CONTCAR', 'POSCAR')
     if os.path.exists('NEWMODECAR') and os.path.getsize('NEWMODECAR') > 0:
