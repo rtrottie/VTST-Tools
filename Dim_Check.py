@@ -46,8 +46,8 @@ def check_dimer(directory, runP=False):
             if 'PBS_O_WORKDIR' in os.environ:
                 os.environ.pop('PBS_O_WORKDIR')
             os.chdir(dir)
-            os.system('touch ' + m + '-' + subprocess.check_output('basename $( ls ../../*.log )', shell=True).strip())
-            os.system('vasp.py ')
+            subprocess.Popen(['touch', m + '-' + subprocess.check_output(['basename', '$( ls ../../*.log )']).strip()]).wait()
+            subprocess.Popen('vasp.py ').wait()
             os.chdir(directory)
 
 if __name__ == '__main__':
