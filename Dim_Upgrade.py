@@ -61,7 +61,7 @@ def check_dimer(directory, runP=False):
             if 'PBS_O_WORKDIR' in os.environ:
                 os.environ.pop('PBS_O_WORKDIR')
             os.chdir(mep_dir)
-            os.system('touch ' + m + '-' + subprocess.check_output('basename $( ls ../../*.log )', shell=True).strip())
+            os.system('touch ' + m + '-' + subprocess.check_output('basename $( ls ../../*.log )', shell=True).decode().strip())
             os.system('Upgrade_Run.py -i ' + runP)
             os.system('vasp.py --ts')
             os.chdir(directory)
