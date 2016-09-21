@@ -20,37 +20,51 @@ def check_dimer(directory, runP=False):
     else:
         os.mkdir('meps')
     for m in ['1', '2', 'c']:
-        min_dir = os.path.join(directory, 'mins', 'min' + m)
         mep_dir = os.path.join(directory, 'meps', 'mep' + m)
         if os.path.exists(mep_dir):
             print(mep_dir + ' already exists: skipping')
             continue
         os.mkdir(mep_dir)
 
-        min_vasprun = Vasprun(os.path.join(min_dir, 'vasprun.xml'))
-        mep_min_folder = os.path.join(mep_dir, str(len(min_vasprun.structures)).zfill(4))
-        os.mkdir(mep_min_folder)
+        if m != 'c':
+            min_dir = os.path.join(directory, 'mins', 'min' + m)
+            min_vasprun = Vasprun(os.path.join(min_dir, 'vasprun.xml'))
+            mep_min_folder = os.path.join(mep_dir, str(len(min_vasprun.structures)).zfill(4))
+            os.mkdir(mep_min_folder)
 
-        mep_ts_folder = os.path.join(mep_dir, '0000')
-        os.mkdir(mep_ts_folder)
-        for f in ['WAVECAR', 'CHGCAR']:
-            print('Copying Min ' + f + ' for ' + m),
-            try:
-                shutil.copy(os.path.join(min_dir, f), os.path.join(mep_min_folder, f))
-                print('Done')
-            except:
-                print('Failed')
-            print('Copying TS ' + f + ' for ' + m),
-            try:
-                shutil.copy(f, os.path.join(mep_ts_folder, f))
-                print('Done')
-            except:
-                print('Failed')
-        print('Copying vasprun for ' + m),
-        shutil.copy(os.path.join(min_dir, 'vasprun.xml'), os.path.join(mep_dir, 'MEP.xml'))
-        print('done')
-        for file in ['POTCAR', 'KPOINTS']:
-            shutil.copy(file, os.path.join(mep_dir, file))
+            mep_ts_folder = os.path.join(mep_dir, '0000')
+            os.mkdir(mep_ts_folder)
+            for f in ['WAVECAR', 'CHGCAR']:
+                print('Copying Min ' + f + ' for ' + m),
+                try:
+                    shutil.copy(os.path.join(min_dir, f), os.path.join(mep_min_folder, f))
+                    print('Done')
+                except:
+                    print('Failed')
+                print('Copying TS ' + f + ' for ' + m),
+                try:
+                    shutil.copy(f, os.path.join(mep_ts_folder, f))
+                    print('Done')
+                except:
+                    print('Failed')
+            print('Copying vasprun for ' + m),
+            shutil.copy(os.path.join(min_dir, 'vasprun.xml'), os.path.join(mep_dir, 'MEP.xml'))
+            print('done')
+            for file in ['POTCAR', 'KPOINTS']:
+                shutil.copy(file, os.path.join(mep_dir, file))
+        else:
+            mep_ts_folder = '0010'
+            for file in ['POTCAR', 'KPOINTS']:
+                shutil.copy(file, os.path.join(mep_dir, file))
+            for f in ['WAVECAR', 'CHGCAR']:
+                print('Copying TS ' + f + ' for ' + m),
+                try:
+                    shutil.copy(f, os.path.join(mep_ts_folder, f))
+                    print('Done')
+                except:
+                    print('Failed')
+
+
         print('Adjusting INCAR')
         incar = Incar.from_file('INCAR')
         incar['EDIFFG'] = -1000
@@ -59,6 +73,7 @@ def check_dimer(directory, runP=False):
         if 'AUTO_TIME' in incar:
             incar.pop('AUTO_TIME')
         incar.write_file(os.path.join(mep_dir,'INCAR'))
+
         if runP:
             if 'PBS_O_WORKDIR' in os.environ:
                 os.environ.pop('PBS_O_WORKDIR')
