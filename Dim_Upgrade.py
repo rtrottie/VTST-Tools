@@ -53,7 +53,7 @@ def check_dimer(directory, runP=False):
             for file in ['POTCAR', 'KPOINTS']:
                 shutil.copy(file, os.path.join(mep_dir, file))
         else:
-            mep_ts_folder = '0010'
+            mep_ts_folder = os.path.join(mep_dir, '0010')
             os.mkdir(mep_ts_folder)
             for file in ['POTCAR', 'KPOINTS']:
                 shutil.copy(file, os.path.join(mep_dir, file))
