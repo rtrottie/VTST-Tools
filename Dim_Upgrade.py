@@ -54,6 +54,7 @@ def check_dimer(directory, runP=False):
                 shutil.copy(file, os.path.join(mep_dir, file))
         else:
             mep_ts_folder = '0010'
+            os.mkdir(mep_ts_folder)
             for file in ['POTCAR', 'KPOINTS']:
                 shutil.copy(file, os.path.join(mep_dir, file))
             for f in ['WAVECAR', 'CHGCAR']:
@@ -63,6 +64,9 @@ def check_dimer(directory, runP=False):
                     print('Done')
                 except:
                     print('Failed')
+            shutil.copy('POSCAR', os.path.join(mep_dir, 'POSCAR.ts'))
+            shutil.copy(os.path.join(directory, 'mins', 'min1', 'POSCAR'), os.path.join(mep_dir, 'POSCAR.1'))
+            shutil.copy(os.path.join(directory, 'mins', 'min2', 'POSCAR'), os.path.join(mep_dir, 'POSCAR.2'))
 
 
         print('Adjusting INCAR')
