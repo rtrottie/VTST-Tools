@@ -17,12 +17,14 @@ def check_dimer(directory, runP=False):
     ts_vasprun = Vasprun('vasprun.xml')
     if os.path.exists('meps'):
         print('meps already exists')
-        return
     else:
         os.mkdir('meps')
-    for m in ['1', '2']:
+    for m in ['1', '2', 'c']:
         min_dir = os.path.join(directory, 'mins', 'min' + m)
         mep_dir = os.path.join(directory, 'meps', 'mep' + m)
+        if os.path.exists(mep_dir):
+            print(mep_dir + ' already exists: skipping')
+            continue
         os.mkdir(mep_dir)
 
         min_vasprun = Vasprun(os.path.join(min_dir, 'vasprun.xml'))
@@ -51,7 +53,7 @@ def check_dimer(directory, runP=False):
             shutil.copy(file, os.path.join(mep_dir, file))
         print('Adjusting INCAR')
         incar = Incar.from_file('INCAR')
-        incar['EDIFFG'] = -1000000
+        incar['EDIFFG'] = -1000
         incar['SYSTEM'] = 'mep' + m + ' ' + incar['SYSTEM']
         incar.pop('ICHAIN')
         if 'AUTO_TIME' in incar:
