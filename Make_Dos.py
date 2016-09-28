@@ -41,7 +41,7 @@ def make_dos(vasprun, groups=[], output=False):
             for orbital in orbitals:  #  Set up atom_orbital argument for later use
                 atom_orbital = atom_orbital + list(map(lambda x : (x, orbital), atom_indices))
 
-        up_down = list(map(lambda (site,orbital): get_dos(tdos, site, orbital), atom_orbital))
+        up_down = list(map(lambda site,orbital: get_dos(tdos, site, orbital), atom_orbital))
         up = list(map(lambda dos: dos.densities[Spin.up].tolist(), up_down))
         up = reduce(lambda x,y: list(map(lambda i: x[i]+y[i], range(len(x)))), up)
         down = list(map(lambda dos: dos.densities[Spin.down].tolist(), up_down))
