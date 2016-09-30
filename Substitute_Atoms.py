@@ -28,7 +28,7 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
     if mm:
         for i in atom_nums:
             mm.pop(i)
-    vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCAR'].structure)
+    vasp['POSCAR'] = Poscar(transformation.apply_transformation(vasp['POSCAR'].structure),selective_dynamics=sd)
     vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
     if sd:
         vasp['POSCAR'].selective_dynamics = sd
