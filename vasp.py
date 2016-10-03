@@ -59,7 +59,6 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
     elif jobtype == 'DynMat':
         instructions['backup'] = ['OUTCAR', 'POSCAR', 'INCAR', 'KPOINTS']
         instructions['move'] = [('CONTCAR', 'POSCAR')]
-        jobtype == 'Standard'
     else:
         raise Exception('Jobtype Not recognized:  ' + jobtype)
     return instructions
