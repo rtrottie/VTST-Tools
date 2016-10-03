@@ -56,6 +56,9 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
         instructions['move'] = [('stringfile.xyz0000', 'restart.xyz0000')]
         if jobtype == 'SSM':
             instructions['backup'].append('scratch/ISOMERS0000')
+    elif jobtype == 'DynMat':
+        instructions['backup'] = ['OUTCAR', 'POSCAR', 'INCAR', 'KPOINTS']
+        instructions['move'] = [('CONTCAR', 'POSCAR')]
     else:
         raise Exception('Jobtype Not recognized:  ' + jobtype)
     return instructions

@@ -74,6 +74,8 @@ def getJobType(dir):
     elif 'ICHAIN' in incar:
         if incar['ICHAIN'] == 0:
             return 'NEB'
+        elif incar['ICHAIN'] == 1:
+            return 'DynMat'
         elif incar['ICHAIN'] == 2:
             return 'Dimer'
         else:
