@@ -31,6 +31,7 @@ if __name__ == '__main__':
         with open('ACF.dat', 'rb') as acf:
             poscar = Poscar.from_file('POSCAR')
             potcar = Potcar.from_file('POTCAR')
+            natoms = poscar.natoms
             cumm_natoms = np.array([ sum(natoms[0:i+1]) for i in range(len(natoms)) ])
             s = Poscar.structure
             cart_axis = np.matrix(args.axis) * s.lattice.matrix
