@@ -18,7 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--origin', help='Set Origin (helps with wrap around errors)',
                         type=float, nargs=3, default=[0,0,0])
     parser.add_argument('--acf', help='Calculate dipole using ACF.dat',
-                        type='store_true')
+                        action='store_true')
     args = parser.parse_args()
 
     if not args.no_calc:
