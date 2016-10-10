@@ -17,6 +17,8 @@ if __name__ == '__main__':
                         action='store_true')
     parser.add_argument('-o', '--origin', help='Set Origin (helps with wrap around errors)',
                         type=float, nargs=3, default=[0,0,0])
+    parser.add_argument('--acf', help='Calculate dipole using ACF.dat',
+                        type=store_true)
     args = parser.parse_args()
 
     if not args.no_calc:
@@ -25,6 +27,28 @@ if __name__ == '__main__':
         p = subprocess.Popen(['bader', 'CHGCAR', '-ref', 'CHGCAR_sum', '-p', 'sum_atom'] + [str(x) for x in args.atoms])
         p.wait()
 
+    if args.acf:
+        with open('ACF.dat', 'rb') as acf:
+            poscar = Poscar.from_file('POSCAR')
+            potcar = Potcar.from_file('POTCAR')
+            cumm_natoms = np.array([ sum(natoms[0:i+1]) for i in range(len(natoms)) ])
+            s = Poscar.structure
+            cart_axis = np.matrix(args.axis) * s.lattice.matrix
+            unit_vector = cart_axis / np.linalg.norm((cart_axis))
+            dipole = 0
+            print('\nCharge = ' + str(element_charge) + ' e-\n')
+            print('\nCorrection = ' + str(correction) + ' e-\n')
+
+            charges_vectors = []
+            for atom in args.atoms:   # iterating over ion centers
+                potcarsingle = potcar[np.argmax(cumm_natoms>=atom)] # get Potcarsingle for each atom
+                core_charge = potcarsingle.nelectrons
+                site = s.sites[atom - 1] # atoms are 1 indexed
+                charges_vectors.append( (core_charge - acf[charge-1] - correction, 
+                                         np.dot(np.array([site.x, site.y, site.z]), unit_vector) ) )
+                # number = site.species_and_occu.elements[0].number
+                i = np.round(np.array([site.a, site.b, site.c]) * lengths)  # getting indecies to place atomic charges in cell
+        
     # Getting info about the cell
     print('Getting Electron Densities...', end='')
     sys.stdout.flush()
