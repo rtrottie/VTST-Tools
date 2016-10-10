@@ -49,6 +49,9 @@ if __name__ == '__main__':
                                          np.dot(np.array([site.x, site.y, site.z]), unit_vector) ) )
                 # number = site.species_and_occu.elements[0].number
                 i = np.round(np.array([site.a, site.b, site.c]) * lengths)  # getting indecies to place atomic charges in cell
+                
+                
+        return
         
     # Getting info about the cell
     print('Getting Electron Densities...', end='')
