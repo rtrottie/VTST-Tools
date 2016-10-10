@@ -49,7 +49,7 @@ if __name__ == '__main__':
         charge = potcarsingle.nelectrons
         site = s.sites[atom - 1] # atoms are 1 indexed
         # number = site.species_and_occu.elements[0].number
-        i = np.round(np.array([np.floor(site.a), np.floor(site.b), np.floor(site.c)]) * lengths)  # getting indecies to place atomic charges in cell
+        i = np.round(np.array([site.a, site.b, site.c]) * lengths)  # getting indecies to place atomic charges in cell
         d[i[0] % lengths[0]][i[1] % lengths[1]][i[2] % lengths[2]] -= (charge)  # placing ionic centers in cell
     print('done')
 
