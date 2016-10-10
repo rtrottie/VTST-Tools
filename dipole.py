@@ -33,7 +33,7 @@ if __name__ == '__main__':
             potcar = Potcar.from_file('POTCAR')
             natoms = poscar.natoms
             cumm_natoms = np.array([ sum(natoms[0:i+1]) for i in range(len(natoms)) ])
-            s = Poscar.structure
+            s = poscar.structure
             cart_axis = np.matrix(args.axis) * s.lattice.matrix
             unit_vector = cart_axis / np.linalg.norm((cart_axis))
             dipole = 0
