@@ -148,7 +148,7 @@ def dipole_chgcars(dipole_folder, reference_folder):
 
     print('Getting Electron Densities (reference)...', end='', flush=True)
     reference_matrix   = get_chg_matrix(reference_folder)
-    s = Poscar.from_file(os.path.join(dipole_matrix, 'POSCAR')).structure
+    s = Poscar.from_file(os.path.join(reference_folder, 'POSCAR')).structure
     print('done')
 
 
