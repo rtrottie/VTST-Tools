@@ -57,7 +57,7 @@ if __name__ == '__main__':
         print('\nCharge = ' + str(net_charge) + ' e-\n')
         print('Dipole = ' + str(dipole) + ' eA')
         print('Dipole = ' + str(dipole / 0.20819434) + ' D')
-        return dipole
+        sys.exit(1)
         
     # Getting info about the cell
     print('Getting Electron Densities...', end='')
