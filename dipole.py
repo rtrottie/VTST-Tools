@@ -21,6 +21,7 @@ if __name__ == '__main__':
                         action='store_true')
     args = parser.parse_args()
 
+
     if not args.no_calc:
         p = subprocess.Popen(['chgsum.pl', 'AECCAR0', 'AECCAR2'])
         p.wait()
@@ -28,30 +29,35 @@ if __name__ == '__main__':
         p.wait()
 
     if args.acf:
+        lengths = []
+        for i in range(3):
+            lengths.append(len(chg.get_axis_grid(i)))
+        lengths = np.array(lengths)
+        poscar = Poscar.from_file('POSCAR')
+        potcar = Potcar.from_file('POTCAR')
+        natoms = poscar.natoms
+        cumm_natoms = np.array([sum(natoms[0:i + 1]) for i in range(len(natoms))])
+        s = poscar.structure
+        cart_axis = np.matrix(args.axis) * s.lattice.matrix
+        unit_vector = cart_axis / np.linalg.norm((cart_axis))
+        dipole = 0
         with open('ACF.dat', 'rb') as acf:
-            poscar = Poscar.from_file('POSCAR')
-            potcar = Potcar.from_file('POTCAR')
-            natoms = poscar.natoms
-            cumm_natoms = np.array([ sum(natoms[0:i+1]) for i in range(len(natoms)) ])
-            s = poscar.structure
-            cart_axis = np.matrix(args.axis) * s.lattice.matrix
-            unit_vector = cart_axis / np.linalg.norm((cart_axis))
-            dipole = 0
-            print('\nCharge = ' + str(element_charge) + ' e-\n')
-            print('\nCorrection = ' + str(correction) + ' e-\n')
-
             charges_vectors = []
-            for atom in args.atoms:   # iterating over ion centers
-                potcarsingle = potcar[np.argmax(cumm_natoms>=atom)] # get Potcarsingle for each atom
+            for atom in args.atoms:  # iterating over ion centers
+                potcarsingle = potcar[np.argmax(cumm_natoms >= atom)]  # get Potcarsingle for each atom
                 core_charge = potcarsingle.nelectrons
-                site = s.sites[atom - 1] # atoms are 1 indexed
-                charges_vectors.append( (core_charge - acf[charge-1] - correction, 
-                                         np.dot(np.array([site.x, site.y, site.z]), unit_vector) ) )
+                site = s.sites[atom - 1]  # atoms are 1 indexed
+                charges_vectors.append((core_charge - acf[atom - 1],
+                                        np.dot(np.array([site.x, site.y, site.z]), unit_vector)))
                 # number = site.species_and_occu.elements[0].number
-                i = np.round(np.array([site.a, site.b, site.c]) * lengths)  # getting indecies to place atomic charges in cell
-                
-                
-        return
+                i = np.round(np.array(
+                    [site.a, site.b, site.c]) * lengths)  # getting indecies to place atomic charges in cell
+        net_charge = sum([ charge for charge, _ in charges_vectors])
+        dipole = sum([ (charge - net_charge/len(args.atoms)) * vector for charge, vector in charges_vectors])
+        print('\nCharge = ' + str(net_charge) + ' e-\n')
+        print('Dipole = ' + str(dipole) + ' eA')
+        print('Dipole = ' + str(dipole / 0.20819434) + ' D')
+        return dipole
         
     # Getting info about the cell
     print('Getting Electron Densities...', end='')
