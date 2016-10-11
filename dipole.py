@@ -141,7 +141,7 @@ def get_chg_matrix(folder):
 
     return -chg_matrix
 
-def dipole_chgcar(start, end):
+def dipole_chgcars(start, end):
     print('Getting Electron Densities...', end='', flush=True)
 
     start = get_chg_matrix(start)
@@ -206,17 +206,18 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-    if not args.no_calc:
-        p = subprocess.Popen(['chgsum.pl', 'AECCAR0', 'AECCAR2'])
-        p.wait()
-        p = subprocess.Popen(['bader', 'CHGCAR', '-ref', 'CHGCAR_sum', '-p', 'sum_atom'] + [str(x) for x in args.atoms])
-        p.wait()
 
     if args.acf:
         dipole_acf(args)
     elif args.dipole and args.reference:
-        dipole_chgcar(args.start, args.end)
+        dipole_chgcars(args.dipole, args.reference)
     else:
+        if not args.no_calc:
+            p = subprocess.Popen(['chgsum.pl', 'AECCAR0', 'AECCAR2'])
+            p.wait()
+            p = subprocess.Popen(
+                ['bader', 'CHGCAR', '-ref', 'CHGCAR_sum', '-p', 'sum_atom'] + [str(x) for x in args.atoms])
+            p.wait()
         dipole_chgcar(args)
 
 
