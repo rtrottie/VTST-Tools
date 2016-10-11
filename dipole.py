@@ -169,7 +169,7 @@ def dipole_chgcars(dipole_folder, reference_folder):
         cart_vector = np.matrix([a, b, c]) * mat
         return float(np.dot(cart_vector, unit_vector.transpose())) * x
 
-    print('Calculating Dipole...', end='', flush=True)
+    print('Calculating Dipole...')
     diff = dipole_matrix - reference_matrix
     dipole = 0
     for a in range(len_a):
