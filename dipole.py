@@ -132,7 +132,7 @@ def get_chg_matrix(folder):
     lengths = np.array(lengths)
 
     for atom in range(len(chg.structure.sites)):  # iterating over ion centers
-        potcarsingle = potcar[np.argmax(cumm_natoms >= atom)]  # get Potcarsingle for each atom
+        potcarsingle = potcar[np.argmax(cumm_natoms >= (atom+1))]  # get Potcarsingle for each atom
         charge = potcarsingle.nelectrons
         site = chg.structure.sites[atom]  # atoms are 1 indexed
         # number = site.species_and_occu.elements[0].number
