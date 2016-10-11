@@ -48,7 +48,7 @@ if __name__ == '__main__':
                 vector = np.matrix([site.x, site.y, site.z])
                 translate_vector = np.matrix([site.a < args.origin[0], site.b < args.origin[1], site.c < args.origin[2]]) # determining if site is < the origin
                 charges_vectors.append((core_charge - float(acf['charge'][atom - 1]),
-                                        np.dot(vector + translate_vector * lattice.matrix, unit_vector)))
+                                        np.dot(vector + translate_vector * lattice.matrix, np.transpose(unit_vector))))
                 # number = site.species_and_occu.elements[0].number
         net_charge = sum([ charge for charge, _ in charges_vectors])
         dipole = sum([ (charge - net_charge/len(args.atoms)) * vector for charge, vector in charges_vectors])
