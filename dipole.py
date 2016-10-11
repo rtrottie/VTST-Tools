@@ -29,29 +29,25 @@ if __name__ == '__main__':
         p.wait()
 
     if args.acf:
-        lengths = []
-        for i in range(3):
-            lengths.append(len(chg.get_axis_grid(i)))
-        lengths = np.array(lengths)
         poscar = Poscar.from_file('POSCAR')
         potcar = Potcar.from_file('POTCAR')
         natoms = poscar.natoms
         cumm_natoms = np.array([sum(natoms[0:i + 1]) for i in range(len(natoms))])
         s = poscar.structure
+        lattice = s.lattice
         cart_axis = np.matrix(args.axis) * s.lattice.matrix
         unit_vector = cart_axis / np.linalg.norm((cart_axis))
-        dipole = 0
         with open('ACF.dat', 'rb') as acf:
             charges_vectors = []
             for atom in args.atoms:  # iterating over ion centers
                 potcarsingle = potcar[np.argmax(cumm_natoms >= atom)]  # get Potcarsingle for each atom
                 core_charge = potcarsingle.nelectrons
                 site = s.sites[atom - 1]  # atoms are 1 indexed
+                vector = np.matrix([site.x, site.y, site.z])
+                translate_vector = np.matrix([site.a < args.origin[0], site.b < args.origin[1], site.c < args.origin[2]]) # determining if site is < the origin
                 charges_vectors.append((core_charge - acf[atom - 1],
-                                        np.dot(np.array([site.x, site.y, site.z]), unit_vector)))
+                                        np.dot(vector + translate_vector * lattice.matrix, unit_vector)))
                 # number = site.species_and_occu.elements[0].number
-                i = np.round(np.array(
-                    [site.a, site.b, site.c]) * lengths)  # getting indecies to place atomic charges in cell
         net_charge = sum([ charge for charge, _ in charges_vectors])
         dipole = sum([ (charge - net_charge/len(args.atoms)) * vector for charge, vector in charges_vectors])
         print('\nCharge = ' + str(net_charge) + ' e-\n')
