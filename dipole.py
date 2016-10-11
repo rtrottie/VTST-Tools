@@ -55,8 +55,8 @@ if __name__ == '__main__':
         print(charges_vectors)
         print([ (charge - net_charge/len(args.atoms)) * vector for charge, vector in charges_vectors])
         print('\nCharge = ' + str(net_charge) + ' e-\n')
-        print('Dipole = ' + str(dipole) + ' eA')
-        print('Dipole = ' + str(dipole / 0.20819434) + ' D')
+        print('Dipole = ' + str(float(dipole)) + ' eA')
+        print('Dipole = ' + str(float(dipole) / 0.20819434) + ' D')
         sys.exit(1)
         
     # Getting info about the cell
