@@ -207,9 +207,9 @@ if __name__ == '__main__':
 
 
     if args.acf:
-        dipole_acf(args)
+        dipole = dipole_acf(args)
     elif args.dipole and args.reference:
-        dipole_chgcars(args.dipole, args.reference)
+        dipole = dipole_chgcars(args.dipole, args.reference)
     else:
         if not args.no_calc:
             p = subprocess.Popen(['chgsum.pl', 'AECCAR0', 'AECCAR2'])
@@ -217,6 +217,9 @@ if __name__ == '__main__':
             p = subprocess.Popen(
                 ['bader', 'CHGCAR', '-ref', 'CHGCAR_sum', '-p', 'sum_atom'] + [str(x) for x in args.atoms])
             p.wait()
-        dipole_chgcar(args)
+        dipole = dipole_chgcar(args)
+    with open('dipole.dat', 'w') as dip_file:
+        dip_file.write('Dipole = ' + str(dipole) + ' eA\nDipole = ' + str(dipole / 0.20819434) + ' D')
+
 
 
