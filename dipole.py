@@ -6,6 +6,7 @@ import numpy as np
 import sys
 from pymatgen.io.vasp.outputs import Chgcar
 from Classes_Pymatgen import Poscar, Potcar
+from File_Management import read_ACF
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -37,7 +38,8 @@ if __name__ == '__main__':
         lattice = s.lattice
         cart_axis = np.matrix(args.axis) * s.lattice.matrix
         unit_vector = cart_axis / np.linalg.norm((cart_axis))
-        with open('ACF.dat', 'rb') as acf:
+        with open('ACF.dat', 'rb') as acf_file:
+            acf = read_ACF(acf_file)
             charges_vectors = []
             for atom in args.atoms:  # iterating over ion centers
                 potcarsingle = potcar[np.argmax(cumm_natoms >= atom)]  # get Potcarsingle for each atom
