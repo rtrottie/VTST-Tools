@@ -52,6 +52,8 @@ if __name__ == '__main__':
                 # number = site.species_and_occu.elements[0].number
         net_charge = sum([ charge for charge, _ in charges_vectors])
         dipole = sum([ (charge - net_charge/len(args.atoms)) * vector for charge, vector in charges_vectors])
+        print(charges_vectors)
+        print([ (charge - net_charge/len(args.atoms)) * vector for charge, vector in charges_vectors])
         print('\nCharge = ' + str(net_charge) + ' e-\n')
         print('Dipole = ' + str(dipole) + ' eA')
         print('Dipole = ' + str(dipole / 0.20819434) + ' D')
