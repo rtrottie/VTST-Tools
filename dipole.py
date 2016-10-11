@@ -177,9 +177,7 @@ def dipole_chgcars(dipole_folder, reference_folder):
         sys.stdout.flush()
         for b in range(len_b):
             for c in range(len_c):
-                x = diff[a][b][c]
-                if x != 0:
-                    dipole += get_first_moment(a, b, c, x)
+                dipole += get_first_moment(a, b, c, diff[a][b][c])
     print('done')
     print('Dipole = ' + str(dipole) + ' eA')
     print('Dipole = ' + str(dipole / 0.20819434) + ' D')
