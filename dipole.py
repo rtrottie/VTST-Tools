@@ -94,8 +94,8 @@ if __name__ == '__main__':
     bader_gridpts = len(np.nonzero(d)[2])# number of gridpoints in bader volume
     correction = -element_charge / bader_gridpts  # normalization constant to account for charged species
     print('done')
-    print('\nCharge = ' + str(element_charge) + ' e-\n')
-    print('\nCorrection = ' + str(correction) + ' e-\n')
+    print('\nCharge = ' + str(-element_charge) + ' e-\n')
+    # print('\nCorrection = ' + str(correction) + ' e-\n')
 
     # Calculating lattice
     #axis = np.array(args.axis) # / np.linalg.norm(np.array(args.axis))
@@ -116,7 +116,7 @@ if __name__ == '__main__':
         b = float((b - mod_b) % len_b) / len_b
         c = float((c - mod_c) % len_c) / len_c
         cart_vector = np.matrix([a, b, c]) * mat
-        return float(np.dot(cart_vector, unit_vector.transpose())) * (x + correction)
+        return float(np.dot(cart_vector, unit_vector.transpose())) * (x - correction)
 
     # integrate over charge density
     print('Calculating Dipole... ')
