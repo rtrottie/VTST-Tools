@@ -154,12 +154,9 @@ def dipole_chgcars(dipole_folder, reference_folder):
 
     cart_axis = np.matrix(args.axis) * s.lattice.matrix
     unit_vector = cart_axis / np.linalg.norm((cart_axis))
-    a_axis = len(dipole_matrix)
-    b_axis = len(dipole_matrix[0])
-    c_axis = len(dipole_matrix[0][0])
-    len_a = len(a_axis)
-    len_b = len(b_axis)
-    len_c = len(c_axis)
+    len_a = len(dipole_matrix)
+    len_b = len(dipole_matrix[0])
+    len_c = len(dipole_matrix[0][0])
     mod_a = int(np.round(float(len_a) * args.origin[0]))
     mod_b = int(np.round(float(len_b) * args.origin[1]))
     mod_c = int(np.round(float(len_c) * args.origin[2]))
