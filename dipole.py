@@ -92,7 +92,7 @@ if __name__ == '__main__':
     sys.stdout.flush()
     element_charge = sum(sum(sum(d)))
     bader_gridpts = len(np.nonzero(d)[2])# number of gridpoints in bader volume
-    correction = -element_charge / bader_gridpts  # normalization constant to account for charged species
+    correction = element_charge / bader_gridpts  # normalization constant to account for charged species
     print('done')
     print('\nCharge = ' + str(-element_charge) + ' e-\n')
     # print('\nCorrection = ' + str(correction) + ' e-\n')
