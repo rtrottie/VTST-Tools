@@ -131,10 +131,10 @@ def get_chg_matrix(folder):
         lengths.append(len(chg.get_axis_grid(i)))
     lengths = np.array(lengths)
 
-    for atom in range(len(chg.s.sites)):  # iterating over ion centers
+    for atom in range(len(chg.structure.sites)):  # iterating over ion centers
         potcarsingle = potcar[np.argmax(cumm_natoms >= atom)]  # get Potcarsingle for each atom
         charge = potcarsingle.nelectrons
-        site = chg.s.sites[atom - 1]  # atoms are 1 indexed
+        site = chg.structure.sites[atom]  # atoms are 1 indexed
         # number = site.species_and_occu.elements[0].number
         i = np.round(np.array([site.a, site.b, site.c]) * lengths)  # getting indecies to place atomic charges in cell
         chg_matrix[i[0] % lengths[0]][i[1] % lengths[1]][i[2] % lengths[2]] -= (charge)  # placing ionic centers in cell
@@ -143,20 +143,20 @@ def get_chg_matrix(folder):
 
 def dipole_chgcars(dipole_folder, reference_folder):
     print('Getting Electron Densities (dipole)...', end='', flush=True)
-    dipole_folder = get_chg_matrix(dipole_folder)
+    dipole_matrix = get_chg_matrix(dipole_folder)
     print('done')
 
     print('Getting Electron Densities (reference)...', end='', flush=True)
-    reference_folder   = get_chg_matrix(reference_folder)
-    s = Poscar.from_file(os.path.join(dipole_folder, 'POSCAR')).structure
+    reference_matrix   = get_chg_matrix(reference_folder)
+    s = Poscar.from_file(os.path.join(dipole_matrix, 'POSCAR')).structure
     print('done')
 
 
     cart_axis = np.matrix(args.axis) * s.lattice.matrix
     unit_vector = cart_axis / np.linalg.norm((cart_axis))
-    a_axis = len(dipole_folder)
-    b_axis = len(dipole_folder[0])
-    c_axis = len(dipole_folder[0][0])
+    a_axis = len(dipole_matrix)
+    b_axis = len(dipole_matrix[0])
+    c_axis = len(dipole_matrix[0][0])
     len_a = len(a_axis)
     len_b = len(b_axis)
     len_c = len(c_axis)
@@ -173,7 +173,7 @@ def dipole_chgcars(dipole_folder, reference_folder):
         return float(np.dot(cart_vector, unit_vector.transpose())) * x
 
     print('Calculating Dipole...', end='', flush=True)
-    diff = reference_folder - dipole_folder
+    diff = dipole_matrix - reference_matrix
     dipole = 0
     for a in range(len_a):
         sys.stdout.write('\r%d percent' % int(a * 100 / len_a))
