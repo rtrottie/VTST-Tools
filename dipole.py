@@ -47,7 +47,7 @@ if __name__ == '__main__':
                 site = s.sites[atom - 1]  # atoms are 1 indexed
                 vector = np.matrix([site.x, site.y, site.z])
                 translate_vector = np.matrix([site.a < args.origin[0], site.b < args.origin[1], site.c < args.origin[2]]) # determining if site is < the origin
-                charges_vectors.append((core_charge - acf['charges'][atom - 1],
+                charges_vectors.append((core_charge - acf['charge'][atom - 1],
                                         np.dot(vector + translate_vector * lattice.matrix, unit_vector)))
                 # number = site.species_and_occu.elements[0].number
         net_charge = sum([ charge for charge, _ in charges_vectors])
