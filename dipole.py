@@ -194,9 +194,9 @@ if __name__ == '__main__':
                         type=float, nargs=3)
     parser.add_argument('-a', '--atoms', help='Atoms to add up',
                         type=int, nargs='*')
-    parser.add_argument('-s', '--start', help='Start Folder (default = ".")',
+    parser.add_argument('-d', '--dipole', help='Folder to calculate dipole in (default = ".")',
                         default='.')
-    parser.add_argument('-e', '--end', help='End Folder')
+    parser.add_argument('-r', '--reference', help='Cell Reference')
     parser.add_argument('-n', '--no-calc', help='Don\'t bader volumes',
                         action='store_true')
     parser.add_argument('-o', '--origin', help='Set Origin (helps with wrap around errors)',
@@ -214,7 +214,7 @@ if __name__ == '__main__':
 
     if args.acf:
         dipole_acf(args)
-    elif args.start and args.end:
+    elif args.dipole and args.reference:
         dipole_chgcar(args.start, args.end)
     else:
         dipole_chgcar(args)
