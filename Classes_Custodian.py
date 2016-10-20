@@ -109,7 +109,7 @@ class NEBJob(VaspJob):
         poscar = Poscar.from_file('00/POSCAR')
         potcar = Potcar.from_file('POTCAR')
         self._images = incar["IMAGES"]
-        for i in xrange(self._images):
+        for i in range(self._images):
             if not os.path.isfile(os.path.join(str(i).zfill(2),'POSCAR')):
                 raise RuntimeError("Expected file at : " + os.path.join(str(i).zfill(2),'POSCAR'))
         if self.settings_override is not None:
