@@ -53,7 +53,7 @@ def make_dos(vasprun, groups=[], output=False):
         up = list(map(lambda dos: dos.densities[Spin.up].tolist(), up_down))
         up = reduce(lambda x, y: list(map(lambda i: x[i]+y[i], range(len(x)))), up)
         down = list(map(lambda dos: dos.densities[Spin_down].tolist(), up_down))
-        down = reduce(lambda x_y: list(map(lambda i: x_y[0][i]+x_y[1][i], range(len(x_y[0])))), down)
+        down = reduce(lambda x, y: list(map(lambda i: x[i]+y[i], range(len(x)))), down)
         m = determine_scale_of_frontier_bands(energies, up, down)
         scaling_factors.append(1/m)
         norm_up = list(map(lambda x: x/m, up))
