@@ -13,10 +13,13 @@ def make_dos(vasprun, groups=[], output=False):
     else:
         v = vasprun
     tdos = v.complete_dos
+
     energies = list(map(lambda x: x-tdos.efermi, tdos.energies.tolist()))
-    m = determine_scale_of_frontier_bands(energies, tdos.densities[Spin.up], tdos.densities[Spin.down])
+    up_spin = tdos.densities[Spin.up]
+    down_spin = tdos.densities[Spin.down] if Spin.down in tdos.densities else tdos.densities[Spin.up]
+    m = determine_scale_of_frontier_bands(energies, up_spin, down_spin)
     scaling_factors = [1.5/m]
-    columns = [energies, list(map(lambda x: x/m*1.5, tdos.densities[Spin.up])), list(map(lambda x: -x/m*1.5, tdos.densities[Spin.down]))]
+    columns = [energies, list(map(lambda x: x/m*1.5, up_spin)), list(map(lambda x: -x / m * 1.5, down_spin))]
     title = ['Energy', 'Total +', 'Total -']
     for group in groups:
         atom_orbital = []
