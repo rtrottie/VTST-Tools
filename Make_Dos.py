@@ -17,9 +17,11 @@ def make_dos(vasprun, groups=[], output=False):
 
     energies = list(map(lambda x: x-tdos.efermi, tdos.energies.tolist()))
     if Spin.down not in tdos.densities:
-        Spin.down = Spin.up
+        Spin_down = Spin.up
+    else:
+        Spin_down = Spin.down
     up_spin = tdos.densities[Spin.up]
-    down_spin = tdos.densities[Spin.down]
+    down_spin = tdos.densities[Spin_down]
     m = determine_scale_of_frontier_bands(energies, up_spin, down_spin)
     scaling_factors = [1.5/m]
     columns = [energies, list(map(lambda x: x/m*1.5, up_spin)), list(map(lambda x: -x / m * 1.5, down_spin))]
@@ -50,7 +52,7 @@ def make_dos(vasprun, groups=[], output=False):
         up_down = list(map(lambda site_orbital: get_dos(tdos, site_orbital[0], site_orbital[1]), atom_orbital))
         up = list(map(lambda dos: dos.densities[Spin.up].tolist(), up_down))
         up = reduce(lambda x, y: list(map(lambda i: x[i]+y[i], range(len(x)))), up)
-        down = list(map(lambda dos: dos.densities[Spin.down].tolist(), up_down))
+        down = list(map(lambda dos: dos.densities[Spin_down].tolist(), up_down))
         down = reduce(lambda x_y: list(map(lambda i: x_y[0][i]+x_y[1][i], range(len(x_y[0])))), down)
         m = determine_scale_of_frontier_bands(energies, up, down)
         scaling_factors.append(1/m)
