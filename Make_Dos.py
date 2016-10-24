@@ -16,8 +16,10 @@ def make_dos(vasprun, groups=[], output=False):
     tdos = v.complete_dos
 
     energies = list(map(lambda x: x-tdos.efermi, tdos.energies.tolist()))
+    if Spin.down not in tdos.densities:
+        Spin.down = Spin.up
     up_spin = tdos.densities[Spin.up]
-    down_spin = tdos.densities[Spin.down] if Spin.down in tdos.densities else tdos.densities[Spin.up]
+    down_spin = tdos.densities[Spin.down]
     m = determine_scale_of_frontier_bands(energies, up_spin, down_spin)
     scaling_factors = [1.5/m]
     columns = [energies, list(map(lambda x: x/m*1.5, up_spin)), list(map(lambda x: -x / m * 1.5, down_spin))]
