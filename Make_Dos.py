@@ -88,7 +88,7 @@ def sum_orbitals(pdos, atoms, orbitals=['all']):
     return
 
 def determine_scale_of_frontier_bands(energies, up, down):
-    fermi_i = len(filter(lambda x: x < 0, energies)) - 1
+    fermi_i = len(list(filter(lambda x: x < 0, energies))) - 1
     m = max(max(up), max(down))
     counter = 0
     bg = True
