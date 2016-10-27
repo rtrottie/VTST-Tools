@@ -311,6 +311,9 @@ if __name__ == '__main__':
 
     if args.queue:
         queue = args.queue
+    elif 'AUTO_QUEUE' in incar:
+        queue = incar['AUTO_QUEUE']
+
     else:
         queue = get_queue(computer, jobtype, time, nodes)
 
