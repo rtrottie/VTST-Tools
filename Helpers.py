@@ -9,6 +9,7 @@ import cfg
 import socket
 import shutil
 from Classes_Pymatgen import *
+from functools import reduce
 
 def get_nelect(outcar):
     line = subprocess.check_output(['grep', 'NELECT', outcar])
