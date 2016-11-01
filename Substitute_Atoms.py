@@ -9,6 +9,7 @@ from Classes_Pymatgen import *
 from Helpers import *
 import sys
 import os
+from functools import reduce
 
 def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
     Poscar.get_string = get_string_more_sigfig
