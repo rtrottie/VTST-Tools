@@ -117,7 +117,7 @@ def replace_atom_arbitrary(prev_dir, this_dir, atom_nums, new_atom):
 def switch_atom(prev_dir, this_dir, atoms, optional_files=None):
     poscar = Poscar.from_file(os.path.join(prev_dir, 'POSCAR'))
     temp_dir = os.path.join(this_dir, 'temp')
-    for i in range(len(atoms)/2):
+    for i in range(int(len(atoms)/2)):
         a1 = str(poscar.structure.species[atoms[2*i]-1])
         a2 = str(poscar.structure.species[atoms[2*i+1]-1])
         replace_atom(prev_dir, temp_dir, [atoms[2*i]], a2, optional_files)
