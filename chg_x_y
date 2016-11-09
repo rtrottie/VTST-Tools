@@ -13,7 +13,7 @@ csv_data = 'z, Charge Density (e-/A)\n'
 data = c.data['total']
 
 for z in range(len(c.get_axis_grid(2))):
-  csv_data = csv_data + '{},{}\n'.format(c.get_axis_grid(2)[z]*area, data[x][y][z])
+  csv_data = csv_data + '{},{}\n'.format(c.get_axis_grid(2)[z], data[x][y][z]*area)
   
 with open('chgdata.csv', 'w') as f:
   f.write(csv_data)
