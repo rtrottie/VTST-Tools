@@ -7,7 +7,7 @@ c = Chgcar.from_file('CHGCAR')
 
 x = int(float(sys.argv[1]) * len(c.get_axis_grid(0)))
 y = int(float(sys.argv[2]) * len(c.get_axis_grid(1)))
-area = c.get_axis_grid(0)[len(c.get_axis_grid(0))] /len(c.get_axis_grid(0))  * c.get_axis_grid(1)[len(c.get_axis_grid(1))]/ len(c.get_axis_grid(1))
+area = c.get_axis_grid(0)[len(c.get_axis_grid(0))-1] /len(c.get_axis_grid(0))  * c.get_axis_grid(1)[len(c.get_axis_grid(1))-1]/ len(c.get_axis_grid(1))
 
 csv_data = 'z, Charge Density (e-/A)\n'
 data = c.data['total']
