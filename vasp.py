@@ -211,6 +211,8 @@ parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to 
                     type=float)
 parser.add_argument('--ts', help='find ts along path specified in MEP.xml (from vasprun.xml)',
                     action='store_true')
+parser.add_argument('--frozen', help='Monitors jobs which constantlyfreeze',
+                    action='store_true')
 
 args = parser.parse_args()
 
@@ -223,7 +225,6 @@ if __name__ == '__main__':
             stage = Incar.from_file('INCAR')['STAGE_NUMBER']
             if stage not in args.finish_convergence:
                 exit('Not correct stage')
-
     jobtype = getJobType('.')
     incar = Incar.from_file('INCAR')
     computer = getComputerName()
@@ -332,6 +333,8 @@ if __name__ == '__main__':
         additional_keywords['target'] = args.ts
         special = 'hse_ts'
 
+    if args.frozen:
+        jobtype = 'Standard-Halting'
 
     (template_dir, template) = get_template(computer, jobtype, special)
     script = 'vasp_standard.sh'
