@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+from Classes_Pymatgen import *
+
+c = Chgcar.from_file('CHGCAR')
