@@ -5,10 +5,11 @@ import sys
 
 c = Chgcar.from_file('CHGCAR')
 
-x = (float(sys.argv[1]) * len(c.get_axis_grid(0)))
-y = (float(sys.argv[2]) * len(c.get_axis_grid(1)))
+x = int(float(sys.argv[1]) * len(c.get_axis_grid(0)))
+y = int(float(sys.argv[2]) * len(c.get_axis_grid(1)))
+area = c.get_axis_grid(0)[len(c.get_axis_grid(0))] /len(c.get_axis_grid(0))  * c.get_axis_grid(1)[len(c.get_axis_grid(1))]/ len(c.get_axis_grid(1))
 
-csv_data = 'z, Charge (e-/A)\n'
+csv_data = 'z, Charge Density (e-/A)\n'
 data = c.data['total']
 
 for z in range(len(c.get_axis_grid(2))):
