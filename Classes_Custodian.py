@@ -337,10 +337,10 @@ class MaxForceErrorHandler_dimer(ErrorHandler):
         vi = VaspInput.from_directory(".")
         ediff = float(vi["INCAR"].get("EDIFF", 1e-4))
         ediffg = float(vi["INCAR"].get("EDIFFG", ediff * 10))
-        actions = [{"file": "CONTCAR",
+        actions = [{"file": "CENTCAR",
                     "action": {"_file_copy": {"dest": "POSCAR"}}},
                    {"dict": "INCAR",
-                    "action": {"_set": {"EDIFFG": ediffg*0.5}}}]
+                    "action": {"_set": {"EDIFFG": max_force_threshold}}}]
         VaspModder(vi=vi).apply_actions(actions)
 
         return {"errors": ["MaxForce"], "actions": actions}
