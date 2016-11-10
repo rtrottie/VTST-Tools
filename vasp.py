@@ -334,7 +334,7 @@ if __name__ == '__main__':
         special = 'hse_ts'
 
     if args.frozen:
-        jobtype = 'Standard-Halting'
+        jobtype = joptype + '-Halting'
 
     (template_dir, template) = get_template(computer, jobtype, special)
     script = 'vasp_standard.sh'
