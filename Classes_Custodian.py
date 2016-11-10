@@ -211,3 +211,49 @@ class StandardJob(VaspJob):
 class DynMatJob(StandardJob):
     def postprocess(self):
         return
+
+class FrozenJobErrorHandler(ErrorHandler):
+    """
+    Detects an error when the output file has not been updated
+    in timeout seconds. Changes ALGO to Normal from Fast
+    """
+
+    is_monitor = True
+
+    def __init__(self, output_filename="vasp.out", timeout=21600):
+        """
+        Initializes the handler with the output file to check.
+
+        Args:
+            output_filename (str): This is the file where the stdout for vasp
+                is being redirected. The error messages that are checked are
+                present in the stdout. Defaults to "vasp.out", which is the
+                default redirect used by :class:`custodian.vasp.jobs.VaspJob`.
+            timeout (int): The time in seconds between checks where if there
+                is no activity on the output file, the run is considered
+                frozen. Defaults to 3600 seconds, i.e., 1 hour.
+        """
+        self.output_filename = output_filename
+        self.timeout = timeout
+
+    def check(self):
+        st = os.stat(self.output_filename)
+        if time.time() - st.st_mtime > self.timeout:
+            return True
+
+
+    def correct(self):
+        backup(VASP_BACKUP_FILES | {self.output_filename})
+
+        vi = VaspInput.from_directory('.')
+        actions = [{"file": "CONTCAR",
+                    "action": {"_file_copy": {"dest": "POSCAR"}}}]
+        if vi["INCAR"].get("ALGO", "Normal") == "Fast":
+            actions.append({"dict": "INCAR",
+                        "action": {"_set": {"ALGO": "Normal"}}})
+
+        VaspModder(vi=vi).apply_actions(actions)
+
+        return {"errors": ["Frozen job"], "actions": actions}
+
+
