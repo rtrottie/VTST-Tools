@@ -296,6 +296,8 @@ class FrozenJobErrorHandler_dimer(ErrorHandler):
         if os.path.getsize('CENTCAR') > 0:
             actions.append({"file": "CENTCAR",
                         "action": {"_file_copy": {"dest": "POSCAR"}}})
+            actions.append({"file": "NEWMODECAR",
+                        "action": {"_file_copy": {"dest": "MODECAR"}}})
         if vi["INCAR"].get("ALGO", "Normal") == "Fast":
             actions.append({"dict": "INCAR",
                         "action": {"_set": {"ALGO": "Normal"}}})
