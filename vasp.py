@@ -121,7 +121,7 @@ def restart_vasp(dir):
     for (old_file, new_file) in instructions["move"]:
         try:
             if os.path.getsize(old_file) > 0:
-                shutil.move(old_file, new_file)
+                shutil.copy(old_file, new_file)
                 print('Moved ' + old_file + ' to ' + new_file)
             else:
                 raise Exception()
