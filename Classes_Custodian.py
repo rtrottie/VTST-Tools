@@ -212,7 +212,7 @@ class DynMatJob(StandardJob):
     def postprocess(self):
         return
 
-class FrozenJobErrorHandler(ErrorHandler):
+class FrozenJobErrorHandler_cont(ErrorHandler):
     """
     Detects an error when the output file has not been updated
     in timeout seconds. Changes ALGO to Normal from Fast
