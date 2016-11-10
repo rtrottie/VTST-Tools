@@ -256,4 +256,92 @@ class FrozenJobErrorHandler_cont(ErrorHandler):
 
         return {"errors": ["Frozen job"], "actions": actions}
 
+class FrozenJobErrorHandler_dimer(ErrorHandler):
+    """
+    Detects an error when the output file has not been updated
+    in timeout seconds. Changes ALGO to Normal from Fast
+    """
+
+    is_monitor = True
+
+    def __init__(self, output_filename="vasp.out", timeout=21600):
+        """
+        Initializes the handler with the output file to check.
+
+        Args:
+            output_filename (str): This is the file where the stdout for vasp
+                is being redirected. The error messages that are checked are
+                present in the stdout. Defaults to "vasp.out", which is the
+                default redirect used by :class:`custodian.vasp.jobs.VaspJob`.
+            timeout (int): The time in seconds between checks where if there
+                is no activity on the output file, the run is considered
+                frozen. Defaults to 3600 seconds, i.e., 1 hour.
+        """
+        self.output_filename = output_filename
+        self.timeout = timeout
+
+    def check(self):
+        st = os.stat(self.output_filename)
+        if time.time() - st.st_mtime > self.timeout:
+            return True
+
+
+    def correct(self):
+        backup(VASP_BACKUP_FILES | {self.output_filename})
+
+        vi = VaspInput.from_directory('.')
+        actions = [{"file": "CENTCAR",
+                    "action": {"_file_copy": {"dest": "POSCAR"}}}]
+        if vi["INCAR"].get("ALGO", "Normal") == "Fast":
+            actions.append({"dict": "INCAR",
+                        "action": {"_set": {"ALGO": "Normal"}}})
+
+        VaspModder(vi=vi).apply_actions(actions)
+
+        return {"errors": ["Frozen job"], "actions": actions}
+class MaxForceErrorHandler_dimer(ErrorHandler):
+    """
+    Checks that the desired force convergence has been achieved. Otherwise
+    restarts the run with smaller EDIFF. (This is necessary since energy
+    and force convergence criteria cannot be set simultaneously)
+    """
+    is_monitor = False
+
+    def __init__(self, output_filename="vasprun.xml",
+                 max_force_threshold=0.005):
+        """
+        Args:
+            input_filename (str): name of the vasp INCAR file
+            output_filename (str): name to look for the vasprun
+            max_force_threshold (float): Threshold for max force for
+                restarting the run. (typically should be set to the value
+                that the creator looks for)
+        """
+        self.output_filename = output_filename
+        self.max_force_threshold = max_force_threshold
+
+    def check(self):
+        try:
+            v = Vasprun(self.output_filename)
+            max_force = max([np.linalg.norm(a) for a
+                             in v.ionic_steps[-1]["forces"]])
+            if max_force > self.max_force_threshold and v.converged is True:
+                return True
+        except:
+            pass
+        return False
+
+
+    def correct(self):
+        backup(VASP_BACKUP_FILES | {self.output_filename})
+        vi = VaspInput.from_directory(".")
+        ediff = float(vi["INCAR"].get("EDIFF", 1e-4))
+        ediffg = float(vi["INCAR"].get("EDIFFG", ediff * 10))
+        actions = [{"file": "CONTCAR",
+                    "action": {"_file_copy": {"dest": "POSCAR"}}},
+                   {"dict": "INCAR",
+                    "action": {"_set": {"EDIFFG": ediffg*0.5}}}]
+        VaspModder(vi=vi).apply_actions(actions)
+
+        return {"errors": ["MaxForce"], "actions": actions}
 
