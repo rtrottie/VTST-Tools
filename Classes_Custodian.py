@@ -246,8 +246,10 @@ class FrozenJobErrorHandler_cont(ErrorHandler):
         backup(VASP_BACKUP_FILES | {self.output_filename})
 
         vi = VaspInput.from_directory('.')
-        actions = [{"file": "CONTCAR",
-                    "action": {"_file_copy": {"dest": "POSCAR"}}}]
+        actions = []
+        if os.path.getsize('CONTCAR') > 0:
+            actions.append({"file": "CONTCAR",
+                        "action": {"_file_copy": {"dest": "POSCAR"}}})
         if vi["INCAR"].get("ALGO", "Normal") == "Fast":
             actions.append({"dict": "INCAR",
                         "action": {"_set": {"ALGO": "Normal"}}})
@@ -290,8 +292,10 @@ class FrozenJobErrorHandler_dimer(ErrorHandler):
         backup(VASP_BACKUP_FILES | {self.output_filename})
 
         vi = VaspInput.from_directory('.')
-        actions = [{"file": "CENTCAR",
-                    "action": {"_file_copy": {"dest": "POSCAR"}}}]
+        actions = []
+        if os.path.getsize('CENTCAR') > 0:
+            actions.append({"file": "CENTCAR",
+                        "action": {"_file_copy": {"dest": "POSCAR"}}})
         if vi["INCAR"].get("ALGO", "Normal") == "Fast":
             actions.append({"dict": "INCAR",
                         "action": {"_set": {"ALGO": "Normal"}}})
@@ -340,7 +344,7 @@ class MaxForceErrorHandler_dimer(ErrorHandler):
         actions = [{"file": "CENTCAR",
                     "action": {"_file_copy": {"dest": "POSCAR"}}},
                    {"dict": "INCAR",
-                    "action": {"_set": {"EDIFFG": max_force_threshold}}}]
+                    "action": {"_set": {"EDIFFG": self.max_force_threshold}}}]
         VaspModder(vi=vi).apply_actions(actions)
 
         return {"errors": ["MaxForce"], "actions": actions}
