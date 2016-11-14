@@ -87,6 +87,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     except:
         print('Copying POTCAR failed, make sure to add an appropriate POTCAR to the directory')
 
+
     if copy_wavefunction:
         if os.path.exists(os.path.join(start_folder, 'WAVECAR')):
             print('Copying initial WAVECAR')
@@ -101,8 +102,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             shutil.copy(os.path.join(start_folder, 'CHGCAR'),
                         os.path.join(new_gsm_dir, 'scratch/IMAGE.01/CHGCAR'))
 
-        start = ase.io.read(start_file, format='vasp')
-        start.wrap(center)
 
         if final: # is GSM
             if os.path.isfile(final):
@@ -125,8 +124,12 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
                 shutil.copy(os.path.join(final_folder, 'CHGCAR'),
                             os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/CHGCAR'))
 
-            final = ase.io.read(final_file, format='vasp')
-            final.wrap(f_center)
+    start = ase.io.read(start_file, format='vasp')
+    start.wrap(center)
+    if final:
+        final = ase.io.read(final_file, format='vasp')
+        final.wrap(f_center)
+
     initial = [start, final]
 
     currdir = os.path.abspath('.')
