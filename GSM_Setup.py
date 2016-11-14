@@ -27,7 +27,7 @@ def wrap_positions_right(positions, center, cell):
 
     return (x,y,z)
 
-def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None):
+def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None, copy_wavefunction=False):
 
     # Initializing Variables to be called later in function
 
@@ -87,47 +87,47 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     except:
         print('Copying POTCAR failed, make sure to add an appropriate POTCAR to the directory')
 
-    if os.path.exists(os.path.join(start_folder, 'WAVECAR')):
-        print('Copying initial WAVECAR')
-        if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.01')):
-            os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.01'))
-        shutil.copy(os.path.join(start_folder, 'WAVECAR'),
-                    os.path.join(new_gsm_dir, 'scratch/IMAGE.01/WAVECAR'))
-    if os.path.exists(os.path.join(start_folder, 'CHGCAR')):
-        print('Copying initial CHGCAR')
-        if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.01')):
-            os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.01'))
-        shutil.copy(os.path.join(start_folder, 'CHGCAR'),
-                    os.path.join(new_gsm_dir, 'scratch/IMAGE.01/CHGCAR'))
+    if copy_wavefunction:
+        if os.path.exists(os.path.join(start_folder, 'WAVECAR')):
+            print('Copying initial WAVECAR')
+            if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.01')):
+                os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.01'))
+            shutil.copy(os.path.join(start_folder, 'WAVECAR'),
+                        os.path.join(new_gsm_dir, 'scratch/IMAGE.01/WAVECAR'))
+        if os.path.exists(os.path.join(start_folder, 'CHGCAR')):
+            print('Copying initial CHGCAR')
+            if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.01')):
+                os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.01'))
+            shutil.copy(os.path.join(start_folder, 'CHGCAR'),
+                        os.path.join(new_gsm_dir, 'scratch/IMAGE.01/CHGCAR'))
 
-    start = ase.io.read(start_file, format='vasp')
-    start.wrap(center)
-    initial = [start]
+        start = ase.io.read(start_file, format='vasp')
+        start.wrap(center)
 
-    if final: # is GSM
-        if os.path.isfile(final):
-            final_file = final
-            final_folder = os.path.dirname(final)
-        else:
-            final_file = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) else os.path.join(final, 'POSCAR')
-            final_folder = final
-        shutil.copy(final_file, os.path.join(new_gsm_dir, 'POSCAR.final'))
-        if os.path.exists(os.path.join(final_folder, 'WAVECAR')):
-            print('Copying final WAVECAR')
-            if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
-                os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
-            shutil.copy(os.path.join(final_folder, 'WAVECAR'),
-                        os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/WAVECAR'))
-        if os.path.exists(os.path.join(final_folder, 'CHGCAR')):
-            print('Copying final CHGCAR')
-            if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
-                os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
-            shutil.copy(os.path.join(final_folder, 'CHGCAR'),
-                        os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/CHGCAR'))
+        if final: # is GSM
+            if os.path.isfile(final):
+                final_file = final
+                final_folder = os.path.dirname(final)
+            else:
+                final_file = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) else os.path.join(final, 'POSCAR')
+                final_folder = final
+            shutil.copy(final_file, os.path.join(new_gsm_dir, 'POSCAR.final'))
+            if os.path.exists(os.path.join(final_folder, 'WAVECAR')):
+                print('Copying final WAVECAR')
+                if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
+                    os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
+                shutil.copy(os.path.join(final_folder, 'WAVECAR'),
+                            os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/WAVECAR'))
+            if os.path.exists(os.path.join(final_folder, 'CHGCAR')):
+                print('Copying final CHGCAR')
+                if not os.path.exists(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2))):
+                    os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
+                shutil.copy(os.path.join(final_folder, 'CHGCAR'),
+                            os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/CHGCAR'))
 
-        final = ase.io.read(final_file, format='vasp')
-        final.wrap(f_center)
-        initial.append(final)
+            final = ase.io.read(final_file, format='vasp')
+            final.wrap(f_center)
+    initial = [start, final]
 
     currdir = os.path.abspath('.')
     os.chdir(new_gsm_dir)
@@ -174,6 +174,8 @@ if __name__ == '__main__':
                         nargs=3, type=float, default=[0.5,0.5,0.5])
     parser.add_argument('-f', '--finalcenter', help='center of final cell in fractional coordinates (defaults to center)',
                         nargs=3, type=float, default=None)
+    parser.add_argument('--wfxn', help='Don\'t copy WAVECAR and CHGCAR',
+                        action='store_false')
     args = parser.parse_args()
 
-    GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter)
+    GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn)
