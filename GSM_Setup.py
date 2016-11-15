@@ -89,6 +89,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
 
     start = ase.io.read(start_file, format='vasp')
     start.wrap(center)
+    initial = [start]
     if final:
         if os.path.isfile(final):
             final_file = final
@@ -98,7 +99,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             final_folder = final
         final = ase.io.read(final_file, format='vasp')
         final.wrap(f_center)
-    initial = [start, final]
+        initial.append(final)
 
     if copy_wavefunction:
         if os.path.exists(os.path.join(start_folder, 'WAVECAR')):
