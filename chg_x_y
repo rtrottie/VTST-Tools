@@ -2,18 +2,29 @@
 
 from Classes_Pymatgen import *
 import sys
+import argparse
 
-c = Chgcar.from_file('CHGCAR')
+parser = argparse.ArgumentParser()
+parser.add_argument('x', type=float)
+parser.add_argument('y', type=float)
+parser.add_argument('-o', '--output', type=str, default='chg.csv')
+parser.add_argument('-i', '--input', type=str, default='LOCPOT')
+args = parser.parse_args()
 
-x = int(float(sys.argv[1]) * len(c.get_axis_grid(0)))
-y = int(float(sys.argv[2]) * len(c.get_axis_grid(1)))
+
+c = Chgcar.from_file(args.input)
+
+
+
+x = int(float(args.x) * len(c.get_axis_grid(0)))
+y = int(float(args.y) * len(c.get_axis_grid(1)))
 area = c.get_axis_grid(0)[len(c.get_axis_grid(0))-1] /len(c.get_axis_grid(0))  * c.get_axis_grid(1)[len(c.get_axis_grid(1))-1]/ len(c.get_axis_grid(1))
 
 csv_data = 'z, Charge Density (e-/A)\n'
 data = c.data['total']
 
 for z in range(len(c.get_axis_grid(2))):
-  csv_data = csv_data + '{},{}\n'.format(c.get_axis_grid(2)[z], data[x][y][z]*area)
+    csv_data = csv_data + '{},{}\n'.format(c.get_axis_grid(2)[z], data[x][y][z]*area)
   
-with open('chgdata.csv', 'w') as f:
-  f.write(csv_data)
+with open(args.output, 'w') as f:
+    f.write(csv_data)
