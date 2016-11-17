@@ -20,7 +20,7 @@ x = int(float(args.x) * len(c.get_axis_grid(0)))
 y = int(float(args.y) * len(c.get_axis_grid(1)))
 area = c.get_axis_grid(0)[len(c.get_axis_grid(0))-1] /len(c.get_axis_grid(0))  * c.get_axis_grid(1)[len(c.get_axis_grid(1))-1]/ len(c.get_axis_grid(1))
 
-csv_data = 'z, Charge Density (e-/A), Area = {} A^2\n'.format(area)
+csv_data = 'z, Electrostatic Potential (e-), Area = {} A^2\n'.format(area)
 data = c.data['total']
 
 for z in range(len(c.get_axis_grid(2))):
