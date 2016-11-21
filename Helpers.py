@@ -20,7 +20,7 @@ def pmg_to_pyl(poscar : Poscar):
         pyl = read.poscar(f.name)
     return pyl
 
-def pyl_tom_pmg(structure : pylada.crystal.Structure):
+def pyl_tom_pmg(structure):
     from pylada.crystal import read, write
     import pylada.crystal
     with tempfile.NamedTemporaryFile() as f:
