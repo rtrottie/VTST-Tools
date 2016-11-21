@@ -10,6 +10,21 @@ import socket
 import shutil
 from Classes_Pymatgen import *
 from functools import reduce
+import tempfile
+from pylada.crystal import read, write
+import pylada.crystal
+
+def pmg_to_pyl(poscar : Poscar):
+    with tempfile.NamedTemporaryFile() as f:
+        poscar.write_file(f.name)
+        pyl = read.poscar(f.name)
+    return pyl
+
+def pyl_tom_pmg(structure : pylada.crystal.Structure):
+    with tempfile.NamedTemporaryFile() as f:
+        write.poscar(structure, f.name)
+        pmg = Poscar.from_file(f.name)
+    return pmg
 
 def get_nelect(outcar):
     line = subprocess.check_output(['grep', 'NELECT', outcar])
