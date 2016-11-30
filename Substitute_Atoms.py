@@ -62,7 +62,7 @@ def remove_atom_arbitrary(prev_dir, this_dir, atom_nums, atom=None):
         raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
     return
 
-def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
+def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None, spin=0):
     Poscar.get_string = get_string_more_sigfig
     vasp = VaspInput.from_directory(prev_dir, optional_files)
     atom_mapping = {k-1:new_atom for k in atom_nums}
@@ -70,6 +70,10 @@ def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
 
     # Modifying POSCAR
     sd = vasp['POSCAR'].selective_dynamics
+    if 'MAGMOM' in vasp['INCAR']:
+        mm = vasp["INCAR"]['MAGMOM']
+    else:
+        mm = False
     vasp['POSCAR'].structure = transformation.apply_transformation(vasp['POSCAR'].structure)
     vasp['POSCAR'].comment = ' '.join(vasp['POSCAR'].site_symbols)
     if sd:
@@ -82,12 +86,15 @@ def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None):
             symbols[i] += '_pv'
         elif symbols[i] in ['Sc']:
             symbols[i] += '_sv'
+    for atom in atom_nums:
+        mm[atom-1] = spin
 
 
     vasp['POTCAR'] = Potcar(symbols)
 
     # Modifying INCAR
     update_incar(vasp['POSCAR'].structure, vasp['INCAR'])
+    vasp['INCAR']['MAGMOM'] = mm
 
     vasp.write_input(this_dir)
     return
