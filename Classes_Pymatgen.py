@@ -434,7 +434,7 @@ class Modecar(MSONable):
         self.contents = contents
 
     def __str__(self):
-        return unicode(self.contents)
+        return str(self.contents)
 
     @staticmethod
     def from_file(modecar_file):
