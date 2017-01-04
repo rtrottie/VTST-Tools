@@ -10,6 +10,7 @@ import subprocess
 
 
 
+
 def parse_incar_update(f_string):
     with open(f_string) as f:
         dicts = []
@@ -133,12 +134,12 @@ if __name__ == '__main__':
             finally:
                 if not run.converged:
                     cont = input('Run has not converged.  Continue? (1/0 = yes/no):  ')
-                    if cont == 1:
+                    if cont == '1':
                         pass
                     else:
                         if args.execute_vasp:
                             cont = input('Run vasp anyway? (1/0 = yes/no)')
-                            if cont == 1:
+                            if cont == '1':
                                 os.system('vasp.py '+ args.f.replace('+', '-'))
                         sys.exit('Run will not be updated')
         run.incar['STAGE_NUMBER'] = Incar.from_file('INCAR')['STAGE_NUMBER']

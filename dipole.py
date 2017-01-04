@@ -7,7 +7,7 @@ import sys
 import os
 from pymatgen.io.vasp.outputs import Chgcar
 from Classes_Pymatgen import Poscar, Potcar
-from File_Management import read_ACF
+from File_Management import file_to_dict
 
 def dipole_acf(args):
     poscar = Poscar.from_file('POSCAR')
@@ -19,7 +19,7 @@ def dipole_acf(args):
     cart_axis = np.matrix(args.axis) * s.lattice.matrix
     unit_vector = cart_axis / np.linalg.norm((cart_axis))
     with open('ACF.dat', 'rb') as acf_file:
-        acf = read_ACF(acf_file)
+        acf = file_to_dict(acf_file.read(), ['#', 'x', 'y', 'z', 'charge', 'min_dist', 'volume'])
         charges_vectors = []
         for atom in args.atoms:  # iterating over ion centers
             potcarsingle = potcar[np.argmax(cumm_natoms >= atom)]  # get Potcarsingle for each atom
