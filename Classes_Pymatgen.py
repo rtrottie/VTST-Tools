@@ -99,9 +99,19 @@ def pretty_incar_string(self, sort_keys=True, pretty=False):
     return s
 
 def incar_from_file(filename):
-    i = old_Incar.from_file(filename)
-    i['LDAUU'] = [ float(x) for x in subprocess.check_output('grep LDAUU {}'.format(filename), shell=True).split()[2:] ]
-    return i
+    """
+    Reads an Incar object from a file.
+
+    Args:
+        filename (str): Filename for file
+
+    Returns:
+        Incar object
+    """
+    with zopen(filename, "rt") as f:
+        i = Incar.from_string(f.read())
+        i['LDAUU'] = [ float(x) for x in subprocess.check_output('grep LDAUU {}'.format(filename), shell=True).split()[2:] ]
+        return i
 
 def perturb_sites(self, distance, sites):
     """
