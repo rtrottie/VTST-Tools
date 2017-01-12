@@ -5,6 +5,7 @@ from pymatgen.io.vasp.outputs import *
 import pymatgen as pmg
 import numpy as np
 import cfg
+import subprocess
 
 def get_string_more_sigfig(self, direct=True, vasp4_compatible=False, significant_figures=20):
     """
@@ -95,6 +96,11 @@ def pretty_incar_string(self, sort_keys=True, pretty=False):
         else:
             s = s + key.upper() + ' = ' + str(self[key]) + '\n'
     return s
+
+def incar_from_file(self, filename):
+    i = Incar.from_file(filename)
+    i['LDAUU'] = [ float(x) for x in subprocess.check_output('grep LDAUU {}'.format(filename), shell=True).split()[2:] ]
+    return i
 
 def perturb_sites(self, distance, sites):
     """
