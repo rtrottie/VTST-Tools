@@ -97,7 +97,7 @@ def pretty_incar_string(self, sort_keys=True, pretty=False):
             s = s + key.upper() + ' = ' + str(self[key]) + '\n'
     return s
 
-def incar_from_file(self, filename):
+def incar_from_file(filename):
     i = Incar.from_file(filename)
     i['LDAUU'] = [ float(x) for x in subprocess.check_output('grep LDAUU {}'.format(filename), shell=True).split()[2:] ]
     return i
@@ -454,7 +454,6 @@ class Modecar(MSONable):
     @classmethod
     def from_dict(cls, d):
         return (d['contents'])
-
 
 
 Poscar.get_string = get_string_more_sigfig
