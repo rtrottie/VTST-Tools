@@ -460,4 +460,5 @@ class Modecar(MSONable):
 Poscar.get_string = get_string_more_sigfig
 Poscar.perturb = perturb_Poscar
 Incar.get_string = pretty_incar_string
+Incar.from_file = incar_from_file
 pmg.Structure.perturb_sites = perturb_sites
