@@ -110,7 +110,8 @@ def incar_from_file(filename):
     """
     with zopen(filename, "rt") as f:
         i = Incar.from_string(f.read())
-        i['LDAUU'] = [ float(x) for x in subprocess.check_output('grep LDAUU {}'.format(filename), shell=True).split()[2:] ]
+        if 'LDAUU' in i:
+            i['LDAUU'] = [ float(x) for x in subprocess.check_output('grep LDAUU {}'.format(filename), shell=True).split()[2:] ]
         return i
 
 def perturb_sites(self, distance, sites):
