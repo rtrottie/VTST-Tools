@@ -4,17 +4,17 @@ import subprocess
 
 def open_in_VESTA(molecule,type='cif'):
     vesta = os.path.join(os.environ['VESTA_DIR'])
-    SCRATCH = '/home/ryan/scratch/scratch.' + type
+    SCRATCH = 'D://Users/RyanTrottier/Documents/Scrap/scratch.' + type
 
     molecule.to(type, SCRATCH)
     os.system(vesta + ' ' + SCRATCH)
 
 def open_in_Jmol(molecule,type='cif'):
-    JMOL_DIR = os.path.join(os.environ['JMOL_DIR'], 'jmol') if 'JMOL_DIR' in os.environ else 'jmol'
-    if isinstance(molecule, basestring):
-        return subprocess.Popen([JMOL_DIR, SCRATCH])
+    JMOL_DIR = os.path.join(os.environ['JMOL_DIR'])
+    if isinstance(molecule, str):
+        return subprocess.Popen(JMOL_DIR + ' ' + molecule, shell=True)
     else:
-        SCRATCH = 'D:\Users\RyanTrottier\Documents\Scrap\scratch.' + type
+        SCRATCH = 'D://Users/RyanTrottier/Documents/Scrap/scratch.' + type
         molecule.to(type, SCRATCH)
         return subprocess.Popen([JMOL_DIR, SCRATCH])
 
