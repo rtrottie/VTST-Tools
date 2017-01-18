@@ -3,7 +3,7 @@ import os
 import subprocess
 
 def open_in_VESTA(molecule,type='cif'):
-    vesta = os.path.join(os.environ['VESTA_DIR'], 'VESTA')
+    vesta = os.path.join(os.environ['VESTA_DIR'])
     SCRATCH = '/home/ryan/scratch/scratch.' + type
 
     molecule.to(type, SCRATCH)
@@ -14,7 +14,7 @@ def open_in_Jmol(molecule,type='cif'):
     if isinstance(molecule, basestring):
         return subprocess.Popen([JMOL_DIR, SCRATCH])
     else:
-        SCRATCH = '/home/ryan/scratch/scratch.' + type
+        SCRATCH = 'D:\Users\RyanTrottier\Documents\Scrap\scratch.' + type
         molecule.to(type, SCRATCH)
         return subprocess.Popen([JMOL_DIR, SCRATCH])
 
