@@ -2,7 +2,7 @@
 
 import argparse
 from Classes_Pymatgen import *
-from pymatgen.core import Site
+from pymatgen.core import PeriodicSite
 import os
 import shutil
 
@@ -39,13 +39,13 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
     new_s_1 = images[0] # type: Structure
     new_s_2 = images[1] # type: Structure
 
-    for atom in atoms_1: # type: Site
+    for atom in atoms_1: # type: PeriodicSite
         atom = atom
-        new_s_1.append(atom.specie, atom.coords, properties=atom.properties)
+        new_s_1.append(atom.specie, atom.frac_coords, properties=atom.properties)
 
-    for atom in atoms_2: # type: Site
+    for atom in atoms_2: # type: PeriodicSite
         atom = atom
-        new_s_2.append(atom.specie, atom.coords, properties=atom.properties)
+        new_s_2.append(atom.specie, atom.frac_coords, properties=atom.properties)
 
     return (new_s_1, new_s_2)
 
