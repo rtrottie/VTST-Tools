@@ -67,6 +67,9 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
         atoms = []
         for i in range(int(len(poscar_override)/2)):
             atoms.append( (poscar_override[i*2], poscar_override[i*2+1]) )
+        print(s1)
+        print(s2)
+        print(atoms)
         (s1, s2) = reorganize_structures(s1, s2, atoms=atoms, autosort_tol=tolerance)
     structures = s1.interpolate(s2, images, autosort_tol=tolerance)
 
