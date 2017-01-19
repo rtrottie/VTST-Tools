@@ -45,7 +45,7 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
 
     for atom in atoms_2: # type: Site
         atom = atom
-        new_s_1.append(atom.specie, atom.coords, properties=atom.properties)
+        new_s_2.append(atom.specie, atom.coords, properties=atom.properties)
 
     return (new_s_1, new_s_2)
 
@@ -67,10 +67,8 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
         atoms = []
         for i in range(int(len(poscar_override)/2)):
             atoms.append( (poscar_override[i*2], poscar_override[i*2+1]) )
-        print(s1)
-        print(s2)
-        print(atoms)
         (s1, s2) = reorganize_structures(s1, s2, atoms=atoms, autosort_tol=tolerance)
+        tolerance=0
     structures = s1.interpolate(s2, images, autosort_tol=tolerance)
 
     incar['ICHAIN'] = 0
