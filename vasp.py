@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # A general catch all function that runs VASP with just one command.  Automatically determines number of nodes to run on,
 # based on NPAR and KPAR what type (NEB,Dimer,Standard) to run and sets up a submission script and runs it
-#TODO: make silent work
+
 
 
 from jinja2 import Environment, FileSystemLoader
