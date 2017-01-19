@@ -105,6 +105,4 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--climbing_image', help='use CI', action = 'store_true')
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms', type=int, nargs='*', default=[])
     args = parser.parse_args()
-    if args.atom_pairs:
-        atom_overrides = reorganize_structures()
-    nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image)
+    nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs)
