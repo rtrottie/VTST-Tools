@@ -69,9 +69,10 @@ if __name__ == '__main__':
                         default='.')
     parser.add_argument('-u', '--undo', help='Read selective_dynamics file and undo frozen atoms',
                         action='store_true')
+    parser.add_argument('--sd', '--selective_dynamics', help='Selective Dynamics file', default='.selective_dynamics')
     args = parser.parse_args()
 
     if args.undo:
-        unfreeze_atoms(args.directory)
+        unfreeze_atoms(args.directory, sd_file=args.selective_dynamics)
     else:
         freeze_atoms_except_neighbors(args.directory, args.atom, args.radius)
