@@ -74,6 +74,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.undo:
-        unfreeze_atoms(args.directory, sd_file=args.selective_dynamics)
+        unfreeze_atoms(args.directory, sd_file=args.sd)
     else:
         freeze_atoms_except_neighbors(args.directory, args.atom, args.radius)
