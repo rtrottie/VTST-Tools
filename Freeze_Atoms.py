@@ -18,7 +18,7 @@ def freeze_atoms_except_neighbors(dir, atom, unfrozen_dist=4):
     with open(os.path.join(dir, 'selective_dynamics'),'w+') as f:
         f.write(str(sd_orig))
     neigh = poscar.structure.get_neighbors(poscar.structure.sites[atom-1], unfrozen_dist, True) # find nearby atoms
-    neigh = map(lambda x: x[2], neigh) # get indices
+    neigh = list(map(lambda x: x[2], neigh)) # get indices
     neigh.append(atom-1) # add center atom
     for i in range(len(poscar.selective_dynamics)): # freeze all atoms not in neigh
         if i not in neigh:
