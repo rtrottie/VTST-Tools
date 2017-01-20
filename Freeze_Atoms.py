@@ -63,7 +63,8 @@ def unfreeze_atoms(directory, sd_file='.selective_dynamics'):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('atom', help='atom number (0 indexed) to freeze from')
+    parser.add_argument('atom', help='atom number (0 indexed) to freeze from',
+                        default=-1, nargs="?")
     parser.add_argument('-r', '--radius', help='radius to freeze around (default 4)')
     parser.add_argument('-d', '--directory', help='Input directory (default = ".")',
                         default='.')
