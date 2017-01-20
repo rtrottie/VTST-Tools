@@ -43,8 +43,19 @@ def unfreeze_atoms(directory, sd_file='.selective_dynamics'):
     '''
     Unfreeze atoms in given directory
     :param directory:
+    :param sd_file:
+        file that is a str(list) of selective dynamics
     :return:
     '''
+
+    # Parse sd_file
+    with open(sd_file) as f:
+        sd = [['True' in x] * 3 for x in f.read().split('],')]
+
+    poscar = Poscar.from_file(os.path.join('directory', 'POSCAR')) # type: Poscar
+    poscar.selective_dynamics = sd
+    poscar.write_file('POSCAR')
+    return
 
 
 
