@@ -7,6 +7,7 @@ from pymatgen.io.vasp.inputs import Poscar
 from Classes_Pymatgen import get_string_more_sigfig
 import os
 import sys
+import argparse
 import pymatgen.io.vasp
 
 
@@ -38,31 +39,28 @@ def freeze_atoms_except_neighbors(dir : str, atom : int, unfrozen_dist=4):
     poscar.write_file(os.path.join(dir, 'POSCAR'))
     return
 
-#TODO: write unfreeze atoms
+def unfreeze_atoms(directory, sd_file='.selective_dynamics'):
+    '''
+    Unfreeze atoms in given directory
+    :param directory:
+    :return:
+    '''
 
 
-if os.path.basename(sys.argv[0]) == 'Freeze_Atoms.py':
-    if len(sys.argv) < 2:
-        raise Exception('Not Enough Arguments Provided\n need: [Dir] Atom_#s [Distance]')
-    elif len(sys.argv) == 2:
-        dir = os.getcwd()
-        atom = int(sys.argv[1])
-        unfrozen_dist = 4
-    elif len(sys.argv) == 3:
-        try:
-            dir = os.getcwd()
-            atom = int(sys.argv[1])
-            unfrozen_dist = int(sys.argv[2])
-        except:
-            dir = int(sys.argv[1])
-            atom = int(sys.argv[2])
-            unfrozen_dist = 4
-    elif len(sys.argv) == 4:
-        dir = int(sys.argv[1])
-        atom = int(sys.argv[2])
-        unfrozen_dist = int(sys.argv[3])
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('atom', help='atom number (0 indexed) to freeze from')
+    parser.add_argument('-r', '--radius', help='radius to freeze around (default 4)')
+    parser.add_argument('-d', '--directory', help='Input directory (default = ".")',
+                        default='.')
+    parser.add_argument('-u', '--undo', help='Read selective_dynamics file and undo frozen atoms',
+                        action='store_true')
+    args = parser.parse_args()
+
+    if args.undo:
+        unfreeze_atoms(args.directory)
     else:
-        raise Exception('Too Many Arguments\n need: [Dir] Atom_#s [Distance]')
-    freeze_atoms_except_neighbors(dir, atom, unfrozen_dist)
-
-
+        freeze_atoms_except_neighbors(args.directory, args.atom, args.radius)
