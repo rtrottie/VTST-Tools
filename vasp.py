@@ -180,8 +180,6 @@ def get_template(computer, jobtype, special=None):
     else:
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.standard.sh.jinja2')
 
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--time', help='walltime for run (integer number of hours)',
                     type=int, default=0)
