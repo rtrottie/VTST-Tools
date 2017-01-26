@@ -4,7 +4,7 @@ import subprocess
 
 def open_in_VESTA(molecule,type='cif'):
     vesta = os.path.join(os.environ['VESTA_DIR'])
-    if type(molecule) == str:
+    if isinstance(molecule,str):
         SCRATCH = molecule
     # else:
     #     SCRATCH = 'D://Users/RyanTrottier/Documents/Scrap/scratch.' + type
