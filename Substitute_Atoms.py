@@ -142,7 +142,8 @@ def switch_atom(prev_dir, this_dir, atoms, optional_files=None):
         if i == int(len(atoms)/2):
             next_dir = this_dir
         replace_atom(temp_dir, next_dir, [atoms[2*i+1]], a1, optional_files)
-        os.system('rm -r ' + temp_dir)
+        if i == int(len(atoms)/2):
+            os.system('rm -r ' + temp_dir)
 
 def switch_atom_arbitrary(prev_dir, this_dir, atom_nums):
     job = getJobType(prev_dir)
