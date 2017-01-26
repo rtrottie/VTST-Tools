@@ -4,9 +4,11 @@ import subprocess
 
 def open_in_VESTA(molecule,type='cif'):
     vesta = os.path.join(os.environ['VESTA_DIR'])
-    SCRATCH = 'D://Users/RyanTrottier/Documents/Scrap/scratch.' + type
-
-    molecule.to(type, SCRATCH)
+    if type(molecule) == str:
+        SCRATCH = molecule
+    # else:
+    #     SCRATCH = 'D://Users/RyanTrottier/Documents/Scrap/scratch.' + type
+    #     molecule.to(type, SCRATCH)
     os.system(vesta + ' ' + SCRATCH)
 
 def open_in_Jmol(molecule,type='cif'):
