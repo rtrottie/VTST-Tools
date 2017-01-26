@@ -139,10 +139,10 @@ def switch_atom(prev_dir, this_dir, atoms, optional_files=None):
         replace_atom(prev_dir, temp_dir, [atoms[2*i]], a2, optional_files)
         prev_dir = temp_dir
         next_dir = temp_dir
-        if i == int(len(atoms)/2):
+        if i == int(len(atoms)/2)-1:
             next_dir = this_dir
         replace_atom(temp_dir, next_dir, [atoms[2*i+1]], a1, optional_files)
-        if i == int(len(atoms)/2):
+        if i == int(len(atoms)/2)-1:
             os.system('rm -r ' + temp_dir)
 
 def switch_atom_arbitrary(prev_dir, this_dir, atom_nums):
