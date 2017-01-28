@@ -15,7 +15,7 @@ def neb2dim(neb_dir, dimer_dir):
     try:
         energies = NEBAnalysis.from_dir(neb_dir).energies
     except:
-        if raw_input('Failed, do: rm ' + neb_dir + '*/*.xyz and try again? (y)') == 'y':
+        if input('Failed, do: rm ' + neb_dir + '*/*.xyz and try again? (y)') == 'y':
             os.system('rm ' + neb_dir + '/*/*.xyz')
             energies = NEBAnalysis.from_dir(neb_dir).energies
         else:
