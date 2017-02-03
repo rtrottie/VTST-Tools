@@ -10,4 +10,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     v = Vasprun(args.vasprun)
     bs = v.get_band_structure()
-    print bs.get_band_gap()
+    print(bs.get_band_gap())
