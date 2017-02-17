@@ -306,7 +306,7 @@ if __name__ == '__main__':
     else:
         openmp = 1
 
-    if computer == 'janus' or computer == 'rapunzel':
+    if computer == 'janus' or computer == 'rapunzel' or computer=='summit':
         queue_type = 'slurm'
         submit = 'sbatch'
     else:
