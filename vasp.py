@@ -143,6 +143,13 @@ def get_queue(computer, jobtype, time, nodes):
             return 'janus'
         elif time > 24:
             return 'janus-long'
+    elif computer == "summit":
+        if time <= 1:
+            return 'debug'
+        elif time <= 24:
+            return 'normal'
+        elif time > 24:
+            return 'long'
     elif computer == "peregrine":
         if time <= 1 and nodes <= 4 and False:
             return 'debug'
