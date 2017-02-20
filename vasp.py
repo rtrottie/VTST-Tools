@@ -357,6 +357,7 @@ if __name__ == '__main__':
                 'mpi'           : os.environ["VASP_MPI"],
                 'vasp_kpts'     : os.environ["VASP_KPTS"],
                 'vasp_gamma'    : os.environ["VASP_GAMMA"],
+                'vasp_bashrc'   : os.environ['VASP_BASHRC'] if 'VASP_BASHRC' in os.environ else '~/.bashrc'
                 'jobtype'       : jobtype,
                 'tasks'         : nodes*cores,
                 'openmp'        : openmp}
