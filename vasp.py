@@ -359,7 +359,7 @@ if __name__ == '__main__':
                 'vasp_gamma'    : os.environ["VASP_GAMMA"],
                 'vasp_bashrc'   : os.environ['VASP_BASHRC'] if 'VASP_BASHRC' in os.environ else '~/.bashrc_vasp',
                 'jobtype'       : jobtype,
-                'tasks'         : nodes*cores,
+                'tasks'         : int(nodes*cores/openmp),
                 'openmp'        : openmp}
     keywords.update(additional_keywords)
 
