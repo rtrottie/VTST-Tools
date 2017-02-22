@@ -302,7 +302,7 @@ if __name__ == '__main__':
         account = ''
 
     if 'VASP_OMP_NUM_THREADS' in os.environ:
-        openmp = os.environ['VASP_OMP_NUM_THREADS']
+        openmp = int(os.environ['VASP_OMP_NUM_THREADS'])
     else:
         openmp = 1
 
