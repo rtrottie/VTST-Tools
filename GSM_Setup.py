@@ -205,4 +205,5 @@ if __name__ == '__main__':
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms', type=int, nargs='*', default=[])
     args = parser.parse_args()
 
-    GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn, a)
+    GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn,
+              tolerance=args.tolerance, poscar_override=args.atom_pairs)
