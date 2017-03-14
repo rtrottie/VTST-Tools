@@ -76,20 +76,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     shutil.copy(start_file, os.path.join(new_gsm_dir, 'POSCAR.start'))
     if not os.path.exists(os.path.join(new_gsm_dir, 'scratch')):
         os.makedirs(os.path.join(new_gsm_dir, 'scratch'))
-    try:
-        incar = Incar.from_file(os.path.join(start_folder, 'INCAR'))
-        incar['NSW']=0
-        incar.write_file(os.path.join(new_gsm_dir, 'INCAR'))
-    except:
-        print('Copying INCAR failed, make sure to add an appropriate INCAR to the directory')
-    try:
-        shutil.copy(os.path.join(start_folder, 'KPOINTS'), os.path.join(new_gsm_dir, 'KPOINTS'))
-    except:
-        print('Copying KPOINTS failed, make sure to add an appropriate KPOINTS to the directory')
-    try:
-        shutil.copy(os.path.join(start_folder, 'POTCAR'), os.path.join(new_gsm_dir, 'POTCAR'))
-    except:
-        print('Copying POTCAR failed, make sure to add an appropriate POTCAR to the directory')
 
     start = ase.io.read(start_file, format='vasp')
     start.wrap(center)
@@ -120,6 +106,28 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             initial = [start, final]
         else:
             initial.append(final)
+
+    try:
+        incar = Incar.from_file(os.path.join(start_folder, 'INCAR'))
+        incar['NSW']=0
+        incar.write_file(os.path.join(new_gsm_dir, 'INCAR'))
+    except:
+        print('Copying INCAR failed, make sure to add an appropriate INCAR to the directory')
+    try:
+        shutil.copy(os.path.join(start_folder, 'KPOINTS'), os.path.join(new_gsm_dir, 'KPOINTS'))
+    except:
+        print('Copying KPOINTS failed, make sure to add an appropriate KPOINTS to the directory')
+    try:
+        potcar = Potcar()
+        for symbol in Poscar.from_file(os.path.join(new_gsm_dir, 'POSCAR.start')).site_symbols:
+            for potcar_single in Potcar.from_file(os.path.join(start_folder, 'POTCAR')): # pymatgen.io.vasp.PotcarSingle
+                if symbol == potcar_single.element:
+                    potcar.append(potcar_single)
+                    break
+
+        shutil.copy(, os.path.join(new_gsm_dir, 'POTCAR'))
+    except:
+        print('Copying POTCAR failed, make sure to add an appropriate POTCAR to the directory')
 
     if copy_wavefunction:
         if os.path.exists(os.path.join(start_folder, 'WAVECAR')):
