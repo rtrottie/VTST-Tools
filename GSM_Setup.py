@@ -187,8 +187,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         with open('scratch/initial0000.xyz', 'w') as f:
             f.writelines(xyz)
         #os.remove('scratch/initial0000.temp.xyz')
-    else:
-        shutil.move('scratch/initial0000.temp.xyz', 'scratch/initial0000.xyz')
+
     os.chdir(currdir)
 
 
