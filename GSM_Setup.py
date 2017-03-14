@@ -170,17 +170,22 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         f.write(template.render(jinja_vars))
     os.chmod('grad.py', 0o755)
     os.chmod('status', 0o755)
-    ase.io.write('scratch/initial0000.temp.xyz', initial)
+    ase.io.write('scratch/initial0000.temp.xyz', initial, )
     poscar = Poscar.from_file('POSCAR.start')
     if poscar.selective_dynamics:
-        with open('scratch/initial0000.temp.xyz', 'r') as f:
-            sd = Poscar.from_file('POSCAR.start').selective_dynamics
-            sd = list(map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd))
-            to_zip = (['\n', '\n'] + sd) * len(initial)
-            zipped = zip(f.readlines(), to_zip)
-            xyz = [ x.rstrip()+y for x, y in zipped ]
-            with open('scratch/initial0000.xyz', 'w') as f:
-                f.writelines(xyz)
+        sd = Poscar.from_file('POSCAR.start').selective_dynamics
+    else:
+        sd = [(True, True, True)] * Poscar.from_file('POSCAR.start').natoms
+
+    with open('scratch/initial0000.temp.xyz', 'r') as f:
+        # Convert True SD to frozen atoms
+        sd = list(map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd))
+        # Set up sd to be zipped (two buffer lines at top of each structure)
+        to_zip = (['\n', '\n'] + sd) * len(initial)
+        zipped = zip(f.readlines(), to_zip)
+        xyz = [ ' '.join(x.split()[0:4])+y for x, y in zipped ] # Remove atom number
+        with open('scratch/initial0000.xyz', 'w') as f:
+            f.writelines(xyz)
         #os.remove('scratch/initial0000.temp.xyz')
     else:
         shutil.move('scratch/initial0000.temp.xyz', 'scratch/initial0000.xyz')
