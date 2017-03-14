@@ -124,8 +124,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
                 if symbol == potcar_single.element:
                     potcar.append(potcar_single)
                     break
-
-        shutil.copy(, os.path.join(new_gsm_dir, 'POTCAR'))
+        potcar.write_file(os.path.join(new_gsm_dir, 'POTCAR'))
     except:
         print('Copying POTCAR failed, make sure to add an appropriate POTCAR to the directory')
 
