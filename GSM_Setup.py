@@ -200,7 +200,7 @@ if __name__ == '__main__':
                         nargs=3, type=float, default=None)
     parser.add_argument('--wfxn', help='Don\'t copy WAVECAR and CHGCAR',
                         action='store_false')
-    parser.add_argument('-t', '--tolerance', help='attempts to match structures (useful for vacancy migrations) (default: 0)',
+    parser.add_argument('--tolerance', help='attempts to match structures (useful for vacancy migrations) (default: 0)',
                         type=float, default=None)
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms', type=int, nargs='*', default=[])
     args = parser.parse_args()
