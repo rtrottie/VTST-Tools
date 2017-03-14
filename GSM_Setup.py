@@ -6,8 +6,10 @@ import Helpers
 import shutil
 import jinja2
 import ase.io
+import tempfile
 from ase.utils.geometry import wrap_positions
 from Classes_Pymatgen import *
+from Neb_Make import reorganize_structures
 import argparse
 
 def wrap_positions_right(positions, center, cell):
@@ -27,7 +29,7 @@ def wrap_positions_right(positions, center, cell):
 
     return (x,y,z)
 
-def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None, copy_wavefunction=False):
+def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None, copy_wavefunction=False, tolerance=None, poscar_override=[]):
 
     # Initializing Variables to be called later in function
 
@@ -61,6 +63,8 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     else:
         start_file = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) else os.path.join(start, 'POSCAR')
         start_folder = start
+
+
 
     # Copying and Updating Files into the directory
 
@@ -99,7 +103,23 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             final_folder = final
         final = ase.io.read(final_file, format='vasp')
         final.wrap(f_center)
-        initial.append(final)
+        if poscar_override: # If structure needs realigning
+            atoms = []
+            # Format the poscar override into pairs
+            for i in range(int(len(poscar_override) / 2)):
+                atoms.append((poscar_override[i * 2], poscar_override[i * 2 + 1]))
+            (s1, s2) = reorganize_structures(Structure.from_file(start_file), Structure.from_file(final_file), atoms=atoms, autosort_tol=tolerance) # pymatgen.core.Structure
+            # Reset the start and final file
+            start_file = tempfile.NamedTemporaryFile(delete=False).name
+            final_file = tempfile.NamedTemporaryFile(delete=False).name
+            s1.to('POSCAR', start_file)
+            s2.to('POSCAR', final_file)
+            start = ase.io.read(start_file, format='vasp')
+            final = ase.io.read(final_file, format='vasp')
+            shutil.copy(start_file, os.path.join(new_gsm_dir, 'POSCAR.start'))
+            initial = [start, final]
+        else:
+            initial.append(final)
 
     if copy_wavefunction:
         if os.path.exists(os.path.join(start_folder, 'WAVECAR')):
@@ -180,6 +200,9 @@ if __name__ == '__main__':
                         nargs=3, type=float, default=None)
     parser.add_argument('--wfxn', help='Don\'t copy WAVECAR and CHGCAR',
                         action='store_false')
+    parser.add_argument('-t', '--tolerance', help='attempts to match structures (useful for vacancy migrations) (default: 0)',
+                        type=float, default=None)
+    parser.add_argument('-a', '--atom_pairs', help='pair certain atoms', type=int, nargs='*', default=[])
     args = parser.parse_args()
 
-    GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn)
+    GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn, a)
