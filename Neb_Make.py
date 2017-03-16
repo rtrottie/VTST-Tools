@@ -67,7 +67,7 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
         for _ in range(len(atom_is_1)): # Going to insert based on position in structure 1
             i = atom_is_1.index(min(atom_is_1)) # find minimum index (to preserve correct ordering)
             atom = structure_2[atom_is_2[i]] # type: PeriodicSite  ;  get atom from original structure
-            new_s_2.insert(i, atom.specie, atom.frac_coords, properties=atom.properties)
+            new_s_2.insert(atom_is_2[i], atom.specie, atom.frac_coords, properties=atom.properties)
             for l in [atom_is_1, atom_is_2]: # remove minimum index
                 l.remove(i)
 
