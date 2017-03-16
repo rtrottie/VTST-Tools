@@ -80,6 +80,7 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
                 if s1_atom.distance(atom) < autosort_tol : # If site is within auto_sort_tol of structure_1
                     return i
                 i = i+1
+            raise Exception('FAILED SORT on: {}'.format(atom))
         new_s_1.sort(sort_fxn)
         new_s_2.sort(sort_fxn)
     else:
