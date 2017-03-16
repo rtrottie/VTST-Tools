@@ -110,6 +110,10 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     try:
         incar = Incar.from_file(os.path.join(start_folder, 'INCAR'))
         incar['NSW']=0
+        if final and 'NUPDOWN' in incar:
+            incar_final = Incar.from_file(os.path.join(final_folder, 'INCAR'))
+            incar['AUTO_NUPDOWN'] = 'r {} {}'.format(incar['NUPDOWN'], incar_final['NUPDOWN'])
+            incar['AUTO_NUPDOWN_ITERS'] = 20
         incar.write_file(os.path.join(new_gsm_dir, 'INCAR'))
     except:
         print('Copying INCAR failed, make sure to add an appropriate INCAR to the directory')

@@ -138,7 +138,6 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
     kpoints.write_file(os.path.join(directory, 'KPOINTS'))
     potcar.write_file(os.path.join(directory, 'POTCAR'))
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
