@@ -19,33 +19,58 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
     '''
 
     # parse Atoms into two lists
-    atom_i_1 = []
-    atom_i_2 = []
+    atom_is_1 = []
+    atom_is_2 = []
     atoms_1 = []
     atoms_2 = []
-    for i_1, i_2 in atoms:
-        atom_i_1.append(i_1)
-        atom_i_2.append(i_2)
+    for i_1, i_2 in atoms: # Make ordered lists of atom indicies
+        atom_is_1.append(i_1)
+        atom_is_2.append(i_2)
         atoms_1.append(structure_1[i_1])
         atoms_2.append(structure_2[i_2])
 
+    structure_2_order = []
+    offset = 0  # to account for moving an atom back in the strucutre
+    offset_indicies = [] # Indicies to reset offset at
+    for i in range(len(structure_2)):
+        if i in atom_is_1: # If index should match atom in structure 1
+            atom_i_2 = atom_is_2[atom_is_1.index(i)] # get atom from current structure
+            structure_2_order.append(atom_i_2 + offset)  # Move atom position to match structure 1
+            if i <= atom_i_2:  # If the position in structure_1 is less than the position in structure_2
+                pass # Then nothing needs changing
+            else:
+                offset = offset -1
+        else:
+            structure_2_order.append(i + offset) # Leave atom in structure order
+
     # Remove sites
-    structure_1_mutable = structure_1.copy() # type: Structure
     structure_2_mutable = structure_2.copy() # type: Structure
-    structure_1_mutable.remove_sites(atom_i_1)
-    structure_2_mutable.remove_sites(atom_i_2)
+    structure_2_mutable.remove_sites(atom_is_2)
 
-    images = structure_1_mutable.interpolate(structure_2_mutable, 1, autosort_tol=autosort_tol)
-    new_s_1 = images[0] # type: Structure
-    new_s_2 = images[1] # type: Structure
+    if autosort_tol > 0:
+        structure_1_mutable = structure_1.copy() # type: Structure
+        structure_1_mutable.remove_sites(atom_is_1)
+        images = structure_1_mutable.interpolate(structure_2_mutable, 1, autosort_tol=autosort_tol)
+        new_s_1 = images[0] # type: Structure
+        new_s_2 = images[1] # type: Structure
 
-    for atom in atoms_1: # type: PeriodicSite
-        atom = atom
-        new_s_1.append(atom.specie, atom.frac_coords, properties=atom.properties)
+        for atom in atoms_1: # type: PeriodicSite
+            atom = atom
+            new_s_1.append(atom.specie, atom.frac_coords, properties=atom.properties)
 
-    for atom in atoms_2: # type: PeriodicSite
-        atom = atom
-        new_s_2.append(atom.specie, atom.frac_coords, properties=atom.properties)
+        for atom in atoms_2: # type: PeriodicSite
+            atom = atom
+            new_s_2.append(atom.specie, atom.frac_coords, properties=atom.properties)
+    else:
+        new_s_1 = structure_1
+        new_s_2 = structure_2_mutable
+        for _ in range(len(atom_is_1)): # Going to insert based on position in structure 1
+            i = atom_is_1.index(min(atom_is_1)) # find minimum index (to preserve correct ordering)
+            atom = structure_2[atom_is_2[i]] # type: PeriodicSite  ;  get atom from original structure
+            new_s_2.insert(i, atom.specie, atom.frac_coords, properties=atom.properties)
+            for l in [atom_is_1, atom_is_2]: # remove minimum index
+                l.remove(i)
+
 
     return (new_s_1, new_s_2)
 
