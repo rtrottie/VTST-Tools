@@ -68,6 +68,7 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
             for s1_atom in structure_1: # type: PeriodicSite
                 if s1_atom.distance(atom) < 0.001 : # If site matches site in structure_1
                     return i
+                i = i+1
 
             # return correct order for structure_2
             i=0
