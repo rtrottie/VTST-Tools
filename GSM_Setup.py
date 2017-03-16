@@ -71,7 +71,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     if not os.path.exists(new_gsm_dir):
         os.makedirs(new_gsm_dir)
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(file_loc))
-    shutil.copy(os.path.join(file_loc, 'gfstringq.exe'), os.path.join(new_gsm_dir, 'gfstringq.exe'))
+    # shutil.copy(os.path.join(file_loc, 'gfstringq.exe'), os.path.join(new_gsm_dir, 'gfstringq.exe'))
     shutil.copy(os.path.join(file_loc, 'status'), os.path.join(new_gsm_dir, 'status'))
     shutil.copy(start_file, os.path.join(new_gsm_dir, 'POSCAR.start'))
     if not os.path.exists(os.path.join(new_gsm_dir, 'scratch')):

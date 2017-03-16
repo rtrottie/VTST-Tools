@@ -29,20 +29,6 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
         atoms_1.append(structure_1[i_1])
         atoms_2.append(structure_2[i_2])
 
-    # structure_2_order = []
-    # offset = 0  # to account for moving an atom back in the strucutre
-    # offset_indicies = [] # Indicies to reset offset at
-    # for i in range(len(structure_2)):
-    #     if i in atom_is_1: # If index should match atom in structure 1
-    #         atom_i_2 = atom_is_2[atom_is_1.index(i)] # get atom from current structure
-    #         structure_2_order.append(atom_i_2 + offset)  # Move atom position to match structure 1
-    #         if i <= atom_i_2:  # If the position in structure_1 is less than the position in structure_2
-    #             pass # Then nothing needs changing
-    #         else:
-    #             offset = offset -1
-    #     else:
-    #         structure_2_order.append(i + offset) # Leave atom in structure order
-
     # Remove sites
     structure_2_mutable = structure_2.copy() # type: Structure
     structure_2_mutable.remove_sites(atom_is_2)
