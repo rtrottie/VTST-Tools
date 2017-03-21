@@ -5,6 +5,7 @@ from Helpers import *
 from Classes_Pymatgen import *
 import Vis
 import argparse
+from tempfile import NamedTemporaryFile
 
 def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, freeze_step, incar, kpoints, vis=False):
     Poscar.get_string = get_string_more_sigfig
@@ -74,7 +75,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
         s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
         if vis:
             Vis.view(s, program=vis)
-            use = raw_input('Use this structure (y/n) or break:  ')
+            use = input('Use this structure (y/n) or break:  ')
             if use == 'n':
                 continue
             elif use =='y':

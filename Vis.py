@@ -1,15 +1,22 @@
 # a quick way to visualize structures and molecules made in pymatgen.  current set up to run only on my virtual box
 import os
 import subprocess
+from tempfile import NamedTemporaryFile
 
 def open_in_VESTA(molecule,type='cif'):
+    '''
+
+    :param molecule: A file or structure of a structure to view
+    :param type: if structure needs to be written, what type of file.  Use Pymatgen standard
+    :return: subprocess.Popen
+    '''
     vesta = os.path.join(os.environ['VESTA_DIR'])
-    if isinstance(molecule,str):
+    if isinstance(molecule, str):
         SCRATCH = molecule
-    # else:
-    #     SCRATCH = 'D://Users/RyanTrottier/Documents/Scrap/scratch.' + type
-    #     molecule.to(type, SCRATCH)
-    os.system(vesta + ' ' + SCRATCH)
+    else:
+        SCRATCH = '{}.{}'.format(NamedTemporaryFile(delete=False).name, type)
+        molecule.to(type, SCRATCH)
+    return subprocess.Popen([vesta, SCRATCH])
 
 def open_in_Jmol(molecule,type='cif'):
     JMOL_DIR = os.path.join(os.environ['JMOL_DIR'])
@@ -22,8 +29,8 @@ def open_in_Jmol(molecule,type='cif'):
 
 def view(molecule, program='jmol', type='cif'):
     if program == True or program.lower() == 'jmol':
-        open_in_Jmol(molecule, type)
+        return open_in_Jmol(molecule, type)
     elif program.lower() == 'vesta':
-        open_in_VESTA(molecule,type)
+        return open_in_VESTA(molecule,type)
     else:
         raise Exception('Unrecognized program:  ' + program.lower())
