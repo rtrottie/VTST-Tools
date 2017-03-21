@@ -1,17 +1,10 @@
-import os
+
+
 import Vis
-from Classes_Pymatgen import Poscar
-import Neb_Make
+from Classes_Pymatgen import *
+import Generate_Surface
 
 print(os.environ['VESTA_DIR'])
+s = Structure.from_file('D:\\Users\\RyanTrottier\\Downloads\\Al2FeO4_mvc-16241_computed.cif')
 
-s1 = Poscar.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR.start').structure
-s2 = Poscar.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR.final').structure
-
-poscar_override = [49, 48, 48, 49, 113, 102]
-if poscar_override:
-    atoms = []
-    for i in range(int(len(poscar_override) / 2)):
-        atoms.append((poscar_override[i * 2], poscar_override[i * 2 + 1]))
-
-Neb_Make.reorganize_structures(s1, s2, poscar_override)
+surf = Generate_Surface.Generate_Surface(s, [1,1,1], 10, 10, 10, vacuum=20,vis=True)

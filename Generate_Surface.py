@@ -38,7 +38,7 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                     vasp = VaspInput(incar, kpoints, poscar, potcar)
                     vasp.write_input(folder)
 
-def Generate_Surface(material, miller, width, length, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False, orth=False):
+def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False, orth=False):
     """
 
     Args:
@@ -64,8 +64,7 @@ def Generate_Surface(material, miller, width, length, depth, freeze=0, vacuum=10
     Poscar.get_string = get_string_more_sigfig
     Incar.get_string = pretty_incar_string
     surfs = []
-    s = Poscar.from_file(material).structure
-    sf = surf.SlabGenerator(s, miller, depth, 1, primitive=True)
+    sf = surf.SlabGenerator(structure, miller, depth, 1, primitive=True)
     i=0
     for s in sf.get_slabs():
         if orth:
