@@ -156,10 +156,11 @@ def get_template(computer, jobtype, special=None):
         return (os.environ["VASP_TEMPLATE_DIR"], 'gauss.peregrine.sh.jinja2')
 
 parser = argparse.ArgumentParser()
+parser.add_argument('name', help='name of run (Default is *.gjf')
 parser.add_argument('-t', '--time', help='walltime for run (integer number of hours)',
                     type=int, default=0)
-parser.add_argument('-o', '--nodes', help='nodes per run (default : KPAR*NPAR)',
-                    type=int, default=0)
+parser.add_argument('-o', '--nodes', help='nodes per run (default : 1',
+                    type=int, default=1)
 parser.add_argument('-c', '--cores', help='cores per run (default : max allowed per system)',
                     type=int)
 parser.add_argument('-q', '--queue', help='manually specify queue instead of auto determining')
@@ -169,37 +170,14 @@ parser.add_argument('-s', '--silent', help='display less information',
                     action='store_true')
 parser.add_argument('-i', '--inplace', help='Run VASP without moving files to continue run',
                     action='store_true')
-parser.add_argument('-f', '--finish_convergence', help='Only run vasp if run has not converged.  Can supply numbers to only uprgrade from specified stages',
-                    type=int, nargs='*')
-parser.add_argument('-n', '--name', help='name of run (Default is SYSTEM_Jobtype')
-parser.add_argument('-g', '--gamma', help='force a gamma point run',
-                    action='store_true')
-parser.add_argument('-m', '--multi-step', help='Vasp will execute multipe runs based on specified CONVERGENCE file',
-                    type=str)
-parser.add_argument('-e', '--encut', help='find ENCUT that will converge to within specified eV/atom for 50 ENCUT',
-                    type=float)
-parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to within specified eV/atom',
-                    type=float)
-parser.add_argument('--ts', help='find ts along path specified in MEP.xml (from vasprun.xml)',
-                    action='store_true')
-parser.add_argument('--frozen', help='Monitors jobs which constantlyfreeze',
-                    action='store_true')
 
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    if args.finish_convergence != None:
-        run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
-        if run.converged:
-            exit('Run is already converged')
-        elif args.finish_convergence != []:
-            stage = Incar.from_file('INCAR')['STAGE_NUMBER']
-            if stage not in args.finish_convergence:
-                exit('Not correct stage')
+
     jobtype = getJobType('.')
-    incar = Incar.from_file('INCAR')
     computer = getComputerName()
-    print('Running vasp.py for ' + jobtype +' on ' + computer)
+    print('Running gauss.py for ' + jobtype +' on ' + computer)
     print('Backing up previous run')
     backup_gauss('.')
     if args.backup:
@@ -209,62 +187,24 @@ if __name__ == '__main__':
         restart_gauss('.')
     print('Determining settings for run')
     if args.time == 0:
-        if 'AUTO_TIME' in incar:
-            time = int(incar["AUTO_TIME"])
-        elif 'VASP_DEFAULT_TIME' in os.environ:
+        if 'VASP_DEFAULT_TIME' in os.environ:
             time = int(os.environ['VASP_DEFAULT_TIME'])
         else:
-            time = 20
+            time = 24
     else:
         time = args.time
-    if args.nodes == 0:
-        if 'AUTO_NODES' in incar:
-            nodes = incar['AUTO_NODES']
-        elif 'NPAR' in incar:
-            nodes = int(incar['NPAR']) * int(incar['KPAR']) if 'KPAR' in incar else int(incar['NPAR'])
-            if jobtype == 'NEB':
-                nodes = nodes * int(incar["IMAGES"])
-        else:
-            raise Exception('No Nodes specifying need 1 of the following (in order of decreasing priority): \n-o option, AUTO_NODES in INCAR, or NPAR in INCAR')
-    else:
-        nodes = args.nodes
 
-    if args.name:
-        name = args.name
-    elif 'SYSTEM' in incar:
-        name = incar['SYSTEM'].strip().replace(' ', '_')
-    elif 'System' in incar:
-        name = incar['System'].strip().replace(' ', '_')
-    elif 'system' in incar:
-        name = incar['system'].strip().replace(' ', '_')
-
-    if 'AUTO_MEM' in incar:
-        mem = incar['AUTO_MEM']
-    else:
-        mem = 0
-
-    if args.gamma:
-        vasp_kpts = os.environ["VASP_GAMMA"]
-    elif 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
-        vasp_kpts = os.environ["VASP_GAMMA"]
-    elif 'AUTO_GAMMA' in incar and not incar['AUTO_GAMMA']:
-        vasp_kpts = os.environ["VASP_KPTS"]
-    else:
-        vasp_kpts = os.environ["VASP_KPTS"]
-
+    nodes = args.nodes
+    name = args.name
 
     if args.cores:
         cores = args.cores
-    elif 'AUTO_CORES' in incar:
-        cores = int(incar['AUTO_CORES'])
     elif 'VASP_MPI_PROCS' in os.environ:
         cores = int(os.environ["VASP_MPI_PROCS"])
     else:
         cores = int(os.environ["VASP_NCORE"])
 
-    if 'AUTO_ALLOCATION' in incar:
-        account = incar['AUTO_ALLOCATION']
-    elif 'VASP_DEFAULT_ALLOCATION' in os.environ:
+    if 'VASP_DEFAULT_ALLOCATION' in os.environ:
         account = os.environ['VASP_DEFAULT_ALLOCATION']
     else:
         account = ''
@@ -283,32 +223,14 @@ if __name__ == '__main__':
 
     if args.queue:
         queue = args.queue
-    elif 'AUTO_QUEUE' in incar:
-        queue = incar['AUTO_QUEUE'].lower()
-
     else:
         queue = get_queue(computer, jobtype, time, nodes)
 
     additional_keywords = {}
     special = None
-    if args.multi_step != None:
-        additional_keywords['CONVERGENCE'] = args.multi_step
-        special = 'multi'
-    elif args.encut:
-        additional_keywords['target'] = args.encut
-        special = 'encut'
-    elif args.kpoints:
-        additional_keywords['target'] = args.kpoints
-        special = 'kpoints'
-    elif args.ts:
-        additional_keywords['target'] = args.ts
-        special = 'hse_ts'
-
-    if args.frozen:
-        jobtype = jobtype + '-Halting'
 
     (template_dir, template) = get_template(computer, jobtype, special)
-    script = 'vasp_standard.sh'
+    script = 'gauss_standard.sh'
 
     keywords = {'queue_type'    : queue_type,
                 'queue'         : queue,
@@ -320,12 +242,8 @@ if __name__ == '__main__':
                 'ppn'           : cores,
                 'cores'         : cores,
                 'logname'       : name + '.log',
-                'mem'           : mem,
                 'account'       : account,
-                'mpi'           : os.environ["VASP_MPI"],
-                'vasp_kpts'     : os.environ["VASP_KPTS"],
-                'vasp_gamma'    : os.environ["VASP_GAMMA"],
-                'vasp_bashrc'   : os.environ['VASP_BASHRC'] if 'VASP_BASHRC' in os.environ else '~/.bashrc_vasp',
+                'gauss_bashrc'   : os.environ['GAUSS_BASHRC'] if 'VASP_BASHRC' in os.environ else '~/.bashrc_gauss',
                 'jobtype'       : jobtype,
                 'tasks'         : int(nodes*cores/openmp),
                 'openmp'        : openmp}
