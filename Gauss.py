@@ -238,7 +238,7 @@ if __name__ == '__main__':
                 'cores'         : cores,
                 'logname'       : name + '.log',
                 'account'       : account,
-                'gauss_bashrc'   : os.environ['GAUSS_BASHRC'] if 'VASP_BASHRC' in os.environ else '~/.bashrc_gauss',
+                'gauss_bashrc'   : os.environ['GAUSS_BASHRC'] if 'GAUSS_BASHRC' in os.environ else '~/.bashrc_gauss',
                 'jobtype'       : jobtype,
                 'tasks'         : int(nodes*cores/openmp),
                 'openmp'        : openmp}
