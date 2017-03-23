@@ -3,16 +3,9 @@
 # based on NPAR and KPAR what type (NEB,Dimer,Standard) to run and sets up a submission script and runs it
 
 from jinja2 import Environment, FileSystemLoader
-from Classes_Pymatgen import *
-from pymatgen.io.vasp.outputs import *
 from Helpers import *
-import sys
 import os
 import shutil
-import fnmatch
-import cfg
-import socket
-import random
 import argparse
 import subprocess
 
@@ -140,7 +133,7 @@ def get_template(computer, jobtype, special=None):
     if special == 'multi':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.multistep.jinja2.py')
     else:
-        return (os.environ["VASP_TEMPLATE_DIR"], 'gauss.peregrine.sh.jinja2')
+        return (os.environ["VASP_TEMPLATE_DIR"], 'Gauss.peregrine.sh.jinja2')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('name', help='name of run (Default is *.gjf',
