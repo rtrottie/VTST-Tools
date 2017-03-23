@@ -16,7 +16,7 @@ import random
 import argparse
 import subprocess
 
-def get_instructions_for_backup(jobtype, incar='INCAR'):
+def get_instructions_for_backup(incar='INCAR'):
     '''
 
     Args:
@@ -48,7 +48,6 @@ def backup_gauss(dir, backup_dir='backup'):
     Returns: None
 
     '''
-    jobtype = 'gauss'
 
     if os.path.isdir(backup_dir):  # Find what directory to backup to
         last_run = -1
@@ -64,7 +63,7 @@ def backup_gauss(dir, backup_dir='backup'):
         this_run = 0
     backup_dir = os.path.join(backup_dir, str(this_run))
 
-    instructions = get_instructions_for_backup(jobtype)
+    instructions = get_instructions_for_backup()
     for command in instructions["commands"]:
         try:
             os.system(command)
@@ -90,8 +89,7 @@ def restart_gauss(dir):
     Returns:
 
     '''
-    jobtype = getJobType(dir)
-    instructions = get_instructions_for_backup(jobtype)
+    instructions = get_instructions_for_backup()
     for (old_file, new_file) in instructions["move"]:
         try:
             if os.path.getsize(old_file) > 0:
@@ -101,17 +99,6 @@ def restart_gauss(dir):
                 raise Exception()
         except:
             print('Unable to move ' + old_file + ' to ' + new_file)
-    if jobtype == 'SSM':
-        raise Exception('Make SSM run into GSM run')
-    elif jobtype == 'GSM' and os.path.exists('restart.xyz0000'):
-        with open('inpfileq') as inpfileq:
-            lines = inpfileq.readlines()
-            gsm_settings = list(map(lambda x: (x + ' 1').split()[0], lines))
-        if 'RESTART' not in gsm_settings:
-            lines.insert(len(lines)-1,'RESTART                 1\n')
-            with open('inpfileq', 'w') as inpfileq:
-                inpfileq.writelines(lines)
-            print('RESTART added to inpfileq')
 
 def get_queue(computer, jobtype, time, nodes):
     if computer == "janus":
