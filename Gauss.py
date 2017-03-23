@@ -191,7 +191,7 @@ if __name__ == '__main__':
         if 'VASP_DEFAULT_TIME' in os.environ:
             time = int(os.environ['VASP_DEFAULT_TIME'])
         else:
-            time = 24
+            time =  24
     else:
         time = args.time
 
