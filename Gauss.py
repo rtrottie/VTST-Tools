@@ -48,7 +48,7 @@ def backup_gauss(dir, backup_dir='backup'):
     Returns: None
 
     '''
-    jobtype = getJobType(dir)
+    jobtype = 'gauss'
 
     if os.path.isdir(backup_dir):  # Find what directory to backup to
         last_run = -1
