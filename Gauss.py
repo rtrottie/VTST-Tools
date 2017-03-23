@@ -182,7 +182,8 @@ if __name__ == '__main__':
                 name = f
     else:
         name = args.name
-    if '.gjf' in f:
+
+    if '.gjf' in name:
         name = name[:-4]
 
     if args.cores:
