@@ -178,7 +178,7 @@ if __name__ == '__main__':
 
     jobtype = getJobType('.')
     computer = getComputerName()
-    print('Running gauss.py for ' + jobtype +' on ' + computer)
+    print('Running Gauss.py for ' + jobtype +' on ' + computer)
     print('Backing up previous run')
     backup_gauss('.')
     if args.backup:
