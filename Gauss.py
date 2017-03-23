@@ -176,8 +176,9 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
 
+    jobtype = 'gauss'
     computer = getComputerName()
-    print('Running Gauss.py for ' + jobtype +' on ' + computer)
+    print('Running Gauss.py for ' +' on ' + computer)
     print('Backing up previous run')
     backup_gauss('.')
     if args.backup:
