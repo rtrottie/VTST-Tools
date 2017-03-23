@@ -133,7 +133,7 @@ def get_template(computer, jobtype, special=None):
     if special == 'multi':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.multistep.jinja2.py')
     else:
-        return (os.environ["VASP_TEMPLATE_DIR"], 'Gauss.peregrine.sh.jinja2')
+        return (os.environ["VASP_TEMPLATE_DIR"], 'Gauss.peregrine.jinja2')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('name', help='name of run (Default is *.gjf',
