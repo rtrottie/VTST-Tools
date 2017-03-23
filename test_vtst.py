@@ -1,8 +1,30 @@
 import Vis
-from Classes_Pymatgen import *
+from Classes_Pymatgen import Structure
+import pymatgen.core
+from math import gcd
+from pymatgen.core import Molecule
 import Generate_Surface
+type = 'cif'
 
-print(os.environ['VESTA_DIR'])
-s = Structure.from_file('D:\\Users\\RyanTrottier\\Downloads\\Al2FeO4_mvc-16241_computed.cif')
+s = Structure.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR')
+surf = Generate_Surface.Generate_Surface(s, [1,1,1], 5, 5, 15, vacuum=30)
+surf = surf[3] # pymatgen.core.Structure
+surf = Molecule.from_sites(surf.sites)
 
-surf = Generate_Surface.Generate_Surface(s, [1,1,1], 10, 10, 10, vacuum=20,vis='vesta')
+surf = surf.to(type, 'D:\\Users\\RyanTrottier\\Documents\\Scrap\\tmp.'+type)
+# surf = Molecule.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\tmp.'+type)
+
+# center_i = 762
+# center = surf[center_i] # pymatgen.core.sites.Site
+# radius = 10
+#
+#
+#
+# for element in surf.symbol_set
+#
+# sites = [center] + [ x[0] for x in surf.get_neighbors(center, radius)]
+# add_sites = surf.get_neighbors_in_shell(center.coords, radius, 2)
+# add_sites.sort(key=lambda a: a[1])
+#
+# mol = Molecule.from_sites(sites)
+# mol.to(type, 'D:\\Users\\RyanTrottier\\Documents\\Scrap\\gaus.'+type)

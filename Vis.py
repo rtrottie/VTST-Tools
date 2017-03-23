@@ -16,7 +16,8 @@ def open_in_VESTA(molecule,type='cif'):
     else:
         SCRATCH = '{}.{}'.format(NamedTemporaryFile(delete=False).name, type)
         molecule.to(type, SCRATCH)
-    return subprocess.Popen([vesta, SCRATCH])
+    # return subprocess.Popen([vesta, SCRATCH])
+    return os.system(vesta + ' ' + SCRATCH)
 
 def open_in_Jmol(molecule,type='cif'):
     JMOL_DIR = os.path.join(os.environ['JMOL_DIR'])
