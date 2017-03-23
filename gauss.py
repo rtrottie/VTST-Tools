@@ -156,7 +156,8 @@ def get_template(computer, jobtype, special=None):
         return (os.environ["VASP_TEMPLATE_DIR"], 'gauss.peregrine.sh.jinja2')
 
 parser = argparse.ArgumentParser()
-parser.add_argument('name', help='name of run (Default is *.gjf')
+parser.add_argument('name', help='name of run (Default is *.gjf',
+                    nargs='?', default=None)
 parser.add_argument('-t', '--time', help='walltime for run (integer number of hours)',
                     type=int, default=0)
 parser.add_argument('-o', '--nodes', help='nodes per run (default : 1',
@@ -195,7 +196,14 @@ if __name__ == '__main__':
         time = args.time
 
     nodes = args.nodes
-    name = args.name
+    if not args.name:
+        for f in os.listdir('.'):
+            if '.gjf' in f:
+                name = f
+    else:
+        name = args.name
+    if '.gjf' in f:
+        name = name[:-4]
 
     if args.cores:
         cores = args.cores
