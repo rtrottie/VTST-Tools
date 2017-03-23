@@ -64,7 +64,7 @@ def backup_gauss(dir, backup_dir='backup'):
         this_run = 0
     backup_dir = os.path.join(backup_dir, str(this_run))
 
-    instructions = get_instructions_for_backup(jobtype, os.path.join(dir, 'INCAR'))
+    instructions = get_instructions_for_backup(jobtype)
     for command in instructions["commands"]:
         try:
             os.system(command)
@@ -91,7 +91,7 @@ def restart_gauss(dir):
 
     '''
     jobtype = getJobType(dir)
-    instructions = get_instructions_for_backup(jobtype, os.path.join(dir, 'INCAR'))
+    instructions = get_instructions_for_backup(jobtype)
     for (old_file, new_file) in instructions["move"]:
         try:
             if os.path.getsize(old_file) > 0:
@@ -176,7 +176,6 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
 
-    jobtype = getJobType('.')
     computer = getComputerName()
     print('Running Gauss.py for ' + jobtype +' on ' + computer)
     print('Backing up previous run')
@@ -191,7 +190,7 @@ if __name__ == '__main__':
         if 'VASP_DEFAULT_TIME' in os.environ:
             time = int(os.environ['VASP_DEFAULT_TIME'])
         else:
-            time =  24
+            time = 24
     else:
         time = args.time
 
