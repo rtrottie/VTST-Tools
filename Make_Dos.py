@@ -8,14 +8,15 @@ import argparse
 from functools import reduce
 
 
-def make_dos(vasprun, groups=[], output=False):
+def make_dos(vasprun, groups=[], output=False, offset=None):
     if type(vasprun) == str:
         v = Vasprun(vasprun, parse_eigen=False)
     else:
         v = vasprun
     tdos = v.complete_dos
-
-    energies = list(map(lambda x: x-tdos.efermi, tdos.energies.tolist()))
+    if not (offset or offset == 0): # offset can be 0
+        offset = tdos.efermi
+    energies = list(map(lambda x: x-offset, tdos.energies.tolist()))
     if Spin.down not in tdos.densities:
         Spin_down = Spin.up
     else:
@@ -160,9 +161,11 @@ if __name__ == '__main__':
     #                     action='append', nargs='*')
     parser.add_argument('-o', '--output', help='Output file location (default: ./DOS.csv)',
                         default='DOS.csv')
+    parser.add_argument('--offset', help='Set offset besides default (0 Fermi)',
+                        default=None)
     args = parser.parse_args()
 
-    make_dos(args.vasprun, args.group, args.output)
+    make_dos(args.vasprun, args.group, args.output, offset=args.offset)
 
 
 
