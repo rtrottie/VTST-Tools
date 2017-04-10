@@ -162,7 +162,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output', help='Output file location (default: ./DOS.csv)',
                         default='DOS.csv')
     parser.add_argument('--offset', help='Set offset besides default (0 Fermi)',
-                        default=None)
+                        default=None, type=float)
     args = parser.parse_args()
 
     make_dos(args.vasprun, args.group, args.output, offset=args.offset)
