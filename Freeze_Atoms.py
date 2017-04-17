@@ -70,7 +70,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('atom', help='atom number (0 indexed) to unfreeze around',
-                        default=-1, nargs="?", type=int)
+                        default=None, nargs="?", type=int)
     parser.add_argument('-r', '--radius', help='radius to freeze around (default 4)',
                         type=float)
     parser.add_argument('-d', '--directory', help='Input directory (default = ".")',
