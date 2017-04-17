@@ -11,7 +11,7 @@ import argparse
 import pymatgen.io.vasp
 
 
-def freeze_atoms_except_neighbors(dir : str, atom : int, unfrozen_dist=4):
+def freeze_atoms_except_neighbors(dir : str, atom : int, invert=False, unfrozen_dist=4):
     '''
 
     #!/usr/bin/env python
@@ -20,6 +20,7 @@ def freeze_atoms_except_neighbors(dir : str, atom : int, unfrozen_dist=4):
 
     :param dir: Directory to freeze atoms in
     :param atom: number of atom in POSCAR of dir
+    :param invert: Normally will leave all atoms in radius able to move, setting this to true will freeze all atoms in radius
     :param unfrozen_dist: radius to freeze atom in
     '''
     poscar = Poscar.from_file(os.path.join(dir, 'POSCAR'))
@@ -31,9 +32,14 @@ def freeze_atoms_except_neighbors(dir : str, atom : int, unfrozen_dist=4):
     neigh = poscar.structure.get_neighbors(poscar.structure.sites[atom], unfrozen_dist, True) # find nearby atoms
     neigh = list(map(lambda x: x[2], neigh)) # get indices
     neigh.append(atom-1) # add center atom
-    for i in range(len(sd_orig)): # freeze all atoms not in neigh
-        if i not in neigh:
-            sd_orig[i] = [False, False, False]
+    if invert: # if radius should be frozen
+        for i in range(len(sd_orig)): # freeze all atoms not in neigh
+            if i in neigh:
+                sd_orig[i] = [False, False, False]
+    else: # radius should be unfrozen
+        for i in range(len(sd_orig)): # freeze all atoms not in neigh
+            if i not in neigh:
+                sd_orig[i] = [False, False, False]
     poscar.selective_dynamics = sd_orig
     Poscar.get_string = get_string_more_sigfig
     poscar.write_file(os.path.join(dir, 'POSCAR'))
@@ -63,7 +69,7 @@ def unfreeze_atoms(directory, sd_file='.selective_dynamics'):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('atom', help='atom number (0 indexed) to freeze from',
+    parser.add_argument('atom', help='atom number (0 indexed) to unfreeze around',
                         default=-1, nargs="?", type=int)
     parser.add_argument('-r', '--radius', help='radius to freeze around (default 4)',
                         type=float)
@@ -71,10 +77,12 @@ if __name__ == '__main__':
                         default='.')
     parser.add_argument('-u', '--undo', help='Read selective_dynamics file and undo frozen atoms',
                         action='store_true')
+    parser.add_argument('-i', '--invert', help='freeze atoms around index, instead of leaving radius available to move',
+                        action='store_true')
     parser.add_argument('--sd', '--selective_dynamics', help='Selective Dynamics file', default='.selective_dynamics')
     args = parser.parse_args()
 
     if args.undo:
         unfreeze_atoms(args.directory, sd_file=args.sd)
     else:
-        freeze_atoms_except_neighbors(args.directory, args.atom, args.radius)
+        freeze_atoms_except_neighbors(args.directory, args.atom, args.inverse, args.radius)
