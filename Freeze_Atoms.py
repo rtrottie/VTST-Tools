@@ -85,4 +85,4 @@ if __name__ == '__main__':
     if args.undo:
         unfreeze_atoms(args.directory, sd_file=args.sd)
     else:
-        freeze_atoms_except_neighbors(args.directory, args.atom, args.inverse, args.radius)
+        freeze_atoms_except_neighbors(args.directory, args.atom, args.invert, args.radius)
