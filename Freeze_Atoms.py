@@ -79,7 +79,7 @@ if __name__ == '__main__':
                         action='store_true')
     parser.add_argument('-i', '--invert', help='freeze atoms around index, instead of leaving radius available to move',
                         action='store_true')
-    parser.add_argument('--sd', '--selective_dynamics', help='Selective Dynamics file', default='.selective_dynamics')
+    parser.add_argument('--sd', '--selective_dynamics', help='Selective Dynamics file', default='./selective_dynamics')
     args = parser.parse_args()
 
     if args.undo:
