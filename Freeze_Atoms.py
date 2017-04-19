@@ -31,7 +31,7 @@ def freeze_atoms_except_neighbors(dir : str, atom : int, invert=False, unfrozen_
         f.write(str(sd_orig))
     neigh = poscar.structure.get_neighbors(poscar.structure.sites[atom], unfrozen_dist, True) # find nearby atoms
     neigh = list(map(lambda x: x[2], neigh)) # get indices
-    neigh.append(atom-1) # add center atom
+    neigh.append(atom) # add center atom
     if invert: # if radius should be frozen
         for i in range(len(sd_orig)): # freeze all atoms not in neigh
             if i in neigh:
@@ -69,7 +69,7 @@ def unfreeze_atoms(directory, sd_file='.selective_dynamics'):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('atom', help='atom number (0 indexed) to unfreeze around',
+    parser.add_argument('atom', help='atom number (1 indexed) to unfreeze around',
                         default=None, nargs="?", type=int)
     parser.add_argument('-r', '--radius', help='radius to freeze around (default 4)',
                         type=float)
