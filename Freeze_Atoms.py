@@ -23,6 +23,7 @@ def freeze_atoms_except_neighbors(dir : str, atom : int, invert=False, unfrozen_
     :param invert: Normally will leave all atoms in radius able to move, setting this to true will freeze all atoms in radius
     :param unfrozen_dist: radius to freeze atom in
     '''
+    atom = atom-1
     poscar = Poscar.from_file(os.path.join(dir, 'POSCAR'))
     if os.path.exists(os.path.join(dir, 'selective_dynamics')): # if atoms are alread frozen, we don't want to overwrite original SD
         raise Exception('Selective Dynamics File Exists')
