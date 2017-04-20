@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from Generate_Surface import get_SD_along_vector
 from Classes_Pymatgen import Poscar
 from pymatgen.core import Structure
