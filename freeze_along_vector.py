@@ -25,4 +25,4 @@ v = args.vector
 
 s = Structure.from_file(args.input)
 sd = get_SD_along_vector(s, v, [lb, ub])
-Poscar.write_file(args.output)
+Poscar(s, selective_dynamics=sd).write_file(args.output)
