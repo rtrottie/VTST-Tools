@@ -100,7 +100,7 @@ surf = Molecule.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\tmp.'+type
 
 center_i = 787
 center = surf[center_i] # pymatgen.core.sites.Site
-for radius in [4,5,6,7,8,9,10,5.5]:
+for radius in [3,4,5,6,8]:
     dr = 4
 
     stoich = get_stoichiometry(surf)
@@ -120,5 +120,5 @@ for radius in [4,5,6,7,8,9,10,5.5]:
             mol.append(site.specie, site.coords, properties=site.properties) # Add site
             remainder[site.specie] = remainder[site.specie] - 1
         i = i + 1
-    type='xyz'
+    type='gjf'
     mol.to(type, 'D:\\Users\\RyanTrottier\\Documents\\Scrap\\feal2o4_{}.{}'.format(radius, type))
