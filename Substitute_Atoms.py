@@ -34,6 +34,16 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
     if sd:
         vasp['POSCAR'].selective_dynamics = sd
 
+    # Creating new POTCAR
+    symbols = vasp['POSCAR'].site_symbols
+    for i in range(len(symbols)):
+        if symbols[i] in ['Fe', 'Ti', 'V', 'Cr', 'Mn', 'Co', 'Ni', 'Cu']:
+            symbols[i] += '_pv'
+        elif symbols[i] in ['Sc']:
+            symbols[i] += '_sv'
+    for atom in atom_nums:
+        mm[atom-1] = spin
+
     # Modifying INCAR
     #update_incar(vasp['POSCAR'].structure, vasp['INCAR'])
     if mm:
