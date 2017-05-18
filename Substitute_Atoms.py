@@ -94,7 +94,8 @@ def replace_atom(prev_dir, this_dir, atom_nums, new_atom, optional_files=None, s
 
     # Modifying INCAR
     update_incar(vasp['POSCAR'].structure, vasp['INCAR'])
-    vasp['INCAR']['MAGMOM'] = mm
+    if 'MAGMOM' in vasp['INCAR']:
+        vasp['INCAR']['MAGMOM'] = mm
 
     vasp.write_input(this_dir)
     return
