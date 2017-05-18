@@ -13,7 +13,7 @@ from functools import reduce
 
 def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
     Poscar.get_string = get_string_more_sigfig
-    vasp = VaspInput.from_directory(prev_dir, optional_files)
+    vasp = VaspInput.from_directory(prev_dir, optional_files, )
     transformation = RemoveSitesTransformation(atom_nums)
 
     # Modifying POSCAR
@@ -41,8 +41,6 @@ def remove_atom(prev_dir, this_dir, atom_nums, optional_files=None):
             symbols[i] += '_pv'
         elif symbols[i] in ['Sc']:
             symbols[i] += '_sv'
-    for atom in atom_nums:
-        mm[atom-1] = spin
 
     # Modifying INCAR
     #update_incar(vasp['POSCAR'].structure, vasp['INCAR'])
