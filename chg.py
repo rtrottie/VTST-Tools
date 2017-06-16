@@ -9,8 +9,9 @@ parser.add_argument('-d', '--derivative', action='store_true')
 args = parser.parse_args()
 
 c = Chgcar.from_file(args.file)
+basename = args.file.lower() if not args.derivative else args.file.lower() + '.d'
 for v in range(3):
-    with open(args.file.lower() + '.' + str(v) + '.txt', 'w') as file_to_write:
+    with open(basename + '.' + str(v) + '.txt', 'w') as file_to_write:
         if args.derivative:
             f = c.get_average_along_axis(v)
             h = c.get_axis_grid(v)[1]
