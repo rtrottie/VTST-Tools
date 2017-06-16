@@ -16,7 +16,7 @@ for v in range(3):
             f = c.get_average_along_axis(v)
             h = c.get_axis_grid(v)[1]
             length = len(f)
-            lines = [ ( -f[x+2 % length] + 8*f[x+1 % length] - 8*f[x-1] + f[x-2] ) / 12 / h for x in range(len(f)) ]
+            lines = [ ( -f[(x+2) % length] + 8*f[(x+1) % length] - 8*f[x-1] + f[x-2] ) / 12 / h for x in range(length) ]
             file_to_write.writelines([str(x) + '\n' for x in lines ])
         else:
             file_to_write.writelines([str(x) + '\n' for x in c.get_average_along_axis(v)])
