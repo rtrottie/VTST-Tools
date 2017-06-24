@@ -78,7 +78,7 @@ def getJobType(dir):
         incar = Incar.from_file(dir)
     else:
         incar = Incar.from_file(os.path.join(dir,'INCAR'))
-    if os.path.exists(os.path.join(dir, 'gfstringq.exe')):
+    if os.path.exists(os.path.join(dir, 'inpfileq')):
         with open('inpfileq') as inpfileq:
             for line in inpfileq.readlines():
                 if len(line.split()) > 1 and 'SM_TYPE' in line.split()[0]:
