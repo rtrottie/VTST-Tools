@@ -26,7 +26,8 @@ def open_in_Jmol(molecule,type='cif'):
     else:
         SCRATCH = 'D://Users/RyanTrottier/Documents/Scrap/scratch.' + type
         molecule.to(type, SCRATCH)
-        return subprocess.Popen([JMOL_DIR, SCRATCH])
+        # return os.system(' '.join([JMOL_DIR, SCRATCH]))
+        return subprocess.Popen(' '.join([JMOL_DIR, SCRATCH]), shell=True)
 
 def view(molecule, program='jmol', type='cif'):
     if program == True or program.lower() == 'jmol':

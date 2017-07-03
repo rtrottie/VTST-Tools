@@ -65,7 +65,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     Poscar.get_string = get_string_more_sigfig
     Incar.get_string = pretty_incar_string
     surfs = []
-    sf = surf.SlabGenerator(structure, miller, depth, 1, primitive=True)
+    sf = surf.SlabGenerator(structure, miller, depth, 1,)
     i=0
     for s in sf.get_slabs():
         if orth:
@@ -111,7 +111,7 @@ def Add_Vac(structure, vector, vacuum):
     vector_len = np.linalg.norm(lattice[vector])
     lattice[vector] = lattice[vector] * (1 + vacuum / vector_len)
     s = Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)
-    s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,0.5-(vector_len/(vector_len+vacuum)/2)])
+    # s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,0.5-(vector_len/(vector_len+vacuum)/2)])
     return s
 
 def get_SD_along_vector(structure, vector, range):
