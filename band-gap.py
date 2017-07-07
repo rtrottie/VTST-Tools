@@ -10,4 +10,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     v = Vasprun(args.vasprun)
     bs = v.get_band_structure()
-    print('Energy:   {} {}'.format(bs.get_band_gap()['energy'], 'direct' if bs.get_band_gap()['direct'] else 'indirect {}'.format(bs.get_band_gap()['transition'])))
+    print('Energy:   {} {} {}'.format(bs.get_band_gap()['energy'], 'direct' if bs.get_band_gap()['direct'] else 'indirect', bs.get_band_gap()['transition']))
