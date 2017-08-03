@@ -217,8 +217,10 @@ if __name__ == '__main__':
                         action='store_false')
     parser.add_argument('--tolerance', help='attempts to match structures (useful for vacancy migrations) (default: 0)',
                         type=float, default=None)
-    parser.add_argument('-a', '--atom_pairs', help='pair certain atoms', type=int, nargs='*', default=[])
+    parser.add_argument('-a', '--atom_pairs', help='pair certain atoms (1 indexed)', type=int, nargs='*', default=[])
     args = parser.parse_args()
+
+    args.atom_pairs = [ x-1 for x in args.atom_pairs ]
 
     GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn,
               tolerance=args.tolerance, poscar_override=args.atom_pairs)
