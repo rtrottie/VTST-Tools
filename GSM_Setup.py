@@ -29,7 +29,7 @@ def wrap_positions_right(positions, center, cell):
 
     return (x,y,z)
 
-def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None, copy_wavefunction=False, tolerance=None, poscar_override=[]):
+def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None, copy_wavefunction=False, tolerance=None, poscar_override=[], name=None):
 
     # Initializing Variables to be called later in function
 
@@ -114,6 +114,8 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             incar_final = Incar.from_file(os.path.join(final_folder, 'INCAR'))
             incar['AUTO_NUPDOWN'] = 'r {} {}'.format(incar['NUPDOWN'], incar_final['NUPDOWN'])
             incar['AUTO_NUPDOWN_ITERS'] = 20
+        if name:
+            incar['SYSTEM'] = name
         incar.write_file(os.path.join(new_gsm_dir, 'INCAR'))
     except:
         print('Copying INCAR failed, make sure to add an appropriate INCAR to the directory')
@@ -217,10 +219,12 @@ if __name__ == '__main__':
                         action='store_false')
     parser.add_argument('--tolerance', help='attempts to match structures (useful for vacancy migrations) (default: 0)',
                         type=float, default=None)
+    parser.add_argument('--name', help='Changes INCAR SYSTEM variable to value provided',
+                        type=str, default=None)
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms (1 indexed)', type=int, nargs='*', default=[])
     args = parser.parse_args()
 
     args.atom_pairs = [ x-1 for x in args.atom_pairs ]
 
     GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn,
-              tolerance=args.tolerance, poscar_override=args.atom_pairs)
+              tolerance=args.tolerance, poscar_override=args.atom_pairs, name=args.name)
