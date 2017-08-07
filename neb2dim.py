@@ -24,7 +24,7 @@ def neb2dim(neb_dir, dimer_dir, ts_i=None, wfxn=False):
 
         ts_i = list(energies).index(energies.max())
 
-    print('Copying TS directory')
+    print('Copying TS directory {}'.format(str(ts_i).zfill(2)))
     if not os.path.exists(dimer_dir):
         os.makedirs(dimer_dir)
     for f in os.listdir(os.path.join(neb_dir, str(ts_i).zfill(2))):
