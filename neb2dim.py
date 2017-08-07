@@ -9,19 +9,20 @@ from pymatgen.analysis.transition_state import NEBAnalysis
 from Classes_Pymatgen import Incar
 import argparse
 
-def neb2dim(neb_dir, dimer_dir):
-    neb_dir = os.path.abspath(neb_dir)
-    dimer_dir = os.path.abspath(dimer_dir)
-    try:
-        energies = NEBAnalysis.from_dir(neb_dir).energies
-    except:
-        if input('Failed, do: rm ' + neb_dir + '*/*.xyz and try again? (y)') == 'y':
-            os.system('rm ' + neb_dir + '/*/*.xyz')
+def neb2dim(neb_dir, dimer_dir, ts_i=None):
+    if not ts_i:
+        neb_dir = os.path.abspath(neb_dir)
+        dimer_dir = os.path.abspath(dimer_dir)
+        try:
             energies = NEBAnalysis.from_dir(neb_dir).energies
-        else:
-            raise Exception('Could not read NEB dir')
+        except:
+            if input('Failed, do: rm ' + neb_dir + '*/*.xyz and try again? (y)') == 'y':
+                os.system('rm ' + neb_dir + '/*/*.xyz')
+                energies = NEBAnalysis.from_dir(neb_dir).energies
+            else:
+                raise Exception('Could not read NEB dir')
 
-    ts_i = list(energies).index(energies.max())
+        ts_i = list(energies).index(energies.max())
 
     print('Copying TS directory')
     if not os.path.exists(dimer_dir):
@@ -58,6 +59,8 @@ if __name__ == '__main__':
     parser.add_argument('neb_dir', help='location of the neb dir')
     parser.add_argument('dimer_dir', help='location of desired dimer dir (defaults to ".")',
                         default='.', nargs='?')
+    parser.add_argument('index', help='Manually set index to copy over',
+                        type=int, default=None)
     args = parser.parse_args()
 
     dimer_dir = args.dimer_dir
