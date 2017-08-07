@@ -9,7 +9,7 @@ from pymatgen.analysis.transition_state import NEBAnalysis
 from Classes_Pymatgen import Incar
 import argparse
 
-def neb2dim(neb_dir, dimer_dir, ts_i=None):
+def neb2dim(neb_dir, dimer_dir, ts_i=None, wfxn=False):
     if not ts_i:
         neb_dir = os.path.abspath(neb_dir)
         dimer_dir = os.path.abspath(dimer_dir)
@@ -31,6 +31,11 @@ def neb2dim(neb_dir, dimer_dir, ts_i=None):
         shutil.copy(os.path.join(neb_dir, str(ts_i).zfill(2), f), dimer_dir)
     for f in ['INCAR', 'KPOINTS', 'POTCAR']:
         shutil.copy(os.path.join(neb_dir, f), dimer_dir)
+
+    if wfxn:
+        for f in ['WAVECAR', 'CHGCAR']:
+            print('Copying {}'.format(f))
+            shutil.copy(os.path.join(neb_dir, f), dimer_dir)
 
     print('Modifying INCAR')
     incar = Incar.from_file(os.path.join(dimer_dir, 'INCAR'))
@@ -59,10 +64,12 @@ if __name__ == '__main__':
     parser.add_argument('neb_dir', help='location of the neb dir')
     parser.add_argument('dimer_dir', help='location of desired dimer dir (defaults to ".")',
                         default='.', nargs='?')
-    parser.add_argument('index', help='Manually set index to copy over',
+    parser.add_argument('--index', help='Manually set index to copy over',
                         type=int, default=None)
+    parser.add_argument('--WAVECAR', help='Copy WAVECAR and CHGCAR',
+                        action='store_true', default=None)
     args = parser.parse_args()
 
     dimer_dir = args.dimer_dir
     neb_dir = args.neb_dir
-    neb2dim(neb_dir, dimer_dir)
+    neb2dim(neb_dir, dimer_dir, ts_i=args.index, wfxn=args.WAVECAR)
