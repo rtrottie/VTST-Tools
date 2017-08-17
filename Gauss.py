@@ -219,7 +219,7 @@ if __name__ == '__main__':
     special = None
 
     (template_dir, template) = get_template(computer, jobtype, special)
-    script = 'gauss_standard.sh'
+    script = '{}.sh'.format(name)
 
     keywords = {'queue_type'    : queue_type,
                 'queue'         : queue,
