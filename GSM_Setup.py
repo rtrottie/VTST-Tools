@@ -64,8 +64,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         start_file = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) else os.path.join(start, 'POSCAR')
         start_folder = start
 
-
-
     # Copying and Updating Files into the directory
 
     if not os.path.exists(new_gsm_dir):
@@ -102,6 +100,8 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             s2.to('POSCAR', final_file)
             start = ase.io.read(start_file, format='vasp')
             final = ase.io.read(final_file, format='vasp')
+            start.wrap(center)
+            final.wrap(f_center)
             shutil.copy(start_file, os.path.join(new_gsm_dir, 'POSCAR.start'))
             initial = [start, final]
         else:
