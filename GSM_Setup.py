@@ -107,6 +107,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         else:
             initial.append(final)
 
+    ase.io.write('scratch/initial0000.temp.xyz', initial, )
     try:
         incar = Incar.from_file(os.path.join(start_folder, 'INCAR'))
         incar['NSW']=0
@@ -176,7 +177,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         f.write(template.render(jinja_vars))
     os.chmod('grad.py', 0o755)
     os.chmod('status', 0o755)
-    ase.io.write('scratch/initial0000.temp.xyz', initial, )
     poscar = Poscar.from_file('POSCAR.start')
     if poscar.selective_dynamics:
         sd = Poscar.from_file('POSCAR.start').selective_dynamics
