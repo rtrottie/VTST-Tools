@@ -17,9 +17,14 @@ def open_in_VESTA(molecule,type='cif'):
         SCRATCH = '{}.{}'.format(NamedTemporaryFile(delete=False).name, type)
         molecule.to(type, SCRATCH)
     # return subprocess.Popen([vesta, SCRATCH])
-    return os.system(vesta + ' ' + SCRATCH)
+    return subprocess.Popen(' '.join([vesta, SCRATCH]), shell=True)
+    # return os.system(vesta + ' ' + SCRATCH)
 
-def open_in_Jmol(molecule,type='cif'):
+def open_in_Jmol(molecule,type='cif',silent=True):
+    if silent:
+        silent = '&> /dev/null'
+    else:
+        silent = ''
     JMOL_DIR = os.path.join(os.environ['JMOL_DIR'])
     if isinstance(molecule, str):
         return subprocess.Popen(JMOL_DIR + ' ' + molecule, shell=True)
@@ -27,7 +32,7 @@ def open_in_Jmol(molecule,type='cif'):
         SCRATCH = 'D://Users/RyanTrottier/Documents/Scrap/scratch.' + type
         molecule.to(type, SCRATCH)
         # return os.system(' '.join([JMOL_DIR, SCRATCH]))
-        return subprocess.Popen(' '.join([JMOL_DIR, SCRATCH]), shell=True)
+        return subprocess.Popen(' '.join([JMOL_DIR, SCRATCH, silent]), shell=True, stdout='/dev/null', stderr='/dev/null')
 
 def view(molecule, program='jmol', type='cif'):
     if program == True or program.lower() == 'jmol':
