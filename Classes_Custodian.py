@@ -407,3 +407,4 @@ class DiffusionJob(NEBJob):
 
     def postprocess(self):
         shutil.copy('01/CONTCAR', 'CONTCAR')
+        shutil.copy('01/OUTCAR', 'OUTCAR')
