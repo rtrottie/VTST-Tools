@@ -181,7 +181,7 @@ def get_template(computer, jobtype, special=None):
     if special == 'kpoints':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.kpoints.sh.jinja2')
     if special == 'diffusion':
-        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.diffusion.sh.jinja2')
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.diffusion.jinja2.py')
     if special == 'hse_ts':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.hse.sh.jinja2')
     if jobtype == 'GSM' or jobtype == 'SSM':
