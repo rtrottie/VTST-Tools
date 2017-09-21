@@ -5,6 +5,8 @@ from custodian.vasp.handlers import *
 from monty.os.path import which
 from pymatgen.io.vasp.inputs import *
 import Dim_Check
+from pymatgen.core import Structure, PeriodicSite
+import numpy as np
 
 class NEBNotTerminating(FrozenJobErrorHandler):
 
@@ -305,6 +307,7 @@ class FrozenJobErrorHandler_dimer(ErrorHandler):
         VaspModder(vi=vi).apply_actions(actions)
 
         return {"errors": ["Frozen job"], "actions": actions}
+
 class MaxForceErrorHandler_dimer(ErrorHandler):
     """
     Checks that the desired force convergence has been achieved. Otherwise
@@ -351,3 +354,53 @@ class MaxForceErrorHandler_dimer(ErrorHandler):
 
         return {"errors": ["MaxForce"], "actions": actions}
 
+class DiffusionJob(NEBJob):
+
+    def __init__(self, diffusing_atom, constricting_atoms, nsteps=10, **kwargs):
+        super.__init__(**kwargs)
+        settings_override = [{"dict": "INCAR", "action": {"_set": {"IMAGES": 1, "LCLIMB" : True, "NSW" : nsteps}}}]
+        self.constricting_atoms = constricting_atoms
+        self.diffusing_atom = diffusing_atom
+        if self.settings_override:
+            self.settings_override = self.settings_override + settings_override
+        else:
+            self.settings_override = settings_override
+
+    is_terminating = False
+
+    def setup(self):
+
+        """
+        Performs initial setup for VaspJob, including overriding any settings
+        and backing up.
+        """
+        p = Poscar.from_file('POSCAR') # type: Poscar
+        s = p.structure # type: Structure
+
+        # Get Translation vectors
+        a = s[self.constricting_atoms[0]].coords # type: np.array
+        b = s[self.constricting_atoms[1]].coords # type: np.array
+        c = s[self.constricting_atoms[2]].coords # type: np.array
+
+        ab = b-a
+        ac = c-a
+        normal_vector = np.cross(ab, ac)
+        normal_vector = normal_vector / np.linalg.norm(normal_vector) / 4
+
+        # Make Endpoint Structures
+        s_00 = s.copy()
+        s_02 = s.copy()
+        s_00.translate_sites(self.diffusing_atom, vector=normal_vector, frac_coords=False)
+        s_02.translate_sites(self.diffusing_atom, vector=-normal_vector, frac_coords=False)
+
+        os.makedirs('00', exist_ok=True)
+        os.makedirs('01', exist_ok=True)
+        os.makedirs('02', exist_ok=True)
+        Poscar(s_00, selective_dynamics=p.selective_dynamics).write_file('00/POSCAR')
+        Poscar(s   , selective_dynamics=p.selective_dynamics).write_file('01/POSCAR')
+        Poscar(s_02, selective_dynamics=p.selective_dynamics).write_file('02/POSCAR')
+
+        super.setup()
+
+    def postprocess(self):
+        shutil.copy('01/CONTCAR', 'CONTCAR')
