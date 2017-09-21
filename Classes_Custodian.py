@@ -358,13 +358,9 @@ class DiffusionJob(NEBJob):
 
     def __init__(self, diffusing_atom, constricting_atoms, nsteps=10, **kwargs):
         super().__init__(**kwargs)
-        settings_override = [{"dict": "INCAR", "action": {"_set": {"IMAGES": 1, "LCLIMB" : True, "NSW" : nsteps}}}]
         self.constricting_atoms = constricting_atoms
         self.diffusing_atom = diffusing_atom
-        if self.settings_override:
-            self.settings_override = self.settings_override + settings_override
-        else:
-            self.settings_override = settings_override
+        self.nsteps = nsteps
 
     is_terminating = False
 
@@ -399,6 +395,13 @@ class DiffusionJob(NEBJob):
         Poscar(s_00, selective_dynamics=p.selective_dynamics).write_file('00/POSCAR')
         Poscar(s   , selective_dynamics=p.selective_dynamics).write_file('01/POSCAR')
         Poscar(s_02, selective_dynamics=p.selective_dynamics).write_file('02/POSCAR')
+
+
+        incar = Incar.from_file('INCAR')
+        incar['IMAGES'] = 1
+        incar['LCLIMB'] = True
+        incar['NSW'] = self.nsteps
+        incar.write_file('INCAR')
 
         super().setup()
 
