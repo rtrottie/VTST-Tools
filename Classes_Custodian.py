@@ -381,7 +381,7 @@ class DiffusionJob(NEBJob):
         ab = b-a
         ac = c-a
         normal_vector = np.cross(ab, ac)
-        normal_vector = normal_vector / np.linalg.norm(normal_vector) / 4
+        normal_vector = normal_vector / np.linalg.norm(normal_vector) / 2
 
         # Make Endpoint Structures
         s_00 = s.copy()
