@@ -180,6 +180,8 @@ def get_template(computer, jobtype, special=None):
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.encut.sh.jinja2')
     if special == 'kpoints':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.kpoints.sh.jinja2')
+    if special == 'diffusion':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.diffusion.sh.jinja2')
     if special == 'hse_ts':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.hse.sh.jinja2')
     if jobtype == 'GSM' or jobtype == 'SSM':
@@ -213,6 +215,8 @@ parser.add_argument('-e', '--encut', help='find ENCUT that will converge to with
 parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to within specified eV/atom',
                     type=float)
 parser.add_argument('--ts', help='find ts along path specified in MEP.xml (from vasprun.xml)',
+                    action='store_true')
+parser.add_argument('--diffusion', help='Do Diffusion Optimized Run',
                     action='store_true')
 parser.add_argument('--frozen', help='Monitors jobs which constantlyfreeze',
                     action='store_true')
@@ -335,6 +339,9 @@ if __name__ == '__main__':
     elif args.ts:
         additional_keywords['target'] = args.ts
         special = 'hse_ts'
+    elif args.diffusion:
+        special = 'diffusion'
+
 
     if args.frozen:
         jobtype = jobtype + '-Halting'
