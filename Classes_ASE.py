@@ -47,7 +47,6 @@ class InPlane:
 
         # Get equation of plane ax+by+cz+d = 0
         perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
-        pdb.set_trace()
         forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
 
 class InvertPlane:
@@ -69,5 +68,4 @@ class InvertPlane:
 
         # Get equation of plane ax+by+cz+d = 0
         perp_projection = 2 * np.dot(normal, forces[self.diffusing_i] ) * normal # Invert Forces
-        pdb.set_trace()
         forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
