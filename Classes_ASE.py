@@ -2,6 +2,7 @@
 # Not meant to be called from command line
 from ase.calculators.vasp import Vasp
 import os
+import numpy as np
 
 class StandardVasp(Vasp):
     def write_input(self, atoms, directory='./'):
