@@ -182,6 +182,8 @@ def get_template(computer, jobtype, special=None):
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.kpoints.sh.jinja2')
     if special == 'diffusion':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.diffusion.jinja2.py')
+    if special == 'pc':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.plane_constrained.jinja2.py')
     if special == 'hse_ts':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.hse.sh.jinja2')
     if jobtype == 'GSM' or jobtype == 'SSM':
@@ -217,6 +219,8 @@ parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to 
 parser.add_argument('--ts', help='find ts along path specified in MEP.xml (from vasprun.xml)',
                     action='store_true')
 parser.add_argument('--diffusion', help='Do diffusion optimized run',
+                    action='store_true')
+parser.add_argument('--pc', help='Do plane constrained run',
                     action='store_true')
 parser.add_argument('--frozen', help='Monitors jobs which constantlyfreeze',
                     action='store_true')
@@ -341,6 +345,8 @@ if __name__ == '__main__':
         special = 'hse_ts'
     elif args.diffusion:
         special = 'diffusion'
+    elif args.pc:
+        special = 'pc'
 
 
     if args.frozen:
