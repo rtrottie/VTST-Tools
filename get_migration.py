@@ -75,21 +75,11 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
             indices.sort()
     indices = indices + list(range(len(orig_structure)+len(edges), len(final_structure)))
     final_structure.remove_sites(indices)
+    diffusion_elements = [ site_dir[tuple(np.round(h.coords))] for h in final_structure[len(orig_structure):] ]
     if vis:
         view(final_structure, 'VESTA')
+        print(diffusion_elements)
 
-    diffusion_elements = [ site_dir[tuple(np.round(h.coords))] for h in final_structure[len(orig_structure):] ]
-    print(diffusion_elements)
+
 
     return diffusion_elements
-
-# structure = Structure.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\amanda\\CONTCAR')
-# # sga = SpacegroupAnalyzer(structure, 2, 20)
-# # s = sga.get_conventional_standard_structure() * (1,1,1)
-# s = structure
-# # s = structure *(1,1,1)
-# view(s, 'VESTA')
-# # get_vacancy_diffusion_pathways_from_cell(s, 73)
-# diff_e = get_vacancy_diffusion_pathways_from_cell(s, get_center_i(s, Element('O')))
-
-pass
