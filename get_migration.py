@@ -22,7 +22,6 @@ def get_center_i(structure : Structure, element : Element):
             return structure.index(site)
     raise Exception('Could not find specified {}'.format(element))
 
-
 def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int):
     '''
 
@@ -83,13 +82,13 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
 
     return diffusion_elements
 
-
-structure = Structure.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR')
-sga = SpacegroupAnalyzer(structure, 2, 20)
-s = sga.get_conventional_standard_structure() * (1,1,1)
-# s = structure *(1,1,1)
-view(s, 'VESTA')
-# get_vacancy_diffusion_pathways_from_cell(s, 73)
-get_vacancy_diffusion_pathways_from_cell(s, get_center_i(s, Element('O')))
+# structure = Structure.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\amanda\\CONTCAR')
+# # sga = SpacegroupAnalyzer(structure, 2, 20)
+# # s = sga.get_conventional_standard_structure() * (1,1,1)
+# s = structure
+# # s = structure *(1,1,1)
+# view(s, 'VESTA')
+# # get_vacancy_diffusion_pathways_from_cell(s, 73)
+# diff_e = get_vacancy_diffusion_pathways_from_cell(s, get_center_i(s, Element('O')))
 
 pass
