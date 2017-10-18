@@ -22,7 +22,7 @@ def get_center_i(structure : Structure, element : Element):
             return structure.index(site)
     raise Exception('Could not find specified {}'.format(element))
 
-def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int):
+def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int, vis=False):
     '''
 
     Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
@@ -75,7 +75,8 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
             indices.sort()
     indices = indices + list(range(len(orig_structure)+len(edges), len(final_structure)))
     final_structure.remove_sites(indices)
-    view(final_structure, 'VESTA')
+    if vis:
+        view(final_structure, 'VESTA')
 
     diffusion_elements = [ site_dir[tuple(np.round(h.coords))] for h in final_structure[len(orig_structure):] ]
     print(diffusion_elements)
