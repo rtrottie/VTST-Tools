@@ -135,6 +135,34 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     except:
         print('Copying POTCAR failed, make sure to add an appropriate POTCAR to the directory')
 
+    currdir = os.path.abspath('.')
+    os.chdir(new_gsm_dir)
+    with open('grad.py', 'w') as f:
+        template = env.get_template('grad.jinja2.py')
+        f.write(template.render(jinja_vars))
+    with open('inpfileq', 'w') as f:
+        template = env.get_template('inpfileq.jinja2')
+        f.write(template.render(jinja_vars))
+    os.chmod('grad.py', 0o755)
+    os.chmod('status', 0o755)
+    poscar = Poscar.from_file('POSCAR.start')
+    if poscar.selective_dynamics:
+        sd = Poscar.from_file('POSCAR.start').selective_dynamics
+    else:
+        sd = [(True, True, True)] * Poscar.from_file('POSCAR.start').natoms
+
+    with open('scratch/initial0000.temp.xyz', 'r') as f:
+        # Convert True SD to frozen atoms
+        sd = list(map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd))
+        # Set up sd to be zipped (two buffer lines at top of each structure)
+        to_zip = (['\n', '\n'] + sd) * len(initial)
+        zipped = zip(f.readlines(), to_zip)
+        xyz = [ ' '.join(x.split()[0:4])+y for x, y in zipped ] # Remove atom number
+        with open('scratch/initial0000.xyz', 'w') as f:
+            f.writelines(xyz)
+        os.remove('scratch/initial0000.temp.xyz')
+
+
     if copy_wavefunction:
         if os.path.exists(os.path.join(start_folder, 'WAVECAR')):
             print('Copying initial WAVECAR')
@@ -164,35 +192,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
                     os.makedirs(os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2)))
                 shutil.copy(os.path.join(final_folder, 'CHGCAR'),
                             os.path.join(new_gsm_dir, 'scratch/IMAGE.' + str(images).zfill(2) + '/CHGCAR'))
-
-
-
-    currdir = os.path.abspath('.')
-    os.chdir(new_gsm_dir)
-    with open('grad.py', 'w') as f:
-        template = env.get_template('grad.jinja2.py')
-        f.write(template.render(jinja_vars))
-    with open('inpfileq', 'w') as f:
-        template = env.get_template('inpfileq.jinja2')
-        f.write(template.render(jinja_vars))
-    os.chmod('grad.py', 0o755)
-    os.chmod('status', 0o755)
-    poscar = Poscar.from_file('POSCAR.start')
-    if poscar.selective_dynamics:
-        sd = Poscar.from_file('POSCAR.start').selective_dynamics
-    else:
-        sd = [(True, True, True)] * Poscar.from_file('POSCAR.start').natoms
-
-    with open('scratch/initial0000.temp.xyz', 'r') as f:
-        # Convert True SD to frozen atoms
-        sd = list(map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd))
-        # Set up sd to be zipped (two buffer lines at top of each structure)
-        to_zip = (['\n', '\n'] + sd) * len(initial)
-        zipped = zip(f.readlines(), to_zip)
-        xyz = [ ' '.join(x.split()[0:4])+y for x, y in zipped ] # Remove atom number
-        with open('scratch/initial0000.xyz', 'w') as f:
-            f.writelines(xyz)
-        #os.remove('scratch/initial0000.temp.xyz')
 
     os.chdir(currdir)
 
