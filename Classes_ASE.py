@@ -71,7 +71,7 @@ class InvertPlane:
         forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
 
 class HookeanPlane:
-    def __init__(self, diffusing_i, plane_i, spring=10):
+    def __init__(self, diffusing_i, plane_i, spring=2):
         self.diffusing_i = diffusing_i
         self.plane_i = plane_i
         self.spring = spring
@@ -111,4 +111,4 @@ class HookeanPlane:
         position = [p[0] + x*a, p[1] + x*b, p[2] + x*c]
 
         # Add restoring Force
-        forces[self.diffusing_i] -= np.linalg.norm(atoms.positions[self.diffusing_i] - position) * self.spring
+        forces[self.diffusing_i] -= (np.linalg.norm(atoms.positions[self.diffusing_i] - position) * self.spring)
