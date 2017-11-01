@@ -135,7 +135,7 @@ class GULP_fixed_io(GULP):
             coords = self.atoms.get_scaled_positions()
         elif all(self.atoms.pbc) and 'scell' in self.keywords:
             cell_params = self.atoms.get_cell_lengths_and_angles()
-            s += 'cell\n{0} {1} {5}\n'.format(*cell_params)
+            s += 'scell\n{0} {1} {5}\n'.format(*cell_params)
             s += 'cart\n'
             coords = self.atoms.get_positions()
         else:
