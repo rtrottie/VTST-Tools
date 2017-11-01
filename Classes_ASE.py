@@ -128,12 +128,12 @@ class GULP_fixed_io(GULP):
         s = p.keywords
         s += '\ntitle\nASE calculation\nend\n\n'
 
-        if all(self.atoms.pbc) and 'scell' not in self.keywords:
+        if all(self.atoms.pbc) and 'scell' not in p.keywords:
             cell_params = self.atoms.get_cell_lengths_and_angles()
             s += 'cell\n{0} {1} {2} {3} {4} {5}\n'.format(*cell_params)
             s += 'frac\n'
             coords = self.atoms.get_scaled_positions()
-        elif all(self.atoms.pbc) and 'scell' in self.keywords:
+        elif all(self.atoms.pbc) and 'scell' in p.keywords:
             cell_params = self.atoms.get_cell_lengths_and_angles()
             s += 'scell\n{0} {1} {5}\n'.format(*cell_params)
             s += 'cart\n'
