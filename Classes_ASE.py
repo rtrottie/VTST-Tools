@@ -148,12 +148,12 @@ class GULP_fixed_io(GULP):
             self.atom_types = c.get_atom_types()
         else:
             labels = self.atoms.get_chemical_symbols()
-        if 'scell' not in self.keywords:
+        if 'scell' not in p.keywords:
             for xyz, symbol in zip(coords, labels):
                 s += ' {0:2} core {1}  {2}  {3}\n'.format(symbol, *xyz)
                 if symbol in p.shel:
                     s += ' {0:2} shel {1}  {2}  {3}\n'.format(symbol, *xyz)
-        elif 'scell' not in self.keywords:
+        elif 'scell' not in p.keywords:
             for xyz, symbol in zip(coords, labels):
                 s += ' {0:2} core {1}  {2}  {3}\n'.format(symbol, *xyz)
                 if symbol in p.shel:
