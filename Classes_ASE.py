@@ -1,8 +1,10 @@
 # functions to improve  ASE and output setup
 # Not meant to be called from command line
 from ase.calculators.vasp import Vasp
+from ase.calculators.gulp import GULP
 import os
 import numpy as np
+from ase.calculators.calculator import FileIOCalculator
 
 class StandardVasp(Vasp):
     def write_input(self, atoms, directory='./'):
@@ -117,3 +119,50 @@ class HookeanPlane:
         # Add restoring Force
         forces[self.diffusing_i] -= (np.linalg.norm(atoms.positions[self.diffusing_i] - position) * self.spring)
 
+class GULP_fixed_io(GULP):
+    def write_input(self, atoms, properties=None, system_changes=None):
+        FileIOCalculator.write_input(self, atoms, properties, system_changes)
+        p = self.parameters
+
+        # Build string to hold .gin input file:
+        s = p.keywords
+        s += '\ntitle\nASE calculation\nend\n\n'
+
+        if all(self.atoms.pbc) and 'scell' not in self.keywords:
+            cell_params = self.atoms.get_cell_lengths_and_angles()
+            s += 'cell\n{0} {1} {2} {3} {4} {5}\n'.format(*cell_params)
+            s += 'frac\n'
+            coords = self.atoms.get_scaled_positions()
+        elif all(self.atoms.pbc) and 'scell' in self.keywords:
+            cell_params = self.atoms.get_cell_lengths_and_angles()
+            s += 'cell\n{0} {1} {5}\n'.format(*cell_params)
+            s += 'cart\n'
+            coords = self.atoms.get_positions()
+        else:
+            s += 'cart\n'
+            coords = self.atoms.get_positions()
+
+        if self.conditions is not None:
+            c = self.conditions
+            labels = c.get_atoms_labels()
+            self.atom_types = c.get_atom_types()
+        else:
+            labels = self.atoms.get_chemical_symbols()
+        if 'scell' not in self.keywords:
+            for xyz, symbol in zip(coords, labels):
+                s += ' {0:2} core {1}  {2}  {3}\n'.format(symbol, *xyz)
+                if symbol in p.shel:
+                    s += ' {0:2} shel {1}  {2}  {3}\n'.format(symbol, *xyz)
+        elif 'scell' not in self.keywords:
+            for xyz, symbol in zip(coords, labels):
+                s += ' {0:2} core {1}  {2}  {3}\n'.format(symbol, *xyz)
+                if symbol in p.shel:
+                    s += ' {0:2} shel {1}  {2}  {3}\n'.format(symbol, *xyz)
+
+
+        s += '\nlibrary {0}\n'.format(p.library)
+        if p.options:
+            for t in p.options:
+                s += '%s\n' % t
+        with open(self.prefix + '.gin', 'w') as f:
+            f.write(s)
