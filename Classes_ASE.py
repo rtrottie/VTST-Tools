@@ -41,11 +41,15 @@ class InPlane:
         p1 = atoms.positions[self.plane_i[0]] # type: np.array
         p2 = atoms.positions[self.plane_i[1]] # type: np.array
         p3 = atoms.positions[self.plane_i[2]] # type: np.array
+
+        # Find vectors in plane
         v1 = p2 - p1
         v2 = p3 - p1
+
+        # find unit vector normal to vectors in plane
         normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1,v2))
 
-        # Get equation of plane ax+by+cz+d = 0
+        # project forces onto surface normal
         perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
         forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
 
