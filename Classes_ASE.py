@@ -153,7 +153,7 @@ class GULP_fixed_io(GULP):
                 s += ' {0:2} core {1}  {2}  {3}\n'.format(symbol, *xyz)
                 if symbol in p.shel:
                     s += ' {0:2} shel {1}  {2}  {3}\n'.format(symbol, *xyz)
-        elif 'scell' not in p.keywords:
+        elif 'scell' in p.keywords:
             for xyz, symbol in zip(coords, labels):
                 s += ' {0:2} core {1}  {2}  {3}\n'.format(symbol, *xyz)
                 if symbol in p.shel:
