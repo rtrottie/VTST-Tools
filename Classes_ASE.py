@@ -167,7 +167,7 @@ class GULP_fixed_io(GULP):
         with open(self.prefix + '.gin', 'w') as f:
             f.write(s)
 
-def converged_fmax_as_emax(self : ase, forces=None):
+def converged_fmax_as_emax(self, forces=None):
     try:
         convergedP = abs(self.previous_energy - self.atoms.get_potential_energy()) < self.fmax
         self.previous_energy = self.atoms.get_potential_energy()
