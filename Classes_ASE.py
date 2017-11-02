@@ -164,11 +164,9 @@ def write_input_scell(self, atoms, properties=None, system_changes=None):
         for t in p.options:
             s += '%s\n' % t
     lines = s.split('\n')
-    i = 0
-    while i < len(lines):
-        line=lines[i]
-        if len(line) < 80:
-            i += 1
+    for line in lines:
+        if len(line) > 80:
+            raise Exception('Line length is to long, modify source code')
     with open(self.prefix + '.gin', 'w') as f:
         f.write(s)
 
