@@ -169,6 +169,9 @@ class GULP_fixed_io(GULP):
 
 def converged_fmax_as_emax(self : ase, forces=None):
     try:
-        return abs(self.previous_energy - self.atoms.get_potential_energy()) < self.fmax
+        convergedP = abs(self.previous_energy - self.atoms.get_potential_energy()) < self.fmax
+        self.previous_energy = self.atoms.get_potential_energy()
+        return convergedP
     except:
+        self.previous_energy = self.atoms.get_potential_energy()
         return False
