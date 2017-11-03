@@ -156,7 +156,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.sp_opt:
         print('Initializing Structures')
-        nebmake(args.directory, args.initial, args.final, 1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs)
+        nebmake(args.directory, args.initial, args.final, 1, args.tolerance, linear=True, poscar_override=args.atom_pairs)
         for f in ['WAVECAR', 'CHGCAR']:
             print('Copying {}s'.format(f))
             shutil.copy(os.path.join(args.start, f), os.path.join(args.directory, '00', f))
