@@ -144,6 +144,6 @@ if __name__ == '__main__':
                         default='.')
     parser.add_argument('-c', '--climbing_image', help='use CI', action = 'store_true')
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms', type=int, nargs='*', default=[])
-    parser.add_argument('--linear', help='Use linear interpolation instead of idpp', type=int, nargs='*', default=[])
+    parser.add_argument('--linear', help='Use linear interpolation instead of idpp', action='store_true')
     args = parser.parse_args()
     nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs, linear=args.linear)
