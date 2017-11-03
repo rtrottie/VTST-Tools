@@ -6,7 +6,7 @@ from pymatgen.core import PeriodicSite
 import os
 import shutil
 
-def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atoms=[], autosort_tol=0.5, linear=False):
+def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atoms=[], autosort_tol=0.5):
     '''
 
     :param structure_1_mutable: Structure
@@ -83,7 +83,7 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
 
     return (new_s_1, new_s_2)
 
-def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_override=[]):
+def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_override=[], linear=False):
     start_POSCAR = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) and os.path.getsize(os.path.join(start, 'CONTCAR')) > 0 else os.path.join(start, 'POSCAR')
     final_POSCAR = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) and os.path.getsize(os.path.join(final, 'CONTCAR')) > 0 else os.path.join(final, 'POSCAR')
 
