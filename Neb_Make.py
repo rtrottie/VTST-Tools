@@ -110,12 +110,12 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
     incar['LCLIMB'] = ci
 
     if not linear:
-        from Helpers import pmg_to_ase, ase_to_pmg
+        from pymatgen.io.ase import AseAtomsAdaptor
         from ase.neb import NEB
-        structures_ase = [ pmg_to_ase(struc) for struc in structures ]
+        structures_ase = [ AseAtomsAdaptor.get_atoms(struc) for struc in structures ]
         neb = NEB(structures_ase)
         neb.interpolate('idpp') # type: NEB
-        structures = [ ase_to_pmg(atoms) for atoms in neb.images ]
+        structures = [ AseAtomsAdaptor.get_structure(atoms) for atoms in neb.images ]
 
     for i, s in enumerate(structures):
         folder = os.path.join(directory, str(i).zfill(2))

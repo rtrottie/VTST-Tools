@@ -12,19 +12,19 @@ from Classes_Pymatgen import *
 from functools import reduce
 import tempfile
 
-def pmg_to_ase(pmg_structure : Structure):
-    from ase.io import read
-    with tempfile.NamedTemporaryFile() as f:
-        pmg_structure.to('poscar', f.name)
-        ase_structure = read(f.name, format='vasp')
-    return ase_structure
-
-def ase_to_pmg(ase_structure):
-    from ase.io import write
-    with tempfile.NamedTemporaryFile() as f:
-        write(f.name, ase_structure, format='vasp')
-        pmg_structure = Poscar.from_file(f.name).structure
-    return pmg_structure
+# def pmg_to_ase(pmg_structure : Structure):
+#     from ase.io import read
+#     with tempfile.NamedTemporaryFile() as f:
+#         pmg_structure.to('cif', f.name)
+#         ase_structure = read(f.name, format='cif')
+#     return ase_structure
+#
+# def ase_to_pmg(ase_structure):
+#     from ase.io import write
+#     with tempfile.NamedTemporaryFile() as f:
+#         write(f.name, ase_structure, format='vasp')
+#         pmg_structure = Poscar.from_file(f.name).structure
+#     return pmg_structure
 
 def pmg_to_pyl(poscar : Poscar):
     from pylada.crystal import read, write
