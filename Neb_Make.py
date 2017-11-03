@@ -157,7 +157,13 @@ if __name__ == '__main__':
     if args.sp_opt:
         print('Initializing Structures')
         nebmake(args.directory, args.initial, args.final, 1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs)
-        for i, f in enumerate(['WAVECAR', 'CHGCAR']):
-            shutil.copy(os.path.join(args.start, f), os.path.join(args.directory, f))
+        for f in ['WAVECAR', 'CHGCAR']:
+            print('Copying {}s'.format(f))
+            shutil.copy(os.path.join(args.start, f), os.path.join(args.directory, '00', f))
+            shutil.copy(os.path.join(args.final, f), os.path.join(args.directory, '01', f))
+        shutil.move('00', '0000')
+        shutil.move('01', '1000')
+        shutil.copy('0000/POSCAR', 'POSCAR.1')
+        shutil.copy('1000/POSCAR', 'POSCAR.2')
     else:
         nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs, linear=args.linear)
