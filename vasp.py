@@ -221,7 +221,7 @@ parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to 
 parser.add_argument('--ts', help='find ts along path specified in MEP.xml (from vasprun.xml)',
                     action='store_true')
 parser.add_argument('--find_max', help='find max from POSCAR.1 to POSCAR.2',
-                    action='store_true')
+                    type=float)
 parser.add_argument('--diffusion', help='Do diffusion optimized run',
                     action='store_true')
 parser.add_argument('--pc', help='Do plane constrained run',
@@ -352,6 +352,7 @@ if __name__ == '__main__':
     elif args.pc:
         special = 'pc'
     elif args.find_max:
+        additional_keywords['target'] = args.find_max
         special = 'find_max'
 
 
