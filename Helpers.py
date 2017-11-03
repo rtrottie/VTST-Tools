@@ -15,8 +15,8 @@ import tempfile
 def pmg_to_ase(pmg_structure : Structure):
     from ase.io import read
     with tempfile.NamedTemporaryFile() as f:
-        pmg_structure.to('vasp', f.name)
-        ase_structure = read(f.name, format='poscar')
+        pmg_structure.to('poscar', f.name)
+        ase_structure = read(f.name, format='vasp')
     return ase_structure
 
 def ase_to_pmg(ase_structure):
