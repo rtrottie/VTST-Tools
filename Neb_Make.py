@@ -113,7 +113,8 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
         from Helpers import pmg_to_ase, ase_to_pmg
         from ase.neb import NEB
         structures_ase = [ pmg_to_ase(struc) for struc in structures ]
-        neb = NEB.interpolate('idpp') # type: NEB
+        neb = NEB(structures_ase)
+        neb.interpolate('idpp') # type: NEB
         structures = [ ase_to_pmg(atoms) for atoms in neb.images ]
 
     for i, s in enumerate(structures):
