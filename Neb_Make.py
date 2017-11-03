@@ -6,7 +6,7 @@ from pymatgen.core import PeriodicSite
 import os
 import shutil
 
-def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atoms=[], autosort_tol=0.5):
+def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atoms=[], autosort_tol=0.5, linear=False):
     '''
 
     :param structure_1_mutable: Structure
@@ -109,8 +109,14 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
     incar['IMAGES'] = images-1
     incar['LCLIMB'] = ci
 
-    i=0
-    for s in structures:
+    if not linear:
+        from Helpers import pmg_to_ase, ase_to_pmg
+        from ase.neb import NEB
+        structures_ase = [ pmg_to_ase(struc) for struc in structures ]
+        neb = NEB.interpolate('idpp') # type: NEB
+        structures = [ ase_to_pmg(atoms) for atoms in neb.images ]
+
+    for i, s in enumerate(structures):
         folder = os.path.join(directory, str(i).zfill(2))
         os.mkdir(folder)
         Poscar(s, selective_dynamics=p1.selective_dynamics).write_file(os.path.join(folder, 'POSCAR'))
@@ -137,5 +143,6 @@ if __name__ == '__main__':
                         default='.')
     parser.add_argument('-c', '--climbing_image', help='use CI', action = 'store_true')
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms', type=int, nargs='*', default=[])
+    parser.add_argument('--linear', help='Use linear interpolation instead of idpp', type=int, nargs='*', default=[])
     args = parser.parse_args()
-    nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs)
+    nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs, linear=args.linear)

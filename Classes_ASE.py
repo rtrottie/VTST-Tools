@@ -129,7 +129,7 @@ def write_input_scell(self, atoms, properties=None, system_changes=None):
 
     if all(self.atoms.pbc) and 'scell' not in p.keywords:
         cell_params = self.atoms.get_cell_lengths_and_angles()
-        s += 'cell\n{0} {1} {2} {3} &\n {4} {5}\n'.format(*cell_params)
+        s += 'cell\n{0} {1} {2} &\n {3} {4} {5}\n'.format(*cell_params)
         s += 'frac\n'
         coords = self.atoms.get_scaled_positions()
     elif all(self.atoms.pbc) and 'scell' in p.keywords:
