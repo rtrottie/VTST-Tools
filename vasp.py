@@ -186,6 +186,8 @@ def get_template(computer, jobtype, special=None):
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.plane_constrained.jinja2.py')
     if special == 'hse_ts':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.hse.sh.jinja2')
+    if special == 'find_max':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.find_max.py.jinja2')
     if jobtype == 'GSM' or jobtype == 'SSM':
         return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.gsm.sh.jinja2')
     else:
@@ -217,6 +219,8 @@ parser.add_argument('-e', '--encut', help='find ENCUT that will converge to with
 parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to within specified eV/atom',
                     type=float)
 parser.add_argument('--ts', help='find ts along path specified in MEP.xml (from vasprun.xml)',
+                    action='store_true')
+parser.add_argument('--find_max', help='find max from POSCAR.1 to POSCAR.2',
                     action='store_true')
 parser.add_argument('--diffusion', help='Do diffusion optimized run',
                     action='store_true')
@@ -347,6 +351,9 @@ if __name__ == '__main__':
         special = 'diffusion'
     elif args.pc:
         special = 'pc'
+    elif args.find_max:
+        special = 'find_max'
+
 
 
     if args.frozen:

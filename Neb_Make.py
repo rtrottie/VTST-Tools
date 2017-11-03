@@ -83,9 +83,7 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
 
     return (new_s_1, new_s_2)
 
-def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_override=[], linear=False):
-    start_POSCAR = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) and os.path.getsize(os.path.join(start, 'CONTCAR')) > 0 else os.path.join(start, 'POSCAR')
-    final_POSCAR = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) and os.path.getsize(os.path.join(final, 'CONTCAR')) > 0 else os.path.join(final, 'POSCAR')
+def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_override=[], linear=False, write=True):
 
     start_OUTCAR = os.path.join(start, 'OUTCAR')
     final_OUTCAR = os.path.join(final, 'OUTCAR')
@@ -93,11 +91,17 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
     kpoints = Kpoints.from_file(os.path.join(start, 'KPOINTS'))
     potcar = Potcar.from_file(os.path.join(start, 'POTCAR'))
 
-    p1 = Poscar.from_file(start_POSCAR)
-    p2 = Poscar.from_file(final_POSCAR)
-    s1 = p1.structure
+    if type(start) == str:
+        start_POSCAR = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) and os.path.getsize(os.path.join(start, 'CONTCAR')) > 0 else os.path.join(start, 'POSCAR')
+        final_POSCAR = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) and os.path.getsize(os.path.join(final, 'CONTCAR')) > 0 else os.path.join(final, 'POSCAR')
+        p1 = Poscar.from_file(start_POSCAR)
+        p2 = Poscar.from_file(final_POSCAR)
+        s1 = p1.structure
+        s2 = p2.structure
+    else:
+        s1 = start
+        s2 = final
     s1.sort()
-    s2 = p2.structure
     s2.sort()
     if poscar_override:
         atoms = []
@@ -119,19 +123,21 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
         neb.interpolate('idpp') # type: NEB
         structures = [ AseAtomsAdaptor.get_structure(atoms) for atoms in neb.images ]
 
-    for i, s in enumerate(structures):
-        folder = os.path.join(directory, str(i).zfill(2))
-        os.mkdir(folder)
-        Poscar(s, selective_dynamics=p1.selective_dynamics).write_file(os.path.join(folder, 'POSCAR'))
-        if i == 0:
-            shutil.copy(start_OUTCAR, os.path.join(folder, 'OUTCAR'))
-        if i == images:
-            shutil.copy(final_OUTCAR, os.path.join(folder, 'OUTCAR'))
-        i += 1
+    if write:
+        for i, s in enumerate(structures):
+            folder = os.path.join(directory, str(i).zfill(2))
+            os.mkdir(folder)
+            Poscar(s, selective_dynamics=p1.selective_dynamics).write_file(os.path.join(folder, 'POSCAR'))
+            if i == 0:
+                shutil.copy(start_OUTCAR, os.path.join(folder, 'OUTCAR'))
+            if i == images:
+                shutil.copy(final_OUTCAR, os.path.join(folder, 'OUTCAR'))
+            i += 1
 
-    incar.write_file(os.path.join(directory, 'INCAR'))
-    kpoints.write_file(os.path.join(directory, 'KPOINTS'))
-    potcar.write_file(os.path.join(directory, 'POTCAR'))
+        incar.write_file(os.path.join(directory, 'INCAR'))
+        kpoints.write_file(os.path.join(directory, 'KPOINTS'))
+        potcar.write_file(os.path.join(directory, 'POTCAR'))
+    return structures
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
