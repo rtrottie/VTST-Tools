@@ -85,12 +85,6 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
 
 def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_override=[], linear=False, write=True):
 
-    start_OUTCAR = os.path.join(start, 'OUTCAR')
-    final_OUTCAR = os.path.join(final, 'OUTCAR')
-    incar = Incar.from_file(os.path.join(start, 'INCAR'))
-    kpoints = Kpoints.from_file(os.path.join(start, 'KPOINTS'))
-    potcar = Potcar.from_file(os.path.join(start, 'POTCAR'))
-
     if type(start) == str:
         start_POSCAR = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) and os.path.getsize(os.path.join(start, 'CONTCAR')) > 0 else os.path.join(start, 'POSCAR')
         final_POSCAR = os.path.join(final, 'CONTCAR') if os.path.exists(os.path.join(final, 'CONTCAR')) and os.path.getsize(os.path.join(final, 'CONTCAR')) > 0 else os.path.join(final, 'POSCAR')
@@ -111,10 +105,6 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
         tolerance=0
     structures = s1.interpolate(s2, images, autosort_tol=tolerance)
 
-    incar['ICHAIN'] = 0
-    incar['IMAGES'] = images-1
-    incar['LCLIMB'] = ci
-
     if not linear:
         from pymatgen.io.ase import AseAtomsAdaptor
         from ase.neb import NEB
@@ -124,6 +114,15 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
         structures = [ AseAtomsAdaptor.get_structure(atoms) for atoms in neb.images ]
 
     if write:
+        start_OUTCAR = os.path.join(start, 'OUTCAR')
+        final_OUTCAR = os.path.join(final, 'OUTCAR')
+        incar = Incar.from_file(os.path.join(start, 'INCAR'))
+        kpoints = Kpoints.from_file(os.path.join(start, 'KPOINTS'))
+        potcar = Potcar.from_file(os.path.join(start, 'POTCAR'))
+        incar['ICHAIN'] = 0
+        incar['IMAGES'] = images-1
+        incar['LCLIMB'] = ci
+
         for i, s in enumerate(structures):
             folder = os.path.join(directory, str(i).zfill(2))
             os.mkdir(folder)
@@ -153,5 +152,9 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--climbing_image', help='use CI', action = 'store_true')
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms', type=int, nargs='*', default=[])
     parser.add_argument('--linear', help='Use linear interpolation instead of idpp', action='store_true')
+    parser.add_argument('--sp_opt', help='Set up single_point optimization', action='store_true')
     args = parser.parse_args()
-    nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs, linear=args.linear)
+    if args.sp_opt:
+        nebmake('.', args.initial, args.final, 1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs)
+    else:
+        nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs, linear=args.linear)
