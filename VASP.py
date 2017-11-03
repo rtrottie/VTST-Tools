@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # A general catch all function that runs VASP with just one command.  Automatically determines number of nodes to run on,
 # based on NPAR and KPAR what type (NEB,Dimer,Standard) to run and sets up a submission script and runs it
-#TODO: fix how the time is setup
-
-# Usage: VASP.py [time] [nodes] [log_file]
 
 from jinja2 import Environment, FileSystemLoader
 from Classes_Pymatgen import *
+from pymatgen.io.vasp.outputs import *
 from Helpers import *
 import sys
 import os
@@ -15,111 +13,121 @@ import fnmatch
 import cfg
 import socket
 import random
+import argparse
+import subprocess
 
-backup_dir = "backup"
+def get_instructions_for_backup(jobtype, incar='INCAR'):
+    '''
 
-# Backup Previous Run
+    Args:
+        jobtype:
+        incar:
 
-job = getJobType(os.getcwd())
+    Returns: A dictionary that contains lists to backup, move, and execute in a shell
 
-print('Setting up ' + job + ' Job')
+    '''
+    instructions = {}
+    instructions["commands"] = ['rm *.sh *.log *.out *.err STOPCAR *.e[0-9][0-9][0-9]* *.o[1-9][1-9][1-9]* *.log* &> /dev/null']
+    instructions['backup'] = []
+    instructions['move'] = []
+    if jobtype == 'Standard':
+        instructions['backup'] = ['OUTCAR', 'POSCAR', 'INCAR', 'KPOINTS']
+        instructions['move'] = [('CONTCAR', 'POSCAR')]
+    elif jobtype == 'NEB':
+        if os.path.isfile(incar):
+            incar = Incar.from_file(incar)
+            instructions['commands'].extend(['nebmovie.pl', 'nebbarrier.pl', 'nebef.pl > nebef.dat'])
+            instructions['backup'] = ['INCAR', 'KPOINTS', 'neb.dat', 'nebef.dat', 'movie.xyz']
+            for i in range(1, int(incar["IMAGES"]) + 1):
+                instructions['move'].append((os.path.join(str(i).zfill(2), 'CONTCAR'),
+                                           os.path.join(str(i).zfill(2), 'POSCAR')))
+                for f in ['OUTCAR', 'POSCAR']:
+                    instructions['backup'].append(os.path.join(str(i).zfill(2), f))
+        else:
+            raise Exception('Need valid INCAR')
+    elif jobtype == 'Dimer':
+        instructions['backup'] = ['OUTCAR', 'POSCAR', 'INCAR', 'KPOINTS', 'MODECAR', 'DIMCAR']
+        instructions['move'] = [('CENTCAR', 'POSCAR'), ('NEWMODECAR', 'MODECAR')]
+    elif jobtype == 'GSM' or jobtype == 'SSM':
+        instructions['backup'] = ['stringfile.xyz0000', 'inpfileq', 'scratch/initial0000.xyz', 'scratch/paragsm0000',
+                                  'INCAR']
+        instructions['move'] = [('stringfile.xyz0000', 'restart.xyz0000')]
+        if jobtype == 'SSM':
+            instructions['backup'].append('scratch/ISOMERS0000')
+    elif jobtype == 'DynMat':
+        instructions['backup'] = ['OUTCAR', 'POSCAR', 'INCAR', 'KPOINTS']
+        instructions['move'] = [('CONTCAR', 'POSCAR')]
+    else:
+        raise Exception('Jobtype Not recognized:  ' + jobtype)
+    return instructions
 
-if os.path.isdir(backup_dir):  # Find what directory to backup to
-    last_run = -1
-    backups = os.listdir(backup_dir)
-    for backup in backups:
-        try:
-            if int(backup) > last_run:
-                last_run = int(backup)
-        except:
-            pass
-    if last_run == -1:
-        raise Exception("backup setup is invalid")
-    this_run = last_run+1
-    if job == "NEB":
-        os.system(os.path.join(os.environ['VTST_DIR'], 'nebbarrier.pl') + ';'+
-                  os.path.join(os.environ['VTST_DIR'], 'nebef.pl > nebef.dat')) # do some post-processing only if this is not the first run
-else:
-    this_run = 0
-os.makedirs(os.path.join(backup_dir, str(this_run))) # make backup directory
+def backup_vasp(dir, backup_dir='backup'):
+    '''
+    Do backup of given directory
 
-if job == 'NEB':  #backuping up files and setting up the templates for the jobs as well as setting template variables
-    template_dir = os.environ['TEMPLATE_DIR']
-    template = 'VTST_Custodian.sh.jinja2'
-    keywords = {}
-    times = []
-    for dir in os.listdir('.'): # Move over CONTCARs from previous run, and store POSCARs in backup folder
-        if os.path.exists(os.path.join(dir,'CONTCAR')) and os.path.getsize(os.path.join(dir,'CONTCAR')) > 0:
-            os.makedirs(os.path.join(backup_dir, str(this_run), dir))
-            shutil.move(os.path.join(dir,'CONTCAR'), os.path.join(dir, 'POSCAR'))
-            shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
-            shutil.copy(os.path.join(dir,'OUTCAR'), os.path.join(backup_dir, str(this_run), dir))
-            times.append(getLoopPlusTimes(os.path.join(dir, 'OUTCAR')))
-        elif os.path.exists(os.path.join(dir,'POSCAR')):
-            os.makedirs(os.path.join(backup_dir, str(this_run), dir))
-            shutil.copy(os.path.join(dir,'POSCAR'), os.path.join(backup_dir, str(this_run), dir))
-    shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
-    os.system('nebmovie.pl') # Clean directory and do basic-postprocessing
-    try:
-        shutil.copy('movie.xyz', os.path.join(backup_dir, str(this_run)))
-    except:
-        pass
-    time = getMaxLoopTimes(times)
-    try:
-        shutil.copy('neb.dat', os.path.join(backup_dir, str(this_run)))
-        shutil.copy('nebef.dat', os.path.join(backup_dir, str(this_run)))
-    except:
-        pass
+    Args:
+        dir: VASP directory to backup
+        backup_dir: directory files will be backed up to
 
-elif job == 'Dimer':
-    template_dir = os.environ['TEMPLATE_DIR']
-    template = 'VTST_Custodian.sh.jinja2'
-    keywords = {}
-    if os.path.exists('CENTCAR') and os.path.getsize('CENTCAR') > 0:
-        shutil.move('CENTCAR', 'POSCAR')
-        shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
-    if os.path.exists('NEWMODECAR') and os.path.getsize('NEWMODECAR') > 0:
-        shutil.move('NEWMODECAR', 'MODECAR')
-    shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
-    shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
-    shutil.copy('MODECAR', os.path.join(backup_dir, str(this_run)))
-    try:
-        shutil.copy('DIMCAR', os.path.join(backup_dir, str(this_run)))
-        time = sum(getLoopPlusTimes('OUTCAR'))
-    except:
-        time = 0
-elif job == 'Standard':
-    template_dir = os.environ['TEMPLATE_DIR']
-    template = 'VTST_Custodian.sh.jinja2'
-    keywords = {}
-    if os.path.exists('CONTCAR') and os.path.getsize('CONTCAR') > 0:
-        shutil.move('CONTCAR', 'POSCAR')
-    if os.path.exists('OUTCAR'):
-        shutil.copy('OUTCAR', os.path.join(backup_dir, str(this_run)))
-    shutil.copy('POSCAR', os.path.join(backup_dir, str(this_run)))
-    shutil.copy('INCAR', os.path.join(backup_dir, str(this_run)))
-    try:
-        time = sum(getLoopPlusTimes('OUTCAR'))
-    except:
-        time = 0
-elif job == 'GSM' or job =='SSM':
-    template_dir = os.environ['TEMPLATE_DIR']
-    template = 'submit.sh.jinja2'
-    keywords = load_variables(os.path.join(os.environ['GSM_DIR'], 'VARS.jinja2'))
-    string_files = filter(lambda s: s.startswith('stringfile.xyz') and s[-1].isdigit() and s[-2].isdigit(),  os.listdir('.'))
-    keywords['iteration'] = 0
-    if len(string_files) > 0:
-        shutil.copy('stringfile.xyz0000', 'restart.xyz0000' )
-        os.system('mkdir ' + os.path.join(backup_dir, str(this_run), 'scratch'))
-        os.system('cp stringfile* ' + os.path.join(backup_dir, str(this_run)))
-        for f in ['scratch/initial.xyz0000', 'scratch/paragsm0000', 'POSCAR.final', 'POSCAR.start', 'INCAR', 'KPOINTS']:
+    Returns: None
+
+    '''
+    jobtype = getJobType(dir)
+
+    if os.path.isdir(backup_dir):  # Find what directory to backup to
+        last_run = -1
+        backups = os.listdir(backup_dir)
+        for backup in backups:
             try:
-                shutil.copy(f, os.path.join(backup_dir, str(this_run), f))
+                if int(backup) > last_run:
+                        last_run = int(backup)
             except:
-                print(f + ' Not Copied')
-        #os.system('find *' + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run))  + '/ \;')
-        #os.system('find scratch/*' + '* -exec mv {} ' + os.path.join(backup_dir, str(this_run), 'scratch')  + '/ \;')
-        keywords['iteration'] = 0
+                pass
+        this_run = last_run+1
+    else:
+        this_run = 0
+    backup_dir = os.path.join(backup_dir, str(this_run))
+
+    instructions = get_instructions_for_backup(jobtype, os.path.join(dir, 'INCAR'))
+    for command in instructions["commands"]:
+        try:
+            os.system(command)
+        except:
+            print('Could not execute command:  ' + command)
+    for original_file in instructions["backup"]:
+        try:
+            backup_file = os.path.join(backup_dir, original_file)
+            if not os.path.exists(os.path.dirname(backup_file)):
+                os.makedirs(os.path.dirname(backup_file))
+            shutil.copy(original_file, backup_file)
+        except:
+            print('Could not backup file at:  ' + original_file)
+
+    return
+
+def restart_vasp(dir):
+    '''
+
+    Args:
+        dir:
+
+    Returns:
+
+    '''
+    jobtype = getJobType(dir)
+    instructions = get_instructions_for_backup(jobtype, os.path.join(dir, 'INCAR'))
+    for (old_file, new_file) in instructions["move"]:
+        try:
+            if os.path.getsize(old_file) > 0:
+                shutil.copy(old_file, new_file)
+                print('Moved ' + old_file + ' to ' + new_file)
+            else:
+                raise Exception()
+        except:
+            print('Unable to move ' + old_file + ' to ' + new_file)
+    if jobtype == 'SSM':
+        raise Exception('Make SSM run into GSM run')
+    elif jobtype == 'GSM' and os.path.exists('restart.xyz0000'):
         with open('inpfileq') as inpfileq:
             lines = inpfileq.readlines()
             gsm_settings = list(map(lambda x: (x + ' 1').split()[0], lines))
@@ -127,158 +135,261 @@ elif job == 'GSM' or job =='SSM':
             lines.insert(len(lines)-1,'RESTART                 1\n')
             with open('inpfileq', 'w') as inpfileq:
                 inpfileq.writelines(lines)
-    time = 'NOT APPLICABLE'
-else:
-    raise Exception('Not Yet Implemented Jobtype is:  ' + str(job))
+            print('RESTART added to inpfileq')
 
-with open(os.path.join(backup_dir, str(this_run), 'run_info'), 'w+') as f:
-    f.write('time,'+str(time))
-
-os.system('rm *.out *.err STOPCAR *.log.e* *.log.o*') # Clean directory and do basic-postprocessing
-# Setup Templating for submit script
-
-env = Environment(loader=FileSystemLoader(template_dir))
-template = env.get_template(template)
-
-# Use default arguments if not enough are provided
-incar = Incar.from_file('INCAR')
-
-if len(sys.argv) < 2:
-    if 'AUTO_TIME' in incar:
-        sys.argv.append(incar['AUTO_TIME'])
-    elif 'psiops' in socket.gethostname():
-        sys.argv.append(1000)
-    elif 'rapunzel' in socket.gethostname():
-        sys.argv.append(5000)
-    else:
-        sys.argv.append(20)
-
-if len(sys.argv) < 3:
-    if 'AUTO_NODES' in incar:
-        nodes = incar['AUTO_NODES']
-    else:
-        if 'NPAR' in incar:
-            nodes = incar['NPAR'] if 'KPAR' not in incar else int(incar['NPAR']) * int(incar['KPAR'])
+def get_queue(computer, jobtype, time, nodes):
+    if computer == "janus":
+        if time <= 24:
+            return 'janus'
+        elif time > 24:
+            return 'janus-long'
+    elif computer == "summit":
+        if time <= 1:
+            return 'debug'
+        elif time <= 24:
+            return 'normal'
+        elif time > 24:
+            return 'long'
+    elif computer == "peregrine":
+        if time <= 1 and nodes <= 4 and False:
+            return 'debug'
+        elif time <= 4 and nodes <= 8:
+            return 'short'
+        elif time <= 24 and nodes >= 16 and nodes <= 296:
+            return 'large'
+        elif time <= 48 and nodes <= 296:
+            return 'batch-h'
+        elif time > 48 and time <= 240 and nodes <= 120:
+            return'long'
         else:
-            nodes = 1
-    sys.argv.append(nodes)
-
-if len(sys.argv) < 4:
-    sys.argv.append(job + '_' + os.path.basename(os.getcwd()) + '.log')
-    for file in os.listdir('.'):
-        if fnmatch.fnmatch(file, '*.log'):
-            sys.argv[3] = file
-            break
-
-# initialize variables for template
-
-nodes_per_image = int(sys.argv[2])
-jobname = sys.argv[3]
-time = int(sys.argv[1])
-if job == 'NEB':
-    images = int(incar['IMAGES'])
-else:
-    images = 1
-script = jobname + '.sh'
-
-if 'AUTO_MEM' in incar:
-    mem = incar['AUTO_MEM']
-else:
-    mem = 8000
-if 'AUTO_GAMMA' in incar:
-    auto_gamma = incar['AUTO_GAMMA']
-else:
-    auto_gamma = 'True'
-
-connection = ''
-queue = ''
-if 'psiops' in socket.gethostname():
-    host = 'psiops'
-    mpi = '/home/apps/openmpi/openmpi-1.10.1/bin/mpirun'
-    queue_sub = 'qsub'
-    nntasks_per_node = 12
-    if nodes_per_image == 1:
-        connection = 'gb'
-        vasp_tst_gamma = '/home/apps/vasp_tst/vasp.5.3/vasp'
-        vasp_tst_kpts  = '/home/apps/vasp_tst/vasp.5.3/vasp'
-    else:
-        connection = 'ib'
-        vasp_tst_gamma = '/home/apps/vasp_tst/vasp.5.3/vasp'
-        vasp_tst_kpts  = '/home/apps/vasp_tst/vasp.5.3/vasp'
-    if job == 'Standard':
-        mpi = '/home/dummy/open_mpi_intel/openmpi-1.6/bin/mpiexec'
-        vasp_tst_kpts = '/home/dummy/vasp5.12/stacked_cache/vasp.5.2/vasp'
-        vasp_tst_gamma = '/home/dummy/vasp5.12/stacked_cache_gamma/vasp.5.2/vasp'
-elif '.rc.' in socket.gethostname():
-    vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-    vasp_tst_kpts = '/projects/musgravc/apps/vasp.5.3.3_vtst/kpts/vasp'
-    host = 'janus'
-    mpi = 'mpirun'
-    queue_sub = 'sbatch'
-    queue = 'janus' if time <= 24 else 'janus-long'
-    nntasks_per_node = 12
-elif 'rapunzel' in socket.gethostname():
-    vasp_tst_gamma = '/export/home/apps/VASP/VTST.gamma/vasp'
-    vasp_tst_kpts = '/export/home/apps/VASP/VTST/vasp.kpts'
-    host = 'rapunzel'
-    mpi = 'mpirun'
-    queue_sub = 'sbatch'
-    nntasks_per_node = 7
-elif 'ryan-VirtualBox' in socket.gethostname():
-    vasp_tst_gamma = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/gamma/vasp.5.3/vasp'
-    vasp_tst_kpts = '/projects/musgravc/apps/red_hat6/vasp5.3.3/tst/kpts/vasp.5.3/vasp'
-    host = 'janus'
-    nntasks_per_node = 1
-    mpi = 'please dont run'
-    queue_sub = 'sbatch'
-elif 'login' in socket.gethostname():
-    vasp_tst_gamma = 'vasp.gamma'
-    vasp_tst_kpts = 'vasp.realk'
-    host = 'peregrine'
-    nntasks_per_node = 24
-    mpi = 'mpirun'
-    queue_sub = 'qsub'
-    keywords['account'] = os.environ['DEFAULT_ALLOCATION']
-    nodes = images*nodes_per_image
-    if time <= 1 and nodes <= 4 and False:
-        queue = 'debug'
-    elif time <= 4 and nodes <= 8:
-        queue = 'short'
-    elif time <= 24 and nodes >= 16 and nodes <= 296:
-        queue = 'large'
-    elif time <= 48 and nodes <= 296:
-        if random.random() < 0.5:
-            queue = 'batch'
+            raise Exception('Peregrine Queue Configuration not Valid: ' + time + ' hours ' + nodes + ' nodes ')
+    elif computer == "psiops":
+        if nodes <= 1:
+            return 'gb'
         else:
-            queue = 'batch-h'
-    elif time > 48 and time <= 240:
-        queue = 'long'
+            return 'ib'
+    elif computer == "rapunzel":
+        return 'batch'
+    else:
+        raise Exception('Unrecognized Computer')
+
+def get_template(computer, jobtype, special=None):
+    if special == 'multi':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.multistep.jinja2.py')
+    if special == 'encut':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.encut.sh.jinja2')
+    if special == 'kpoints':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.kpoints.sh.jinja2')
+    if special == 'diffusion':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.diffusion.jinja2.py')
+    if special == 'pc':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.plane_constrained.jinja2.py')
+    if special == 'hse_ts':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.hse.sh.jinja2')
+    if special == 'find_max':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.find_max.py.jinja2')
+    if jobtype == 'GSM' or jobtype == 'SSM':
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.gsm.sh.jinja2')
+    else:
+        return (os.environ["VASP_TEMPLATE_DIR"], 'VASP.standard.sh.jinja2')
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-t', '--time', help='walltime for run (integer number of hours)',
+                    type=int, default=0)
+parser.add_argument('-o', '--nodes', help='nodes per run (default : KPAR*NPAR)',
+                    type=int, default=0)
+parser.add_argument('-c', '--cores', help='cores per run (default : max allowed per system)',
+                    type=int)
+parser.add_argument('-q', '--queue', help='manually specify queue instead of auto determining')
+parser.add_argument('-b', '--backup', help='backup files, but don\'t execute vasp ',
+                    action='store_true')
+parser.add_argument('-s', '--silent', help='display less information',
+                    action='store_true')
+parser.add_argument('-i', '--inplace', help='Run VASP without moving files to continue run',
+                    action='store_true')
+parser.add_argument('-f', '--finish_convergence', help='Only run vasp if run has not converged.  Can supply numbers to only uprgrade from specified stages',
+                    type=int, nargs='*')
+parser.add_argument('-n', '--name', help='name of run (Default is SYSTEM_Jobtype')
+parser.add_argument('-g', '--gamma', help='force a gamma point run',
+                    action='store_true')
+parser.add_argument('-m', '--multi-step', help='Vasp will execute multipe runs based on specified CONVERGENCE file',
+                    type=str)
+parser.add_argument('-e', '--encut', help='find ENCUT that will converge to within specified eV/atom for 50 ENCUT',
+                    type=float)
+parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to within specified eV/atom',
+                    type=float)
+parser.add_argument('--ts', help='find ts along path specified in MEP.xml (from vasprun.xml)',
+                    action='store_true')
+parser.add_argument('--find_max', help='find max from POSCAR.1 to POSCAR.2',
+                    action='store_true')
+parser.add_argument('--diffusion', help='Do diffusion optimized run',
+                    action='store_true')
+parser.add_argument('--pc', help='Do plane constrained run',
+                    action='store_true')
+parser.add_argument('--frozen', help='Monitors jobs which constantlyfreeze',
+                    action='store_true')
+
+args = parser.parse_args()
+
+if __name__ == '__main__':
+    if args.finish_convergence != None:
+        run = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False, parse_potcar_file=False)
+        if run.converged:
+            exit('Run is already converged')
+        elif args.finish_convergence != []:
+            stage = Incar.from_file('INCAR')['STAGE_NUMBER']
+            if stage not in args.finish_convergence:
+                exit('Not correct stage')
+    jobtype = getJobType('.')
+    incar = Incar.from_file('INCAR')
+    computer = getComputerName()
+    print('Running vasp.py for ' + jobtype +' on ' + computer)
+    print('Backing up previous run')
+    backup_vasp('.')
+    if args.backup:
+        exit(0)
+    if not args.inplace:
+        print('Setting up next run')
+        restart_vasp('.')
+    print('Determining settings for run')
+    if args.time == 0:
+        if 'AUTO_TIME' in incar:
+            time = int(incar["AUTO_TIME"])
+        elif 'VASP_DEFAULT_TIME' in os.environ:
+            time = int(os.environ['VASP_DEFAULT_TIME'])
+        else:
+            time = 20
+    else:
+        time = args.time
+    if args.nodes == 0:
+        if 'AUTO_NODES' in incar:
+            nodes = incar['AUTO_NODES']
+        elif 'NPAR' in incar:
+            nodes = int(incar['NPAR']) * int(incar['KPAR']) if 'KPAR' in incar else int(incar['NPAR'])
+            if jobtype == 'NEB':
+                nodes = nodes * int(incar["IMAGES"])
+        else:
+            raise Exception('No Nodes specifying need 1 of the following (in order of decreasing priority): \n-o option, AUTO_NODES in INCAR, or NPAR in INCAR')
+    else:
+        nodes = args.nodes
+
+    if args.name:
+        name = args.name
+    elif 'SYSTEM' in incar:
+        name = incar['SYSTEM'].strip().replace(' ', '_')
+    elif 'System' in incar:
+        name = incar['System'].strip().replace(' ', '_')
+    elif 'system' in incar:
+        name = incar['system'].strip().replace(' ', '_')
+
+    if 'AUTO_MEM' in incar:
+        mem = incar['AUTO_MEM']
+    else:
+        mem = 0
+
+    if args.gamma:
+        vasp_kpts = os.environ["VASP_GAMMA"]
+    elif 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
+        vasp_kpts = os.environ["VASP_GAMMA"]
+    elif 'AUTO_GAMMA' in incar and not incar['AUTO_GAMMA']:
+        vasp_kpts = os.environ["VASP_KPTS"]
+    else:
+        vasp_kpts = os.environ["VASP_KPTS"]
+
+
+    if args.cores:
+        cores = args.cores
+    elif 'AUTO_CORES' in incar:
+        cores = int(incar['AUTO_CORES'])
+    elif 'VASP_MPI_PROCS' in os.environ:
+        cores = int(os.environ["VASP_MPI_PROCS"])
+    else:
+        cores = int(os.environ["VASP_NCORE"])
+
+    if 'AUTO_ALLOCATION' in incar:
+        account = incar['AUTO_ALLOCATION']
+    elif 'VASP_DEFAULT_ALLOCATION' in os.environ:
+        account = os.environ['VASP_DEFAULT_ALLOCATION']
+    else:
+        account = ''
+
+    if 'VASP_OMP_NUM_THREADS' in os.environ:
+        openmp = int(os.environ['VASP_OMP_NUM_THREADS'])
+    else:
+        openmp = 1
+
+    if computer == 'janus' or computer == 'rapunzel' or computer=='summit':
+        queue_type = 'slurm'
+        submit = 'sbatch'
+    else:
+        queue_type = 'pbs'
+        submit = 'qsub'
+
+    if args.queue:
+        queue = args.queue
+    elif 'AUTO_QUEUE' in incar:
+        queue = incar['AUTO_QUEUE'].lower()
 
     else:
-        raise Exception('Queue Configuration not Valid: ' + time + ' hours ' + nodes + ' nodes ')
-else:
-    raise Exception('Don\'t recognize host: ' + socket.gethostname())
+        queue = get_queue(computer, jobtype, time, nodes)
+
+    additional_keywords = {}
+    special = None
+    if args.multi_step != None:
+        additional_keywords['CONVERGENCE'] = args.multi_step
+        special = 'multi'
+    elif args.encut:
+        additional_keywords['target'] = args.encut
+        special = 'encut'
+    elif args.kpoints:
+        additional_keywords['target'] = args.kpoints
+        special = 'kpoints'
+    elif args.ts:
+        additional_keywords['target'] = args.ts
+        special = 'hse_ts'
+    elif args.diffusion:
+        special = 'diffusion'
+    elif args.pc:
+        special = 'pc'
+    elif args.find_max:
+        special = 'find_max'
 
 
-keywords.update( {'J' : jobname,
-            'hours' : time,
-            'nodes' : images*nodes_per_image,
-            'nntasks_per_node' : nntasks_per_node,
-            'logname' : jobname,
-            'tasks' : images*nodes_per_image*nntasks_per_node,
-            'user' : os.environ['USER'],
-            'jobtype' : job,
-            'vasp_tst_gamma' : vasp_tst_gamma,
-            'vasp_tst_kpts' : vasp_tst_kpts,
-            'host' : host,
-            'connection' : connection,
-            'mpi' : mpi,
-            'queue': queue,
-            'mem': mem,
-            'currdir': os.path.abspath('.'),
-            'auto_gamma' : auto_gamma} )
 
-with open(script, 'w+') as f:
-    f.write(template.render(keywords))
+    if args.frozen:
+        jobtype = jobtype + '-Halting'
 
-os.system(queue_sub + ' ' + script)
+    (template_dir, template) = get_template(computer, jobtype, special)
+    script = 'vasp_standard.sh'
+
+    keywords = {'queue_type'    : queue_type,
+                'queue'         : queue,
+                'nodes'         : nodes,
+                'computer'      : computer,
+                'time'          : time,
+                'nodes'         : nodes,
+                'name'          : name,
+                'ppn'           : cores,
+                'cores'         : cores,
+                'logname'       : name + '.log',
+                'mem'           : mem,
+                'account'       : account,
+                'mpi'           : os.environ["VASP_MPI"],
+                'vasp_kpts'     : os.environ["VASP_KPTS"],
+                'vasp_gamma'    : os.environ["VASP_GAMMA"],
+                'vasp_bashrc'   : os.environ['VASP_BASHRC'] if 'VASP_BASHRC' in os.environ else '~/.bashrc_vasp',
+                'jobtype'       : jobtype,
+                'tasks'         : int(nodes*cores/openmp),
+                'openmp'        : openmp}
+    keywords.update(additional_keywords)
+
+    env = Environment(loader=FileSystemLoader(template_dir))
+    template = env.get_template(template)
+    with open(script, 'w+') as f:
+        f.write(template.render(keywords))
+    subprocess.call([submit, script])
+    print('Submitted ' + name + ' to ' + queue)
+
+
+
+
