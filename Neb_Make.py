@@ -155,6 +155,9 @@ if __name__ == '__main__':
     parser.add_argument('--sp_opt', help='Set up single_point optimization', action='store_true')
     args = parser.parse_args()
     if args.sp_opt:
-        nebmake('.', args.initial, args.final, 1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs)
+        print('Initializing Structures')
+        nebmake(args.directory, args.initial, args.final, 1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs)
+        for i, f in enumerate(['WAVECAR', 'CHGCAR']):
+            shutil.copy(os.path.join(args.start, f), os.path.join(args.directory, f))
     else:
         nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs, linear=args.linear)
