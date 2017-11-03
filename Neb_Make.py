@@ -96,7 +96,9 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
     p1 = Poscar.from_file(start_POSCAR)
     p2 = Poscar.from_file(final_POSCAR)
     s1 = p1.structure
+    s1.sort()
     s2 = p2.structure
+    s2.sort()
     if poscar_override:
         atoms = []
         for i in range(int(len(poscar_override)/2)):
