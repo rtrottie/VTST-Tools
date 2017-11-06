@@ -55,6 +55,44 @@ class InPlane:
         perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
         forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
 
+class InMPPlane:
+    def __init__(self, diffusing_i, plane_i):
+        self.diffusing_i = diffusing_i
+        self.plane_i = plane_i
+
+    def get_plane(self, pos_1, pos_2):
+        # get Normal Vector
+        normal = pos_1 - pos_2
+
+        # get Midpoint
+        mp = (pos_1 + pos_2) / 2
+
+        # get constant
+        d = np.dot(normal, mp)
+
+        # return constants
+        return (normal[0], normal[1], normal[2], d)
+
+
+    def adjust_positions(self, oldpositions, newpositions):
+        # get plane
+        (a, b, c, d) = self.get_plane(oldpositions[self.plane_i[0]], oldpositions[self.plane_i[1]])
+
+        # Get closest point on plane
+        p = newpositions[self.diffusing_i]
+        x = - (d + a*p[0] + b*p[1] + c*p[2]) / (a**2 + b**2 + c**2)
+        position = [p[0] + x*a, p[1] + x*b, p[2] + x*c]
+        newpositions[self.diffusing_i] = position
+
+    def adjust_forces(self, atoms, forces):
+        # get plane
+        (a, b, c, d) = self.get_plane(atoms[self.plane_i[0]].get_scaled_positions(), atoms[self.plane_i[1]].get_scaled_positions())
+        normal = np.array([a,b,c]) / np.linalg.norm(np.array([a,b,c]))
+
+        # project forces onto surface normal
+        perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
+        forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
+
 class InvertPlane:
     def __init__(self, diffusing_i, plane_i):
         self.diffusing_i = diffusing_i
