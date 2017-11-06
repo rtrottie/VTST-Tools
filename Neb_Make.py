@@ -33,52 +33,52 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
     structure_2_mutable = structure_2.copy() # type: Structure
     structure_2_mutable.remove_sites(atom_is_2)
 
-    if autosort_tol > 0:
-        structure_1_mutable = structure_1.copy() # type: Structure
-        structure_1_mutable.remove_sites(atom_is_1)
-        images = structure_1_mutable.interpolate(structure_2_mutable, 1, autosort_tol=autosort_tol)
-        new_s_1 = images[0] # type: Structure
-        new_s_2 = images[1] # type: Structure
+    # if autosort_tol > 0:
+    structure_1_mutable = structure_1.copy() # type: Structure
+    structure_1_mutable.remove_sites(atom_is_1)
+    images = structure_1_mutable.interpolate(structure_2_mutable, 1, autosort_tol=autosort_tol)
+    new_s_1 = images[0] # type: Structure
+    new_s_2 = images[1] # type: Structure
 
-        for atom in atoms_1: # type: PeriodicSite
-            atom = atom
-            new_s_1.append(atom.specie, atom.frac_coords, properties=atom.properties)
+    for atom in atoms_1: # type: PeriodicSite
+        atom = atom
+        new_s_1.append(atom.specie, atom.frac_coords, properties=atom.properties)
 
-        for atom in atoms_2: # type: PeriodicSite
-            atom = atom
-            new_s_2.append(atom.specie, atom.frac_coords, properties=atom.properties)
+    for atom in atoms_2: # type: PeriodicSite
+        atom = atom
+        new_s_2.append(atom.specie, atom.frac_coords, properties=atom.properties)
 
-        def sort_fxn(atom):
-            # return correct order for structure_1
-            i = 0
-            for s1_atom in structure_1: # type: PeriodicSite
-                if s1_atom.distance(atom) < 0.001 : # If site matches site in structure_1
-                    return i
-                i = i+1
+    def sort_fxn(atom):
+        # return correct order for structure_1
+        i = 0
+        for s1_atom in structure_1: # type: PeriodicSite
+            if s1_atom.distance(atom) < 0.001 : # If site matches site in structure_1
+                return i
+            i = i+1
 
-            # return correct order for structure_2
-            i=0
-            # for s2_atom in atoms_2:
-            #     if s2_atom.distance(atom) < 0.01: # If atom should have been moved
-            #         return atom_is_1[i] # where it should be in structure 1
-            #     i = i+1
-            # i = 0
-            for s1_atom in structure_1: # type: PeriodicSite
-                if s1_atom.distance(atom) < autosort_tol : # If site is within auto_sort_tol of structure_1
-                    return i
-                i = i+1
-            raise Exception('FAILED SORT on: {}'.format(atom))
-        new_s_1.sort(sort_fxn)
-        new_s_2.sort(sort_fxn)
-    else:
-        new_s_1 = structure_1
-        new_s_2 = structure_2_mutable
-        for _ in range(len(atom_is_1)): # Going to insert based on position in structure 1
-            i = atom_is_1.index(min(atom_is_1)) # find minimum index (to preserve correct ordering)
-            atom = structure_2[atom_is_2[i]] # type: PeriodicSite  ;  get atom from original structure
-            new_s_2.insert(atom_is_2[i], atom.specie, atom.frac_coords, properties=atom.properties)
-            for l in [atom_is_1, atom_is_2]: # remove minimum index
-                l.pop(i)
+        # return correct order for structure_2
+        i=0
+        # for s2_atom in atoms_2:
+        #     if s2_atom.distance(atom) < 0.01: # If atom should have been moved
+        #         return atom_is_1[i] # where it should be in structure 1
+        #     i = i+1
+        # i = 0
+        for s1_atom in structure_1: # type: PeriodicSite
+            if s1_atom.distance(atom) < autosort_tol : # If site is within auto_sort_tol of structure_1
+                return i
+            i = i+1
+        raise Exception('FAILED SORT on: {}'.format(atom))
+    new_s_1.sort(sort_fxn)
+    new_s_2.sort(sort_fxn)
+    # else:
+    #     new_s_1 = structure_1
+    #     new_s_2 = structure_2_mutable
+    #     for _ in range(len(atom_is_1)): # Going to insert based on position in structure 1
+    #         i = atom_is_1.index(min(atom_is_1)) # find minimum index (to preserve correct ordering)
+    #         atom = structure_2[atom_is_2[i]] # type: PeriodicSite  ;  get atom from original structure
+    #         new_s_2.insert(atom_is_2[i], atom.specie, atom.frac_coords, properties=atom.properties)
+    #         for l in [atom_is_1, atom_is_2]: # remove minimum index
+    #             l.pop(i)
 
 
     return (new_s_1, new_s_2)
