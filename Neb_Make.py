@@ -173,6 +173,8 @@ if __name__ == '__main__':
         shutil.move('01', '1000')
         shutil.copy('0000/POSCAR', 'POSCAR.1')
         shutil.copy('1000/POSCAR', 'POSCAR.2')
+        shutil.copy(os.path.join(args.initial), 'vasprun.xml', '0000')
+        shutil.copy(os.path.join(args.final, 'vasprun.xml'), '1000')
         i = Incar.from_file(os.path.join(args.directory, 'INCAR'))
         del i['IMAGES']
         del i['ICHAIN']
