@@ -110,6 +110,7 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
         if a=='y':
             s1.sort()
             s2.sort()
+        structures = s1.interpolate(s2, images, autosort_tol=tolerance)
 
 
     if not linear:
