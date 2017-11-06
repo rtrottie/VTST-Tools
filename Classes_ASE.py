@@ -9,7 +9,7 @@ from ase.calculators.calculator import FileIOCalculator
 class StandardVasp(Vasp):
     def write_input(self, atoms, directory='./'):
         from ase.io.vasp import write_vasp
-        write_vasp(os.path.join(directory, 'POSCAR'), self.atoms_sorted, symbol_count = self.symbol_count)
+        write_vasp(os.path.join(directory, 'POSCAR'), atoms=atoms, symbol_count = self.symbol_count)
         self.write_sort_file(directory=directory)
 
 class InPlane:
