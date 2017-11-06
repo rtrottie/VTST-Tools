@@ -52,7 +52,7 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
             # return correct order for structure_1
             i = 0
             for s1_atom in structure_1: # type: PeriodicSite
-                if s1_atom.distance(atom) < autosort_tol : # If site matches site in structure_1
+                if s1_atom.distance(atom) < 0.001 : # If site matches site in structure_1
                     return i
                 i = i+1
 
@@ -97,12 +97,11 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
         s2 = final
     # s1.sort()
     # s2.sort()
-    if poscar_override:
-        atoms = []
-        for i in range(int(len(poscar_override)/2)):
-            atoms.append( (poscar_override[i*2], poscar_override[i*2+1]) )
-        (s1, s2) = reorganize_structures(s1, s2, atoms=atoms, autosort_tol=tolerance)
-        tolerance=0
+    atoms = []
+    for i in range(int(len(poscar_override)/2)):
+        atoms.append( (poscar_override[i*2], poscar_override[i*2+1]) )
+    (s1, s2) = reorganize_structures(s1, s2, atoms=atoms, autosort_tol=tolerance)
+    tolerance=0
     structures = s1.interpolate(s2, images, autosort_tol=tolerance)
 
     if not linear:
