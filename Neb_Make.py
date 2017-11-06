@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#TODO:  Ask to sort
 import argparse
 from Classes_Pymatgen import *
 from pymatgen.core import PeriodicSite
@@ -95,8 +95,8 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
     else:
         s1 = start
         s2 = final
-    s1.sort()
-    s2.sort()
+    # s1.sort()
+    # s2.sort()
     if poscar_override:
         atoms = []
         for i in range(int(len(poscar_override)/2)):
