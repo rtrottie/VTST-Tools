@@ -162,7 +162,7 @@ def load_variables(file_loc):
     return vars
 
 def get_midpoint(sites):
-    coords = np.array([ 0, 0, 0])
+    coords = np.array([ 0.0, 0.0, 0.0])
     for site in sites: # type: PeriodicSite
         coords += site.frac_coords
     coords /= len(sites)
