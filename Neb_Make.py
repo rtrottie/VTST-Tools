@@ -58,11 +58,11 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
 
             # return correct order for structure_2
             i=0
-            for s2_atom in atoms_2:
-                if s2_atom.distance(atom) < 0.01: # If atom should have been moved
-                    return atom_is_1[i] # where it should be in structure 1
-                i = i+1
-            i = 0
+            # for s2_atom in atoms_2:
+            #     if s2_atom.distance(atom) < 0.01: # If atom should have been moved
+            #         return atom_is_1[i] # where it should be in structure 1
+            #     i = i+1
+            # i = 0
             for s1_atom in structure_1: # type: PeriodicSite
                 if s1_atom.distance(atom) < autosort_tol : # If site is within auto_sort_tol of structure_1
                     return i
