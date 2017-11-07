@@ -81,7 +81,7 @@ class InMPPlane:
 
     def adjust_positions(self, oldpositions, newpositions):
         # get plane
-        (a, b, c, d) = self.get_plane(oldpositions[self.plane_i[0]], oldpositions[self.plane_i[1]], oldpositions[self.diffusing_i])
+        (a, b, c, d) = self.get_plane(newpositions[self.plane_i[0]], newpositions[self.plane_i[1]], newpositions[self.diffusing_i])
 
         # Get closest point on plane
         p = (newpositions[self.diffusing_i] + newpositions[self.diffusing_i]) / 2
