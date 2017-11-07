@@ -63,8 +63,10 @@ class InMPPlane:
 
     def get_plane(self, pos_1, pos_2, center_pos):
         # Make sure to get nearest images
-        pos_1 = wrap_positions([pos_1], cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], center=self.diffusing_i)[0]
-        pos_2 = wrap_positions([pos_2], cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], center=self.diffusing_i)[1]
+        pos_1 = wrap_positions([pos_1], cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], center=center_pos)[0]
+        pos_2 = wrap_positions([pos_2], cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], center=center_pos)[0]
+        print(pos_1)
+        print(pos_2)
 
         # get Normal Vector
         normal = pos_1 - pos_2
