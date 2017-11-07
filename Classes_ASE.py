@@ -86,7 +86,7 @@ class InMPPlane:
 
     def adjust_forces(self, atoms, forces):
         # get plane
-        (a, b, c, d) = self.get_plane(atoms[self.plane_i[0]].get_scaled_positions(), atoms[self.plane_i[1]].get_scaled_positions())
+        (a, b, c, d) = self.get_plane(atoms.get_scaled_positions()[self.plane_i[0]], atoms.get_scaled_positions()[self.plane_i[1]])
         normal = np.array([a,b,c]) / np.linalg.norm(np.array([a,b,c]))
 
         # project forces onto surface normal
