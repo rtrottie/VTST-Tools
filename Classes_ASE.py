@@ -5,6 +5,7 @@ from ase.calculators.gulp import GULP
 import os
 import numpy as np
 from ase.calculators.calculator import FileIOCalculator
+from ase.geometry import wrap_positions
 
 class StandardVasp(Vasp):
     def write_input(self, atoms, directory='./'):
@@ -60,7 +61,11 @@ class InMPPlane:
         self.diffusing_i = diffusing_i
         self.plane_i = plane_i
 
-    def get_plane(self, pos_1, pos_2):
+    def get_plane(self, pos_1, pos_2, center_pos):
+        # Make sure to get nearest images
+        pos_1 = wrap_positions(pos_1, cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], center=self.diffusing_i)
+        pos_2 = wrap_positions(pos_2, cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], center=self.diffusing_i)
+
         # get Normal Vector
         normal = pos_1 - pos_2
 
@@ -76,7 +81,7 @@ class InMPPlane:
 
     def adjust_positions(self, oldpositions, newpositions):
         # get plane
-        (a, b, c, d) = self.get_plane(oldpositions[self.plane_i[0]], oldpositions[self.plane_i[1]])
+        (a, b, c, d) = self.get_plane(oldpositions[self.plane_i[0]], oldpositions[self.plane_i[1]], oldpositions[self.diffusing_i])
 
         # Get closest point on plane
         p = (newpositions[self.diffusing_i] + newpositions[self.diffusing_i]) / 2
@@ -86,7 +91,7 @@ class InMPPlane:
 
     def adjust_forces(self, atoms, forces):
         # get plane
-        (a, b, c, d) = self.get_plane(atoms.get_scaled_positions()[self.plane_i[0]], atoms.get_scaled_positions()[self.plane_i[1]])
+        (a, b, c, d) = self.get_plane(atoms.get_scaled_positions()[self.plane_i[0]], atoms.get_scaled_positions()[self.plane_i[1]], atoms.get_scaled_positions()[self.diffusing_i])
         normal = np.array([a,b,c]) / np.linalg.norm(np.array([a,b,c]))
 
         # project forces onto surface normal
