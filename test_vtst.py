@@ -1,7 +1,9 @@
-import Vis
-from get_migration import *
-type = 'cif'
+from Classes_ASE import InMPPlane
+from ase.io import read
 
-s = Structure.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR')
-
-get_vacancy_diffusion_pathways_from_cell(s, get_center_i(s, Element('O')), True)
+a=read('D:\\Users\\RyanTrottier\\Documents\\Scrap\\POSCAR')
+ip = InMPPlane(48, [102, 32])
+pos = a.get_positions()
+a.set_constraint(ip)
+a.set_positions(pos)
+a.write('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR')

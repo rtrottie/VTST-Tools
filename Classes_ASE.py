@@ -7,7 +7,6 @@ import numpy as np
 from ase.calculators.calculator import FileIOCalculator
 from ase.geometry import wrap_positions
 from ase import Atoms
-import pdb
 
 class StandardVasp(Vasp):
     def write_input(self, atoms, directory='./'):
@@ -73,12 +72,9 @@ class InMPPlane:
 
         # get Midpoint
         mp = (pos_1 + pos_2) / 2
-        print(pos_1)
-        print(pos_2)
-        print(mp)
 
         # get constant
-        d = -np.dot(normal, mp)
+        d = np.dot(normal, mp)
 
         # return constants
         return (normal[0], normal[1], normal[2], d)
@@ -87,15 +83,11 @@ class InMPPlane:
     def adjust_positions(self, atoms : Atoms, newpositions):
         # get plane
         atoms.wrap(atoms.get_scaled_positions()[self.diffusing_i])
-        pdb.set_trace()
-        (a, b, c, d) = self.get_plane(atoms)
+        (a, b, c, d) = self.get_plane(atoms) # ax + by + cz = d
         # Get closest point on plane
         p = atoms.positions[self.diffusing_i]
         k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
-        print(k)
         position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
-        print(p)
-        print(position)
         newpositions[self.diffusing_i] = position
 
     def adjust_forces(self, atoms, forces):
