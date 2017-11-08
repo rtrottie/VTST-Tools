@@ -73,6 +73,8 @@ class InMPPlane:
 
         # get Midpoint
         mp = (pos_1 + pos_2) / 2
+        print(pos_1)
+        print(pos_2)
         print(mp)
 
         # get constant
@@ -89,6 +91,7 @@ class InMPPlane:
         p = newpositions[self.diffusing_i]
         k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
         position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
+        print(p)
         print(position)
         newpositions[self.diffusing_i] = position
 
