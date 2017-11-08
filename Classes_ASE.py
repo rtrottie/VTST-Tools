@@ -35,8 +35,8 @@ class InPlane:
 
         # Get closest point on plane
         p = newpositions[self.diffusing_i]
-        x = - (d + a*p[0] + b*p[1] + c*p[2]) / (a**2 + b**2 + c**2)
-        position = [p[0] + x*a, p[1] + x*b, p[2] + x*c]
+        k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2)
+        position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
         newpositions[self.diffusing_i] = position
 
     def adjust_forces(self, atoms, forces):
@@ -84,9 +84,9 @@ class InMPPlane:
         (a, b, c, d) = self.get_plane(newpositions[self.plane_i[0]], newpositions[self.plane_i[1]], newpositions[self.diffusing_i])
 
         # Get closest point on plane
-        p = (newpositions[self.diffusing_i] + newpositions[self.diffusing_i]) / 2
-        x = - (d + a*p[0] + b*p[1] + c*p[2]) / (a**2 + b**2 + c**2)
-        position = [p[0] + x*a, p[1] + x*b, p[2] + x*c]
+        p = newpositions[self.diffusing_i]
+        k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
+        position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
         newpositions[self.diffusing_i] = position
 
     def adjust_forces(self, atoms, forces):
