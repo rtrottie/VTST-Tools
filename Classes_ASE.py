@@ -64,7 +64,6 @@ class InMPPlane:
 
     def get_plane(self, atoms : Atoms):
         # Make sure to get nearest images
-        atoms.wrap(atoms.get_scaled_positions()[self.diffusing_i])
         pos_1 = atoms.get_positions()[self.plane_i[0]]
         pos_2 = atoms.get_positions()[self.plane_i[1]]
 
@@ -86,9 +85,10 @@ class InMPPlane:
 
     def adjust_positions(self, atoms : Atoms, newpositions):
         # get plane
+        atoms.wrap(atoms.get_scaled_positions()[self.diffusing_i])
         (a, b, c, d) = self.get_plane(atoms)
         # Get closest point on plane
-        p = newpositions[self.diffusing_i]
+        p = atoms.positions[self.diffusing_i]
         k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
         position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
         print(p)
