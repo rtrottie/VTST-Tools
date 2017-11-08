@@ -66,7 +66,7 @@ class InMPPlane:
         # Make sure to get nearest images
         atoms.wrap(atoms.get_scaled_positions()[self.diffusing_i])
         pos_1 = atoms.get_positions()[self.plane_i[0]]
-        pos_2 = atoms.get_positions()[self.plane_i[2]]
+        pos_2 = atoms.get_positions()[self.plane_i[1]]
 
         # get Normal Vector
         normal = pos_1 - pos_2
