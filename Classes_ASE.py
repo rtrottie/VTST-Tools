@@ -90,6 +90,7 @@ class InMPPlane:
         # Get closest point on plane
         p = atoms.positions[self.diffusing_i]
         k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
+        print(k)
         position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
         print(p)
         print(position)
