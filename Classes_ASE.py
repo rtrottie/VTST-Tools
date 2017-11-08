@@ -6,6 +6,7 @@ import os
 import numpy as np
 from ase.calculators.calculator import FileIOCalculator
 from ase.geometry import wrap_positions
+from ase import Atoms
 
 class StandardVasp(Vasp):
     def write_input(self, atoms, directory='./'):
@@ -61,16 +62,18 @@ class InMPPlane:
         self.diffusing_i = diffusing_i
         self.plane_i = plane_i
 
-    def get_plane(self, pos_1, pos_2, center_pos):
+    def get_plane(self, atoms : Atoms):
         # Make sure to get nearest images
-        pos_1 = wrap_positions([pos_1], cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], center=center_pos)[0]
-        pos_2 = wrap_positions([pos_2], cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]], center=center_pos)[0]
+        atoms.wrap(atoms.get_scaled_positions()[self.diffusing_i])
+        pos_1 = atoms.get_positions()[self.plane_i[0]]
+        pos_2 = atoms.get_positions()[self.plane_i[2]]
 
         # get Normal Vector
         normal = pos_1 - pos_2
 
         # get Midpoint
         mp = (pos_1 + pos_2) / 2
+        print(mp)
 
         # get constant
         d = -np.dot(normal, mp)
@@ -79,10 +82,9 @@ class InMPPlane:
         return (normal[0], normal[1], normal[2], d)
 
 
-    def adjust_positions(self, oldpositions, newpositions):
+    def adjust_positions(self, atoms : Atoms, newpositions):
         # get plane
-        (a, b, c, d) = self.get_plane(newpositions[self.plane_i[0]], newpositions[self.plane_i[1]], newpositions[self.diffusing_i])
-
+        (a, b, c, d) = self.get_plane(atoms)
         # Get closest point on plane
         p = newpositions[self.diffusing_i]
         k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
