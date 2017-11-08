@@ -32,11 +32,11 @@ class InPlane:
         a = normal[0]
         b = normal[1]
         c = normal[2]
-        d = -(a*p1[0] + b*p1[1] + c*p1[2])
+        d = (a*p1[0] + b*p1[1] + c*p1[2])
 
         # Get closest point on plane
         p = newpositions[self.diffusing_i]
-        k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2)
+        k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
         position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
         newpositions[self.diffusing_i] = position
 
@@ -66,16 +66,12 @@ class InMPPlane:
         # Make sure to get nearest images
         pos_1 = atoms.get_positions()[self.plane_i[0]]
         pos_2 = atoms.get_positions()[self.plane_i[1]]
-
         # get Normal Vector
         normal = pos_1 - pos_2
-
         # get Midpoint
         mp = (pos_1 + pos_2) / 2
-
         # get constant
         d = np.dot(normal, mp)
-
         # return constants
         return (normal[0], normal[1], normal[2], d)
 
