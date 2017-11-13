@@ -93,6 +93,46 @@ class InMPPlane:
         perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
         forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
 
+class InMPPlaneXY:
+    def __init__(self, diffusing_i, plane_i, alignment_vector=[0,0,1]):
+        self.diffusing_i = diffusing_i
+        self.plane_i = plane_i
+        self.alignment_vector = alignment_vector
+
+    def get_plane(self, atoms : Atoms):
+        # Make sure to get nearest images
+        pos_1 = atoms.get_positions()[self.plane_i[0]]
+        pos_2 = atoms.get_positions()[self.plane_i[1]]
+        # get Normal Vector
+        bond_vector = pos_1 - pos_2
+        normal = np.cross(self.alignment_vector, (np.cross(bond_vector, self.alignment_vector) / np.linalg.norm(self.alignment_vector))) / np.linalg.norm(self.alignment_vector) # Eq'n from http://www.euclideanspace.com/maths/geometry/elements/plane/lineOnPlane/
+        # get Midpoint
+        mp = (pos_1 + pos_2) / 2
+        # get constant
+        d = np.dot(normal, mp)
+        # return constants
+        return (normal[0], normal[1], normal[2], d)
+
+
+    def adjust_positions(self, atoms : Atoms, newpositions):
+        # get plane
+        atoms.wrap(atoms.get_scaled_positions()[self.diffusing_i])
+        (a, b, c, d) = self.get_plane(atoms) # ax + by + cz = d
+        # Get closest point on plane
+        p = atoms.positions[self.diffusing_i]
+        k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
+        position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
+        newpositions[self.diffusing_i] = position
+
+    def adjust_forces(self, atoms, forces):
+        # get plane
+        (a, b, c, d) = self.get_plane(atoms)
+        normal = np.array([a,b,c]) / np.linalg.norm(np.array([a,b,c]))
+
+        # project forces onto surface normal
+        perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
+        forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
+
 class InvertPlane:
     def __init__(self, diffusing_i, plane_i):
         self.diffusing_i = diffusing_i
