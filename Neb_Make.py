@@ -170,11 +170,11 @@ if __name__ == '__main__':
             shutil.copy(os.path.join(args.initial, f), os.path.join(args.directory, '00', f))
             shutil.copy(os.path.join(args.final, f), os.path.join(args.directory, '01', f))
         shutil.move('00', '0000')
-        shutil.move('01', '1000')
+        shutil.move('01', '9999')
         shutil.copy('0000/POSCAR', 'POSCAR.1')
-        shutil.copy('1000/POSCAR', 'POSCAR.2')
+        shutil.copy('9999/POSCAR', 'POSCAR.2')
         shutil.copy(os.path.join(args.initial, 'vasprun.xml'), '0000')
-        shutil.copy(os.path.join(args.final, 'vasprun.xml'), '1000')
+        shutil.copy(os.path.join(args.final, 'vasprun.xml'), '9999')
         i = Incar.from_file(os.path.join(args.directory, 'INCAR'))
         del i['IMAGES']
         del i['ICHAIN']
