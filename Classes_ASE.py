@@ -120,6 +120,10 @@ class InMPPlaneXY:
         # get constant
         d = np.dot(normal, mp)
         # return constants
+        self.a = normal[0]
+        self.b = normal[1]
+        self.c = normal[2]
+        self.d = d
         return (normal[0], normal[1], normal[2], d)
 
 
