@@ -98,8 +98,17 @@ class InMPPlaneXY:
         self.diffusing_i = diffusing_i
         self.plane_i = plane_i
         self.alignment_vector = alignment_vector
+        self.a = None
+        self.b = None
+        self.c = None
+        self.d = None
+        self.iter = 9999
 
     def get_plane(self, atoms : Atoms):
+        if self.iter < 50:
+            self.iter += 1
+            return (self.a, self.b, self.c, self.d)
+        self.iter = 0
         # Make sure to get nearest images
         pos_1 = atoms.get_positions()[self.plane_i[0]]
         pos_2 = atoms.get_positions()[self.plane_i[1]]
