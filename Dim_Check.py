@@ -38,7 +38,7 @@ def check_dimer(directory, runP=False):
         incar['EDIFFG'] = max(incar['EDIFFG']*1.5, -0.05)
         incar['SYSTEM'] = m + ' ' + incar['SYSTEM']
         incar.pop('ICHAIN')
-        incar['IOPT'] = 4
+        incar['IOPT'] = 7
         if 'AUTO_TIME' in incar:
             incar.pop('AUTO_TIME')
         incar.write_file(os.path.join(dir,'INCAR'))
