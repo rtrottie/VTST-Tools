@@ -2,6 +2,7 @@
 # Not meant to be called from command line
 from ase.calculators.vasp import Vasp
 from ase.calculators.gulp import GULP
+from ase.io import read
 import os
 import numpy as np
 from ase.calculators.calculator import FileIOCalculator
@@ -140,6 +141,48 @@ class InMPPlaneXY:
     def adjust_forces(self, atoms, forces):
         # get plane
         (a, b, c, d) = self.get_plane(atoms)
+        normal = np.array([a,b,c]) / np.linalg.norm(np.array([a,b,c]))
+
+        # project forces onto surface normal
+        perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
+        forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
+
+class InMPPlane_SurfaceReference:
+    def __init__(self, diffusing_i, plane_i, surface_reference):
+        self.diffusing_i = diffusing_i
+        self.plane_i = plane_i
+        surface_reference = read(surface_reference, format='vasp')
+        self.surface_reference = surface_reference
+
+    def get_plane(self):
+        # Make sure to get nearest images
+        atoms = self.surface_reference
+        pos_1 = atoms.get_positions()[self.plane_i[0]]
+        pos_2 = atoms.get_positions()[self.plane_i[1]]
+        # get Normal Vector
+        normal = pos_1 - pos_2
+        # get Midpoint
+        mp = (pos_1 + pos_2) / 2
+        # get constant
+        d = np.dot(normal, mp)
+        # return constants
+        return (normal[0], normal[1], normal[2], d)
+
+
+    def adjust_positions(self, atoms : Atoms, newpositions):
+        # get plane
+        self.surface_reference.wrap(atoms.get_scaled_positions()[self.diffusing_i])
+        (a, b, c, d) = self.get_plane() # ax + by + cz = d
+        # Get closest point on plane
+        p = atoms.positions[self.diffusing_i]
+        k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
+        position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
+        newpositions[self.diffusing_i] = position
+
+    def adjust_forces(self, atoms, forces):
+        # get plane
+        self.surface_reference.wrap(atoms.get_scaled_positions()[self.diffusing_i])
+        (a, b, c, d) = self.get_plane()
         normal = np.array([a,b,c]) / np.linalg.norm(np.array([a,b,c]))
 
         # project forces onto surface normal
