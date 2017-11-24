@@ -304,13 +304,26 @@ def write_input_scell(self, atoms, properties=None, system_changes=None):
     with open(self.prefix + '.gin', 'w') as f:
         f.write(s)
 
-def converged_fmax_as_emax(self, forces=None):
+def converged_fmax_or_emax(self, forces=None):
     try:
         convergedP = abs(self.previous_energy - self.atoms.get_potential_energy()) < (self.fmax / 10000)
         self.previous_energy = self.atoms.get_potential_energy()
-        return convergedP or self.converged(forces)
+        if not convergedP:
+            if forces is None:
+                forces = self.atoms.get_forces()
+            if hasattr(self.atoms, 'get_curvature'):
+                return ((forces ** 2).sum(axis=1).max() < self.fmax ** 2 and
+                        self.atoms.get_curvature() < 0.0)
+            return (forces ** 2).sum(axis=1).max() < self.fmax ** 2
+        return convergedP
     except:
         self.previous_energy = self.atoms.get_potential_energy()
-        return self.converged(forces)
+        if forces is None:
+            forces = self.atoms.get_forces()
+        if hasattr(self.atoms, 'get_curvature'):
+            return ((forces ** 2).sum(axis=1).max() < self.fmax ** 2 and
+                    self.atoms.get_curvature() < 0.0)
+        return (forces ** 2).sum(axis=1).max() < self.fmax ** 2
+
 
 GULP.write_input = write_input_scell
