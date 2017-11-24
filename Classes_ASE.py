@@ -306,11 +306,11 @@ def write_input_scell(self, atoms, properties=None, system_changes=None):
 
 def converged_fmax_as_emax(self, forces=None):
     try:
-        convergedP = abs(self.previous_energy - self.atoms.get_potential_energy()) < self.fmax
+        convergedP = abs(self.previous_energy - self.atoms.get_potential_energy()) < (self.fmax / 10000)
         self.previous_energy = self.atoms.get_potential_energy()
-        return convergedP
+        return convergedP or self.converged(forces)
     except:
         self.previous_energy = self.atoms.get_potential_energy()
-        return False
+        return self.converged(forces)
 
 GULP.write_input = write_input_scell
