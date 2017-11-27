@@ -214,6 +214,8 @@ parser.add_argument('-g', '--gamma', help='force a gamma point run',
                     action='store_true')
 parser.add_argument('-m', '--multi-step', help='Vasp will execute multipe runs based on specified CONVERGENCE file',
                     type=str)
+parser.add_argument('--init', help='Vasp will initialize multipe runs based on specified CONVERGENCE file',
+                    action='store_true')
 parser.add_argument('-e', '--encut', help='find ENCUT that will converge to within specified eV/atom for 50 ENCUT',
                     type=float)
 parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to within specified eV/atom',
@@ -337,6 +339,8 @@ if __name__ == '__main__':
     special = None
     if args.multi_step != None:
         additional_keywords['CONVERGENCE'] = args.multi_step
+        if args.init:
+            subprocess.call(['Upgrade_Run.py', '-i', args.multi_step])
         special = 'multi'
     elif args.encut:
         additional_keywords['target'] = args.encut
