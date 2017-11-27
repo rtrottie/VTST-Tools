@@ -4,6 +4,7 @@ from custodian.vasp.jobs import *
 from custodian.vasp.handlers import *
 from monty.os.path import which
 from pymatgen.io.vasp.inputs import *
+from pymatgen.io.vasp.outputs import Vasprun
 import Dim_Check
 from pymatgen.core import Structure, PeriodicSite
 import numpy as np
@@ -63,7 +64,7 @@ class DimerCheckMins(ErrorHandler):
     def check(self):
         try:
             v = Vasprun(self.output_filename)
-            if v.converged and len(v.ionic_steps) <= 5:
+            if v.converged and len(v.ionic_steps) <= 10:
                 Dim_Check.check_dimer(os.path.abspath('.'), True)
                 return False
         except:
