@@ -217,13 +217,13 @@ parser.add_argument('-m', '--multi-step', help='Vasp will execute multipe runs b
 parser.add_argument('--init', help='Vasp will initialize multipe runs based on specified CONVERGENCE file',
                     action='store_true')
 parser.add_argument('-e', '--encut', help='find ENCUT that will converge to within specified eV/atom for 50 ENCUT',
-                    type=float)
+                    type=float, default=0.0001, nargs='?')
 parser.add_argument('-k', '--kpoints', help='find Kpoints that will converge to within specified eV/atom',
-                    type=float)
+                    type=float, default=0.0001, nargs='?')
 parser.add_argument('--ts', help='find ts along path specified in MEP.xml (from vasprun.xml)',
                     action='store_true')
 parser.add_argument('--find_max', help='find max from POSCAR.1 to POSCAR.2',
-                    type=float)
+                    type=float, default=0.01, nargs='?')
 parser.add_argument('--diffusion', help='Do diffusion optimized run',
                     action='store_true')
 parser.add_argument('--pc', help='Do plane constrained run',
