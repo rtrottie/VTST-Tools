@@ -63,6 +63,8 @@ def get_energy(i, structure):
             vasprun = Vasprun(os.path.join(folder, dir, 'vasprun.xml'))
             if vasprun.converged:
                 pass
+            else:
+                raise Exception('Not Converged')
         except:
             os.makedirs(os.path.join(folder, dir), exist_ok=True)
             shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
