@@ -81,7 +81,7 @@ def get_energy(i, structure):
                 vasp = '{{ vasp_gamma }}'
             else:
                 vasp = '{{ vasp_kpts }}'
-            j = StandardJob([os.environ['VASP_MPI'], '-np', os.environ['$PBS_NP'], vasp], 'vasp.log', auto_npar=False, final=True, settings_override=settings)
+            j = StandardJob([os.environ['VASP_MPI'], '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, final=True, settings_override=settings)
             c = Custodian(handlers, [j], max_errors=10)
             c.run()
             os.chdir(cwd)
