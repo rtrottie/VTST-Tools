@@ -68,8 +68,9 @@ def get_energy(i, structure):
                 raise Exception('Not Converged')
         except:
             os.makedirs(os.path.join(folder, dir), exist_ok=True)
-            shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
-            shutil.copy(os.path.join(dir_i, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
+            if not os.path.exists(os.path.join(folder, dir, 'WAVECAR')):
+                shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
+                shutil.copy(os.path.join(dir_i, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
             shutil.copy('INCAR', os.path.join(folder, dir, 'INCAR'))
             shutil.copy('KPOINTS', os.path.join(folder, dir, 'KPOINTS'))
             shutil.copy('POTCAR', os.path.join(folder, dir, 'POTCAR'))
