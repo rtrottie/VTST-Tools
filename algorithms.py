@@ -8,6 +8,7 @@ from Neb_Make import nebmake
 
 def get_energy(i, structure):
     cwd = os.path.abspath('.')
+    handlers = []
     settings = [
         {'dict': 'INCAR',
          'action': {'_set': {'NSW': 0,
