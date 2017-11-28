@@ -78,9 +78,9 @@ def get_energy(i, structure):
             Poscar(structure).write_file('POSCAR')
             incar = Incar.from_file('INCAR')
             if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
-                vasp = '{{ vasp_gamma }}'
+                vasp = os.environ['VASP_GAMMA']
             else:
-                vasp = '{{ vasp_kpts }}'
+                vasp = os.environ['VASP_KPTS']
             j = StandardJob([os.environ['VASP_MPI'], '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, final=True, settings_override=settings)
             c = Custodian(handlers, [j], max_errors=10)
             c.run()
