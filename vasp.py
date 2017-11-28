@@ -357,6 +357,7 @@ if __name__ == '__main__':
         special = 'pc'
     elif args.find_max:
         special = 'find_max'
+        additional_keywords['target'] = args.find_max
 
 
 
