@@ -6,7 +6,7 @@ import shutil
 import logging
 from Neb_Make import nebmake
 
-def get_energy(i, structure):
+def get_energy(i, structure : Structure):
     cwd = os.path.abspath('.')
     handlers = []
     settings = [
@@ -19,6 +19,7 @@ def get_energy(i, structure):
     ]
     folder = os.path.join(cwd, str(i).zfill(4))
     if os.path.exists(folder):
+        Poscar(structure).write_file(os.path.join(folder, 'POSCAR'))
         try:
             vasprun_above = Vasprun(os.path.join(folder, 'above', 'vasprun.xml'))
             vasprun_below = Vasprun(os.path.join(folder, 'below', 'vasprun.xml'))
