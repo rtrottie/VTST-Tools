@@ -30,7 +30,7 @@ def get_energy(i, structure):
             try:
                 vasprun = Vasprun(os.path.join(folder, 'vasprun.xml'))
                 if vasprun.converged:
-                    return vasprun
+                    return vasprun.final_energy
             except:
                 pass
     else:
