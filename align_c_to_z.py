@@ -5,7 +5,7 @@ from pymatgen.core.operations import *
 import numpy as np
 
 p = Poscar.from_file('POSCAR')
-struc = p.structure
+s = p.structure
 
 a = struc.lattice.matrix[2] / np.linalg.norm(struc.lattice.matrix[2])
 

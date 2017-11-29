@@ -32,7 +32,7 @@ def get_energy(i, structure : Structure):
                 vasprun = Vasprun(os.path.join(folder, 'vasprun.xml'))
                 if vasprun.converged:
                     with open(os.path.join(folder, 'energy.txt'), 'w') as f:
-                        f.write(str(min(vasprun_above.final_energy, vasprun_below.final_energy)))
+                        f.write(str(vasprun.final_energy))
                     return vasprun.final_energy
             except:
                 pass
