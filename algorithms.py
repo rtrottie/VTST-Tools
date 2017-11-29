@@ -69,8 +69,20 @@ def get_energy(i, structure):
         except:
             os.makedirs(os.path.join(folder, dir), exist_ok=True)
             if not os.path.exists(os.path.join(folder, dir, 'WAVECAR')):
-                shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
-                shutil.copy(os.path.join(dir_i, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
+                try:
+                    shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
+                    shutil.copy(os.path.join(dir_i, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
+                except:
+                    vasprun_above = Vasprun(os.path.join(dir_i, 'above', 'vasprun.xml'))
+                    vasprun_below = Vasprun(os.path.join(dir_i, 'below', 'vasprun.xml'))
+                    if vasprun_above.final_energy < vasprun_below.final_energy:
+                        lowest_dir = 'above'
+                    else:
+                        lowest_dir = 'below'
+                    shutil.copy(os.path.join(dir_i, lowest_dir, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
+                    shutil.copy(os.path.join(dir_i, lowest_dir, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
+
+
             shutil.copy('INCAR', os.path.join(folder, dir, 'INCAR'))
             shutil.copy('KPOINTS', os.path.join(folder, dir, 'KPOINTS'))
             shutil.copy('POTCAR', os.path.join(folder, dir, 'POTCAR'))
