@@ -105,9 +105,6 @@ def get_energy(i, structure : Structure):
 
 def get_ts(low, mp, high, target=0.01):
     logging.info('Finding Max from locations : {} {} {}'.format(low, mp, high))
-    if mp == low or mp == high:
-        logging.info('Found Max at : {} with E= {:.10}'.format(mp, ))
-        return mp
 
     start_struct = Structure.from_file(os.path.join(str(low).zfill(4), 'POSCAR'))
     final_struct = Structure.from_file(os.path.join(str(high).zfill(4), 'POSCAR'))
@@ -120,9 +117,12 @@ def get_ts(low, mp, high, target=0.01):
     high_e = get_energy(high, final_struct)
     logging.info('Converging Midpoint')
     mp_e = get_energy(mp, mp_struct)
+    if mp == low or mp == high:
+        logging.info('Found Max at : {} with E= {:.10}'.format(mp, mp_e))
+        return mp
 
     if abs(mp_e - high_e) < target and abs(mp_e - low_e) < target:
-        logging.info('Found Max at : {} with E= {:.10}'.format(mp, ))
+        logging.info('Found Max at : {} with E= {:.10}'.format(mp, mp_e))
         return mp
     q1_struct = nebmake('.', start_struct, mp_struct, 2, write=False)[1]
     q3_struct = nebmake('.', mp_struct, final_struct, 2, write=False)[1]
