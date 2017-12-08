@@ -14,6 +14,9 @@ class StandardVasp(Vasp):
         atoms.write(os.path.join(directory, 'POSCAR'))
 
 class InPlane:
+    '''
+    Keeps Atoms in Plane between 3 atoms
+    '''
     def __init__(self, diffusing_i, plane_i):
         self.diffusing_i = diffusing_i
         self.plane_i = plane_i
@@ -38,6 +41,39 @@ class InPlane:
         k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
         position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
         newpositions[self.diffusing_i] = position
+
+    class LockedTo3AtomPlane:
+        '''
+        Keeps Atoms in Plane between 3 atoms.  Keeps atom in same parrallel plane it starts in
+        '''
+
+        def __init__(self, diffusing_i, plane_i):
+            self.diffusing_i = diffusing_i
+            self.plane_i = plane_i
+            self.orig_point = None
+
+        def adjust_positions(self, oldpositions, newpositions):
+            # get Normal Vector
+            p1 = newpositions[self.plane_i[0]]  # type: np.array
+            p2 = newpositions[self.plane_i[1]]  # type: np.array
+            p3 = newpositions[self.plane_i[2]]  # type: np.array
+            v1 = p2 - p1
+            v2 = p3 - p1
+
+            # Get equation of plane ax+by+cz+d = 0
+            normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1, v2))
+            p = newpositions[self.diffusing_i]
+            if not self.orig_point:
+                self.orig_point = p
+            d = np.dot(normal, self.orig_point)
+            a = normal[0]
+            b = normal[1]
+            c = normal[2]
+
+            # Get closest point on plane
+            k = (a * p[0] + b * p[1] + c * p[2] - d) / (a ** 2 + b ** 2 + c ** 2)  # distance between point and plane
+            position = [p[0] - k * a, p[1] - k * b, p[2] - k * c]
+            newpositions[self.diffusing_i] = position
 
     def adjust_forces(self, atoms, forces):
         # get Normal Vector
