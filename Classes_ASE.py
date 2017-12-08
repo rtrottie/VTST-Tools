@@ -42,47 +42,64 @@ class InPlane:
         position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
         newpositions[self.diffusing_i] = position
 
-    class LockedTo3AtomPlane:
-        '''
-        Keeps Atoms in Plane between 3 atoms.  Keeps atom in same parrallel plane it starts in
-        '''
+    def adjust_forces(self, atoms, forces):
+        # get Normal Vector
+        p1 = atoms.positions[self.plane_i[0]] # type: np.array
+        p2 = atoms.positions[self.plane_i[1]] # type: np.array
+        p3 = atoms.positions[self.plane_i[2]] # type: np.array
 
-        def __init__(self, diffusing_i, plane_i):
-            self.diffusing_i = diffusing_i
-            self.plane_i = plane_i
-            self.displacement = None
+        # Find vectors in plane
+        v1 = p2 - p1
+        v2 = p3 - p1
 
-        def adjust_positions(self, oldpositions, newpositions):
-            # get Normal Vector
-            p1 = newpositions[self.plane_i[0]]  # type: np.array
-            p2 = newpositions[self.plane_i[1]]  # type: np.array
-            p3 = newpositions[self.plane_i[2]]  # type: np.array
-            v1 = p2 - p1
-            v2 = p3 - p1
+        # find unit vector normal to vectors in plane
+        normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1,v2))
 
-            # Get equation of plane ax+by+cz+d = 0
-            normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1, v2))
-            p = newpositions[self.diffusing_i]
-            if not self.orig_point:
-                self.orig_point = p
-            d = np.dot(normal, self.orig_point)
-            a = normal[0]
-            b = normal[1]
-            c = normal[2]
+        # project forces onto surface normal
+        perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
+        forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
 
-            # Get closest point on plane
-            k = (a * p[0] + b * p[1] + c * p[2] - d) / (a ** 2 + b ** 2 + c ** 2)  # distance between point and plane
-            if type(self.displacement) != float:
-                p0 = oldpositions[self.diffusing_i]
-                k0 = (a * p0[0] + b * p0[1] + c * p0[2] - d) / (a ** 2 + b ** 2 + c ** 2)  # distance between point and plane
-                from Classes_Pymatgen import Incar
-                i = Incar.from_file('INCAR')
-                i['CONTINUE_3PT'] = k
-                i.write_file('INCAR')
-                self.displacement = k0
-            k = k - self.displacement
-            position = [p[0] - k * a, p[1] - k * b, p[2] - k * c]
-            newpositions[self.diffusing_i] = position
+ class LockedTo3AtomPlane:
+    '''
+    Keeps Atoms in Plane between 3 atoms.  Keeps atom in same parrallel plane it starts in
+    '''
+
+    def __init__(self, diffusing_i, plane_i):
+        self.diffusing_i = diffusing_i
+        self.plane_i = plane_i
+        self.displacement = None
+
+    def adjust_positions(self, oldpositions, newpositions):
+        # get Normal Vector
+        p1 = newpositions[self.plane_i[0]]  # type: np.array
+        p2 = newpositions[self.plane_i[1]]  # type: np.array
+        p3 = newpositions[self.plane_i[2]]  # type: np.array
+        v1 = p2 - p1
+        v2 = p3 - p1
+
+        # Get equation of plane ax+by+cz+d = 0
+        normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1, v2))
+        p = newpositions[self.diffusing_i]
+        if not self.orig_point:
+            self.orig_point = p
+        d = np.dot(normal, self.orig_point)
+        a = normal[0]
+        b = normal[1]
+        c = normal[2]
+
+        # Get closest point on plane
+        k = (a * p[0] + b * p[1] + c * p[2] - d) / (a ** 2 + b ** 2 + c ** 2)  # distance between point and plane
+        if type(self.displacement) != float:
+            p0 = oldpositions[self.diffusing_i]
+            k0 = (a * p0[0] + b * p0[1] + c * p0[2] - d) / (a ** 2 + b ** 2 + c ** 2)  # distance between point and plane
+            from Classes_Pymatgen import Incar
+            i = Incar.from_file('INCAR')
+            i['CONTINUE_3PT'] = k
+            i.write_file('INCAR')
+            self.displacement = k0
+        k = k - self.displacement
+        position = [p[0] - k * a, p[1] - k * b, p[2] - k * c]
+        newpositions[self.diffusing_i] = position
 
     def adjust_forces(self, atoms, forces):
         # get Normal Vector
