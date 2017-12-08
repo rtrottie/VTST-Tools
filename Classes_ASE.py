@@ -50,7 +50,7 @@ class InPlane:
         def __init__(self, diffusing_i, plane_i):
             self.diffusing_i = diffusing_i
             self.plane_i = plane_i
-            self.orig_point = None
+            self.displacement = None
 
         def adjust_positions(self, oldpositions, newpositions):
             # get Normal Vector
@@ -72,6 +72,15 @@ class InPlane:
 
             # Get closest point on plane
             k = (a * p[0] + b * p[1] + c * p[2] - d) / (a ** 2 + b ** 2 + c ** 2)  # distance between point and plane
+            if type(self.displacement) != float:
+                p0 = oldpositions[self.diffusing_i]
+                k0 = (a * p0[0] + b * p0[1] + c * p0[2] - d) / (a ** 2 + b ** 2 + c ** 2)  # distance between point and plane
+                from Classes_Pymatgen import Incar
+                i = Incar.from_file('INCAR')
+                i['CONTINUE_3PT'] = k
+                i.write_file('INCAR')
+                self.displacement = k0
+            k = k - self.displacement
             position = [p[0] - k * a, p[1] - k * b, p[2] - k * c]
             newpositions[self.diffusing_i] = position
 
