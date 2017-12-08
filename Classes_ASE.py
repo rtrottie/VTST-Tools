@@ -59,7 +59,7 @@ class InPlane:
         perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
         forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
 
- class LockedTo3AtomPlane:
+class LockedTo3AtomPlane:
     '''
     Keeps Atoms in Plane between 3 atoms.  Keeps atom in same parrallel plane it starts in
     '''
