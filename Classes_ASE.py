@@ -27,11 +27,11 @@ class InPlane:
         v2 = p3 - p1
 
         # Get equation of plane ax+by+cz+d = 0
-        normal = np.cross(v1, v2)
-        a = normal[0]
-        b = normal[1]
-        c = normal[2]
-        d = (a*p1[0] + b*p1[1] + c*p1[2])
+        normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1,v2))
+        d = np.dot(normal, p1)
+        a=normal[0]
+        b=normal[1]
+        c=normal[2]
 
         # Get closest point on plane
         p = newpositions[self.diffusing_i]
