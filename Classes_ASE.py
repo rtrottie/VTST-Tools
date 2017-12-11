@@ -21,8 +21,9 @@ class InPlane:
         self.diffusing_i = diffusing_i
         self.plane_i = plane_i
 
-    def adjust_positions(self, oldpositions, newpositions):
+    def adjust_positions(self, atoms : Atoms, newpositions):
         # get Normal Vector
+        atoms.wrap(atoms.get_scaled_positions()[self.diffusing_i])
         p1 = newpositions[self.plane_i[0]] # type: np.array
         p2 = newpositions[self.plane_i[1]] # type: np.array
         p3 = newpositions[self.plane_i[2]] # type: np.array
