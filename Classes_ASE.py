@@ -71,7 +71,7 @@ class LockedTo3AtomPlane:
         self.displacement = None
         self.orig_point = None
 
-    def adjust_positions(self, oldpositions, newpositions):
+    def adjust_positions(self, atoms : Atoms, newpositions):
         # get Normal Vector
         p1 = newpositions[self.plane_i[0]]  # type: np.array
         p2 = newpositions[self.plane_i[1]]  # type: np.array
@@ -91,15 +91,6 @@ class LockedTo3AtomPlane:
 
         # Get closest point on plane
         k = (a * p[0] + b * p[1] + c * p[2] - d) / (a ** 2 + b ** 2 + c ** 2)  # distance between point and plane
-        if type(self.displacement) != float:
-            p0 = oldpositions[self.diffusing_i]
-            k0 = (a * p0[0] + b * p0[1] + c * p0[2] - d) / (a ** 2 + b ** 2 + c ** 2)  # distance between point and plane
-            from Classes_Pymatgen import Incar
-            i = Incar.from_file('INCAR')
-            i['CONTINUE_3PT'] = k
-            i.write_file('INCAR')
-            self.displacement = k0
-        k = k - self.displacement
         position = [p[0] - k * a, p[1] - k * b, p[2] - k * c]
         newpositions[self.diffusing_i] = position
 
