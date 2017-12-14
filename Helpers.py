@@ -27,6 +27,17 @@ import tempfile
 #         pmg_structure = Poscar.from_file(f.name).structure
 #     return pmg_structure
 
+def get_FERE_chemical_potential(structure : Structure):
+    fere = {'Fe' : -6.15,
+            'Al' : -3.02,
+            'O'  : -4.73
+            }
+    chem_pot = 0
+    for a in structure: #type: PeriodicSite
+        chem_pot += fere[str(a.specie)]
+    return chem_pot
+
+
 def pmg_to_pyl(poscar : Poscar):
     from pylada.crystal import read, write
     import pylada.crystal

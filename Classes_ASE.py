@@ -69,6 +69,7 @@ class LockedTo3AtomPlane:
         self.diffusing_i = diffusing_i
         self.plane_i = plane_i
         self.displacement = None
+        self.orig_point = None
 
     def adjust_positions(self, oldpositions, newpositions):
         # get Normal Vector
