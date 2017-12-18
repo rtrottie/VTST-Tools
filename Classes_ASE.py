@@ -82,7 +82,7 @@ class LockedTo3AtomPlane:
         # Get equation of plane ax+by+cz+d = 0
         normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1, v2))
         p = newpositions[self.diffusing_i]
-        if type(self.orig_point) is None :
+        if self.orig_point is None:
             self.orig_point = p
         d = np.dot(normal, self.orig_point)
         a = normal[0]
