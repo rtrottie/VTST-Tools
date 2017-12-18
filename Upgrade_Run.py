@@ -208,12 +208,12 @@ if __name__ == '__main__':
                 else:
                     err_msg = err_msg + 'INCAR :  N/A'
             cont = input(err_msg + '\n  Continue? (1/0 = yes/no):  ')
-            if cont == 1:
+            if cont == '1':
                 run.incar = incar
             else:
                 if args.execute_vasp:
                     cont = input('Run vasp anyway? (1/0 = yes/no)')
-                    if cont == 1:
+                    if cont == '1':
                         os.system('vasp.py '+ args.f.replace('+', '-'))
                 sys.exit('Run will not be updated')
     elif prev_stage != None and not args.convergence_ignore:
