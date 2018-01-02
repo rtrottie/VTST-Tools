@@ -65,11 +65,10 @@ class LockedTo3AtomPlane:
     Keeps Atoms in Plane between 3 atoms.  Keeps atom in same parrallel plane it starts in
     '''
 
-    def __init__(self, diffusing_i, plane_i):
+    def __init__(self, diffusing_i, plane_i, orig_point):
         self.diffusing_i = diffusing_i
         self.plane_i = plane_i
-        self.displacement = None
-        self.orig_point = None
+        self.orig_point = orig_point
 
     def adjust_positions(self, atoms : Atoms, newpositions):
         # get Normal Vector
@@ -82,8 +81,6 @@ class LockedTo3AtomPlane:
         # Get equation of plane ax+by+cz+d = 0
         normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1, v2))
         p = newpositions[self.diffusing_i]
-        if self.orig_point is None:
-            self.orig_point = p
         d = np.dot(normal, self.orig_point)
         a = normal[0]
         b = normal[1]
