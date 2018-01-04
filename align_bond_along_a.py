@@ -75,7 +75,8 @@ if __name__ == '__main__':
                         type=str)
     parser.add_argument('atoms', help='Bonded atoms to align along Vector A',
                         type=int, nargs=2)
-    parser.add_argument('-o', '--output', help='Output file (Default aligned.vasp)')
+    parser.add_argument('-o', '--output', help='Output file (Default aligned.vasp)',
+                        default='aligned.vasp')
     args = parser.parse_args()
 
     structure = Poscar.from_file(args.structure).structure
