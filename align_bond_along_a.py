@@ -81,5 +81,5 @@ if __name__ == '__main__':
 
     structure = Poscar.from_file(args.structure).structure
     vector = structure[args.atoms[0]].coords - structure[args.atoms[1]].coords
-    align_a_to_vector(structure, vector)
+    structure = align_a_to_vector(structure, vector)
     Poscar(structure).write_file(args.output)
