@@ -76,8 +76,8 @@ if __name__ == '__main__':
                         type=float, default=4)
     parser.add_argument('--input', help='input POSCAR file (default = "POSCAR")',
                         default='POSCAR')
-    parser.add_argument('--output', help='output POSCAR file (default = "POSCAR.sd")',
-                        default='POSCAR.sd')
+    parser.add_argument('--output', help='output POSCAR file (default = "POSCAR.sd.vasp")',
+                        default='POSCAR.sd.vasp')
     parser.add_argument('-u', '--undo', help='Read selective_dynamics file and undo frozen atoms',
                         action='store_true')
     parser.add_argument('-i', '--invert', help='freeze atoms around index, instead of leaving radius available to move',
