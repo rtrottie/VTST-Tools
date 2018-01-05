@@ -46,7 +46,7 @@ def freeze_atoms_except_neighbors(input : str, atom : int, output : str, invert=
     poscar.write_file(output)
     return
 
-def unfreeze_atoms(directory, sd_file='.selective_dynamics'):
+def unfreeze_atoms(input, sd_file='.selective_dynamics'):
     '''
     Unfreeze atoms in given directory
     :param directory:
@@ -59,9 +59,9 @@ def unfreeze_atoms(directory, sd_file='.selective_dynamics'):
     with open(sd_file) as f:
         sd = [['True' in x] * 3 for x in f.read().split('],')]
 
-    poscar = Poscar.from_file(os.path.join(directory, 'POSCAR')) # type: Poscar
+    poscar = Poscar.from_file(input) # type: Poscar
     poscar.selective_dynamics = sd
-    poscar.write_file('POSCAR')
+    poscar.write_file(input)
     return
 
 
@@ -86,6 +86,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.undo:
-        unfreeze_atoms(args.directory, sd_file=args.sd)
+        unfreeze_atoms(args.input, sd_file=args.sd)
     else:
         freeze_atoms_except_neighbors(args.input, args.output, args.atom, args.invert, args.radius)
