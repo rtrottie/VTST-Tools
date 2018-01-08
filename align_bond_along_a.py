@@ -74,7 +74,7 @@ if __name__ == '__main__':
     parser.add_argument('structure', help='Structure to Rotate',
                         type=str)
     parser.add_argument('atoms', help='Atoms to align along Vector A',
-                        type=int, nargs='?')
+                        type=int, nargs='*')
     parser.add_argument('-o', '--output', help='Output file (Default aligned.vasp)',
                         default='aligned.vasp')
     parser.add_argument('-m', '--modecar', help='get vector from modecar (provide single atom)')
