@@ -73,13 +73,18 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('structure', help='Structure to Rotate',
                         type=str)
-    parser.add_argument('atoms', help='Bonded atoms to align along Vector A',
-                        type=int, nargs=2)
+    parser.add_argument('atoms', help='Atoms to align along Vector A',
+                        type=int, nargs='?')
     parser.add_argument('-o', '--output', help='Output file (Default aligned.vasp)',
                         default='aligned.vasp')
+    parser.add_argument('-m', '--modecar', help='get vector from modecar (provide single atom)')
     args = parser.parse_args()
 
     structure = Poscar.from_file(args.structure).structure
-    vector = structure[args.atoms[0]].coords - structure[args.atoms[1]].coords
+    if args.modecar:
+        with open(args.modecar) as modecar:
+            vector = np.array([ float(x) for x in modecar.readlines()[args.atoms[0]].split() ] )
+    else:
+        vector = structure[args.atoms[0]].coords - structure[args.atoms[1]].coords
     structure = set_vector_as_boundary(structure, vector)
     Poscar(structure).write_file(args.output)
