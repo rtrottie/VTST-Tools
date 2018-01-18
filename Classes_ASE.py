@@ -14,6 +14,7 @@ class StandardVasp(Vasp):
         self.read(atoms)
         self.atoms = atoms.copy()
     def initialize(self, atoms):
+        self.resort = list(range(len(atoms)))
         return
     def write_input(self, atoms : Atoms, directory='./'):
         atoms.write(os.path.join(directory, 'POSCAR'))
