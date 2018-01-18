@@ -10,6 +10,8 @@ from ase.geometry import wrap_positions
 from ase import Atoms
 
 class StandardVasp(Vasp):
+    def initialize(self, atoms):
+        return
     def write_input(self, atoms : Atoms, directory='./'):
         atoms.write(os.path.join(directory, 'POSCAR'))
 
