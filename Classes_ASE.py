@@ -10,8 +10,6 @@ from ase.geometry import wrap_positions
 from ase import Atoms
 
 class StandardVasp(Vasp):
-    def update(self, atoms):
-        return
     def set_results(self, atoms):
         self.atoms = atoms.copy()
     def write_input(self, atoms : Atoms, directory='./'):
