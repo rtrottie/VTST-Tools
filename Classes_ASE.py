@@ -11,8 +11,8 @@ from ase import Atoms
 
 class StandardVasp(Vasp):
     def set_results(self, atoms):
-        self.read(atoms)
-        self.atoms = atoms.copy()
+        self.spinpol = False
+        return super().set_results(atoms)
     def initialize(self, atoms):
         self.resort = list(range(len(atoms)))
         return
