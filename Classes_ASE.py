@@ -11,6 +11,7 @@ from ase import Atoms
 
 class StandardVasp(Vasp):
     def set_results(self, atoms):
+        self.read(atoms)
         self.atoms = atoms.copy()
     def initialize(self, atoms):
         return
