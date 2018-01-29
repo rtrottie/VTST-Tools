@@ -3,7 +3,10 @@
 from ase.calculators.vasp import Vasp
 from ase.calculators.gulp import GULP
 from ase.io import read
+from ase.vibrations import Vibrations
+from copy import copy
 import os
+import shutil
 import numpy as np
 from ase.calculators.calculator import FileIOCalculator
 from ase.geometry import wrap_positions
@@ -383,5 +386,17 @@ def converged_fmax_or_emax(self, forces=None):
                     self.atoms.get_curvature() < 0.0)
         return (forces ** 2).sum(axis=1).max() < self.fmax ** 2
 
+class Vibration_Initializer(Vibrations):
+    def setup(self):
+        for filename, a, i, disp in self.displacements():
+            dirname = copy(filename) # type: str
+            dirname.replace('+', 'p')
+            dirname.replace('-', 'm')
+            atoms = self.atoms.copy() # type: Atoms
+            atoms.positions[a, i] = atoms.positions[a, i] + disp
+            os.makedirs(dirname, exist_ok=True)
+            atoms.write(os.path.join(dirname, 'POSCAR'))
+            for f in ['INCAR', 'KPOINTS', 'POTCAR', 'WAVECAR', 'CHG', 'CHGCAR']:
+                shutil.copy(f, os.path.join(dirname,f))
 
 GULP.write_input = write_input_scell
