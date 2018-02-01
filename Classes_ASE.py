@@ -69,7 +69,7 @@ class InPlane:
         perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
         forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
 
-class LockedTo3AtomPlane:
+class LockedTo3AtomPlane(InPlane):
     '''
     Keeps Atoms in Plane between 3 atoms.  Keeps atom in same parrallel plane it starts in
     '''
@@ -81,6 +81,7 @@ class LockedTo3AtomPlane:
 
     def adjust_positions(self, atoms : Atoms, newpositions):
         # get Normal Vector
+        print(newpositions)
         p1 = newpositions[self.plane_i[0]]  # type: np.array
         p2 = newpositions[self.plane_i[1]]  # type: np.array
         p3 = newpositions[self.plane_i[2]]  # type: np.array
@@ -100,22 +101,6 @@ class LockedTo3AtomPlane:
         position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
         newpositions[self.diffusing_i] = position
 
-    def adjust_forces(self, atoms, forces):
-        # get Normal Vector
-        p1 = atoms.positions[self.plane_i[0]] # type: np.array
-        p2 = atoms.positions[self.plane_i[1]] # type: np.array
-        p3 = atoms.positions[self.plane_i[2]] # type: np.array
-
-        # Find vectors in plane
-        v1 = p2 - p1
-        v2 = p3 - p1
-
-        # find unit vector normal to vectors in plane
-        normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1,v2))
-
-        # project forces onto surface normal
-        perp_projection = np.dot(normal, forces[self.diffusing_i] ) * normal
-        forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
 
 class InMPPlane:
     def __init__(self, diffusing_i, plane_i):
