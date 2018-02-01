@@ -89,15 +89,15 @@ class LockedTo3AtomPlane:
 
         # Get equation of plane ax+by+cz+d = 0
         normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1, v2))
-        p = newpositions[self.diffusing_i]
         d = np.dot(normal, self.orig_point)
         a = normal[0]
         b = normal[1]
         c = normal[2]
 
         # Get closest point on plane
-        k = (a * p[0] + b * p[1] + c * p[2] - d) / (a ** 2 + b ** 2 + c ** 2)  # distance between point and plane
-        position = [p[0] - k * a, p[1] - k * b, p[2] - k * c]
+        p = newpositions[self.diffusing_i]
+        k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
+        position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
         newpositions[self.diffusing_i] = position
 
     def adjust_forces(self, atoms, forces):
