@@ -81,7 +81,6 @@ class LockedTo3AtomPlane(InPlane):
 
     def adjust_positions(self, atoms : Atoms, newpositions):
         # get Normal Vector
-        print(newpositions)
         p1 = newpositions[self.plane_i[0]]  # type: np.array
         p2 = newpositions[self.plane_i[1]]  # type: np.array
         p3 = newpositions[self.plane_i[2]]  # type: np.array
