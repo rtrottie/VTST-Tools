@@ -254,6 +254,34 @@ if __name__ == '__main__':
         print('Setting up next run')
         restart_vasp('.')
     print('Determining settings for run')
+
+    # What kind of run.  load correct template
+    additional_keywords = {}
+    special = None
+    if args.multi_step != None:
+        additional_keywords['CONVERGENCE'] = args.multi_step
+        if args.init:
+            subprocess.call(['Upgrade_Run.py', '-i', args.multi_step])
+            incar = Incar.from_file('INCAR')
+        special = 'multi'
+    elif args.encut:
+        additional_keywords['target'] = args.encut
+        special = 'encut'
+    elif args.kpoints:
+        additional_keywords['target'] = args.kpoints
+        special = 'kpoints'
+    elif args.ts:
+        additional_keywords['target'] = args.ts
+        special = 'hse_ts'
+    elif args.diffusion:
+        special = 'diffusion'
+    elif args.pc:
+        special = 'pc'
+    elif args.find_max:
+        special = 'find_max'
+        additional_keywords['target'] = args.find_max
+
+    # Set Time
     if args.time == 0:
         if 'AUTO_TIME' in incar:
             time = int(incar["AUTO_TIME"])
@@ -263,6 +291,8 @@ if __name__ == '__main__':
             time = 20
     else:
         time = args.time
+
+    # Find number of Nodes
     if args.nodes == 0:
         if 'AUTO_NODES' in incar:
             nodes = incar['AUTO_NODES']
@@ -275,6 +305,7 @@ if __name__ == '__main__':
     else:
         nodes = args.nodes
 
+    # Set Name
     if args.name:
         name = args.name
     elif 'SYSTEM' in incar:
@@ -284,11 +315,13 @@ if __name__ == '__main__':
     elif 'system' in incar:
         name = incar['system'].strip().replace(' ', '_')
 
+    # Set Memory
     if 'AUTO_MEM' in incar:
         mem = incar['AUTO_MEM']
     else:
         mem = 0
 
+    # What version of VASP to run
     if args.gamma:
         vasp_kpts = os.environ["VASP_GAMMA"]
     elif 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
@@ -298,7 +331,7 @@ if __name__ == '__main__':
     else:
         vasp_kpts = os.environ["VASP_KPTS"]
 
-
+    # Get number of cores
     if args.cores:
         cores = args.cores
     elif 'AUTO_CORES' in incar:
@@ -308,6 +341,7 @@ if __name__ == '__main__':
     else:
         cores = int(os.environ["VASP_NCORE"])
 
+    # Set Allocation
     if 'AUTO_ALLOCATION' in incar:
         account = incar['AUTO_ALLOCATION']
     elif 'VASP_DEFAULT_ALLOCATION' in os.environ:
@@ -335,29 +369,6 @@ if __name__ == '__main__':
     else:
         queue = get_queue(computer, jobtype, time, nodes)
 
-    additional_keywords = {}
-    special = None
-    if args.multi_step != None:
-        additional_keywords['CONVERGENCE'] = args.multi_step
-        if args.init:
-            subprocess.call(['Upgrade_Run.py', '-i', args.multi_step])
-        special = 'multi'
-    elif args.encut:
-        additional_keywords['target'] = args.encut
-        special = 'encut'
-    elif args.kpoints:
-        additional_keywords['target'] = args.kpoints
-        special = 'kpoints'
-    elif args.ts:
-        additional_keywords['target'] = args.ts
-        special = 'hse_ts'
-    elif args.diffusion:
-        special = 'diffusion'
-    elif args.pc:
-        special = 'pc'
-    elif args.find_max:
-        special = 'find_max'
-        additional_keywords['target'] = args.find_max
 
 
 
