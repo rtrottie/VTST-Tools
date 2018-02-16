@@ -50,6 +50,7 @@ def pmg_to_pyl_poscar(poscar : Poscar):
 
 def pmg_to_pyl(pmg : Structure):
     from pylada.crystal import Structure as Pyl_Structure
+    from pylada.crystal import Atom
     pyl = Pyl_Structure(pmg.lattice.matrix)
     for i in range(len(pmg)):
         if pmg.site_properties:
