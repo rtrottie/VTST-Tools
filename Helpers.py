@@ -12,6 +12,7 @@ import shutil
 from Classes_Pymatgen import *
 from functools import reduce
 import tempfile
+from math import ceil
 
 # def pmg_to_ase(pmg_structure : Structure):
 #     from ase.io import read
@@ -38,12 +39,27 @@ def get_FERE_chemical_potential(structure : Structure):
     return chem_pot
 
 
-def pmg_to_pyl(poscar : Poscar):
+
+def pmg_to_pyl_poscar(poscar : Poscar):
     from pylada.crystal import read, write
     import pylada.crystal
     with tempfile.NamedTemporaryFile() as f:
         poscar.write_file(f.name)
         pyl = read.poscar(f.name)
+    return pyl
+
+def pmg_to_pyl(pmg : Structure):
+    from pylada.crystal import Structure as Pyl_Structure
+    pyl = Pyl_Structure(pmg.lattice.matrix)
+    for i in range(len(pmg)):
+        if pmg.site_properties:
+            kwargs = {x: pmg.site_properties[x][i] for x in pmg.site_properties}
+        else:
+            kwargs = None
+        coords = pmg[i].coords
+        specie = str(pmg[i].specie)
+        pyl_atom = Atom(coords[0], coords[1], coords[2], specie, **kwargs)
+        pyl.add_atom(pyl_atom)
     return pyl
 
 def pyl_to_pmg(structure):
@@ -53,11 +69,36 @@ def pyl_to_pmg(structure):
     pmg_dict = {}
     for tag in property_tags:
         pmg_dict[tag] = [pyl_dict[site][tag] for site in range(len(structure))]
-
     coords = [ atom.pos for atom in structure ]
     species = [atom.type for atom in structure]
+    return Structure(structure.cell, species, coords, coords_are_cartesian=True, site_properties=pmg_dict)
 
-    return Structure(structure.cell, coords, species, coords_are_cartesian=True, site_properties=pmg_dict)
+def get_smallest_expansion(structure : Structure, length : float):
+    '''
+    Finds the smallest expansion of the provided cell such that all sides are at minimum length.  Will change shape of
+    cell if it creates a better match
+    :param structure: Unit cell to convert
+    :param length: Minimum vector difference
+    :return:
+    '''
+    from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+    sga = SpacegroupAnalyzer(structure)
+    structures = [
+        structure,
+        structure.get_primitive_structure(),
+        structure.get_reduced_structure('niggli'),
+        structure.get_reduced_structure('LLL'),
+        sga.get_conventional_standard_structure(),
+        sga.get_primitive_standard_structure()
+    ]
+    best_structure = None
+    for structure in structures: # type: Structure
+        l = structure.lattice
+        expansion = [ ceil(length / vec) for vec in l.abc ]
+        possible_structure = structure * expansion
+        if best_structure == None or len(possible_structure) < len(best_structure):
+            best_structure = possible_structure
+    return best_structure
 
 def get_nelect(outcar):
     line = subprocess.check_output(['grep', 'NELECT', outcar])
