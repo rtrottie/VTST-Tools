@@ -100,6 +100,12 @@ def get_smallest_expansion(structure : Structure, length : float):
         possible_structure = structure * expansion
         if best_structure == None or len(possible_structure) < len(best_structure):
             best_structure = possible_structure
+    if structure.site_properties and not best_structure.site_properties:
+        def get_property(prop, atom):
+            i = structure.species.index(atom)
+            return structure.site_properties[prop][i]
+        site_properties = { prop : [ get_property(prop, atom) for atom in best_structure.species ] for prop in structure.site_properties}
+        best_structure = Structure(best_structure.lattice, best_structure.species, best_structure.frac_coords, site_properties=site_properties)
     return best_structure
 
 def get_nelect(outcar):
