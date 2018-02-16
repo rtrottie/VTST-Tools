@@ -94,10 +94,10 @@ def get_smallest_expansion(structure : Structure, length : float):
         sga.get_primitive_standard_structure()
     ]
     best_structure = None
-    for structure in structures: # type: Structure
-        l = structure.lattice
+    for s in structures: # type: Structure
+        l = s.lattice
         expansion = [ ceil(length / vec) for vec in l.abc ]
-        possible_structure = structure * expansion
+        possible_structure = s * expansion
         if best_structure == None or len(possible_structure) < len(best_structure):
             best_structure = possible_structure
     if structure.site_properties and not best_structure.site_properties:
