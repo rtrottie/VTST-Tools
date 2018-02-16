@@ -12,6 +12,7 @@ import shutil
 from Classes_Pymatgen import *
 from functools import reduce
 import tempfile
+import numpy as np
 from math import ceil
 
 # def pmg_to_ase(pmg_structure : Structure):
@@ -51,7 +52,7 @@ def pmg_to_pyl_poscar(poscar : Poscar):
 def pmg_to_pyl(pmg : Structure):
     from pylada.crystal import Structure as Pyl_Structure
     from pylada.crystal import Atom
-    pyl = Pyl_Structure(pmg.lattice.matrix)
+    pyl = Pyl_Structure(np.transpose(pmg.lattice.matrix))
     for i in range(len(pmg)):
         if pmg.site_properties:
             kwargs = {x: pmg.site_properties[x][i] for x in pmg.site_properties}
@@ -72,7 +73,7 @@ def pyl_to_pmg(structure):
         pmg_dict[tag] = [pyl_dict[site][tag] for site in range(len(structure))]
     coords = [ atom.pos for atom in structure ]
     species = [atom.type for atom in structure]
-    return Structure(structure.cell, species, coords, coords_are_cartesian=True, site_properties=pmg_dict)
+    return Structure(np.transpose(structure.cell), species, coords, coords_are_cartesian=True, site_properties=pmg_dict)
 
 def get_smallest_expansion(structure : Structure, length : float):
     '''
