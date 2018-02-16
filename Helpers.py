@@ -56,7 +56,7 @@ def pmg_to_pyl(pmg : Structure):
         if pmg.site_properties:
             kwargs = {x: pmg.site_properties[x][i] for x in pmg.site_properties}
         else:
-            kwargs = None
+            kwargs = {}
         coords = pmg[i].coords
         specie = str(pmg[i].specie)
         pyl_atom = Atom(coords[0], coords[1], coords[2], specie, **kwargs)
