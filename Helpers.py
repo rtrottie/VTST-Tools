@@ -46,13 +46,18 @@ def pmg_to_pyl(poscar : Poscar):
         pyl = read.poscar(f.name)
     return pyl
 
-def pyl_tom_pmg(structure):
-    from pylada.crystal import read, write
-    import pylada.crystal
-    with tempfile.NamedTemporaryFile() as f:
-        write.poscar(structure, f.name)
-        pmg = Poscar.from_file(f.name)
-    return pmg
+def pyl_to_pmg(structure):
+    redundant_properties = ['pos', 'type']
+    pyl_dict = structure.to_dict()
+    property_tags = [x for x in pyl_dict[0] if x not in redundant_properties]
+    pmg_dict = {}
+    for tag in property_tags:
+        pmg_dict[tag] = [pyl_dict[site][tag] for site in range(len(structure))]
+
+    coords = [ atom.pos for atom in structure ]
+    species = [atom.type for atom in structure]
+
+    return Structure(structure.cell, coords, species, coords_are_cartesian=True, site_properties=pmg_dict)
 
 def get_nelect(outcar):
     line = subprocess.check_output(['grep', 'NELECT', outcar])
