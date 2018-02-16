@@ -36,7 +36,7 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
 
     # To Find Pathway, look for voronoi edges
     orig_structure = structure.copy()
-    structure = structure.copy()
+    structure = structure.copy() # type: Structure
     target_atom = structure[atom_i].specie
     vnn = VoronoiNN(targets=[target_atom])
     edges = vnn.get_nn_info(structure, atom_i)
@@ -46,9 +46,10 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
     # equivalent pathways
     site_dir = {}
     for edge in edges:
-        coords = (base_coords + edge['site'].coords)/2
+        coords = np.round((base_coords + edge['site'].coords)/2,3)
         structure.append('H', coords, True)
-        site_dir[tuple(np.round(coords))] = structure.index(edge['site']) # Use Tuple for indexing dict, need to round
+        #site_dir[tuple(np.round(coords))] = structure.index(edge['site']) # Use Tuple for indexing dict, need to round
+        site_dir[tuple(np.round(coords))] = len(structure)-1 # Use Tuple for indexing dict, need to round
 
     # Add H for all other diffusion atoms, so symmetry is preserved
     for i in get_atom_i(orig_structure, target_atom):
