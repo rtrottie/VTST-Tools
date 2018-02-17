@@ -48,9 +48,8 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
     for edge in edges:
         coords = np.round((base_coords + edge['site'].coords)/2,3)
         structure.append('H', coords, True)
-        [list(x) for x in np.round(structure.cart_coords, 1)].index(list(np.round(edge['site'].coords, 1)))
-        site_dir[tuple(np.round(coords))] = structure.index(edge['site']) # Use Tuple for indexing dict, need to round
-        site_dir[tuple(np.round(coords))] =  [list(x) for x in np.round(structure.cart_coords, 1) ].index(list(np.round(edge['site'].coords, 1))) # Use Tuple for indexing dict, need to round
+       # site_dir[tuple(np.round(coords))] = structure.index(edge['site']) # Use Tuple for indexing dict, need to round
+        site_dir[tuple(np.round(coords))] =  [list(x) for x in np.round(structure.frac_coords % 1,2) ].index(list(np.round(edge['site'].frac_coords % 1, 2))) # Use Tuple for indexing dict, need to round
 
     # Add H for all other diffusion atoms, so symmetry is preserved
     for i in get_atom_i(orig_structure, target_atom):
