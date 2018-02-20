@@ -78,6 +78,7 @@ class LockedTo3AtomPlane(InPlane):
         self.diffusing_i = diffusing_i
         self.plane_i = plane_i
         self.orig_point = orig_point
+        self.distance = None
 
     def adjust_positions(self, atoms : Atoms, newpositions):
         # get Normal Vector
@@ -89,7 +90,11 @@ class LockedTo3AtomPlane(InPlane):
 
         # Get equation of plane ax+by+cz+d = 0
         normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1, v2))
-        d = np.dot(normal, self.orig_point)
+        if self.distance != None:
+            d = self.distance
+        else:
+            d = np.dot(normal, self.orig_point)
+            self.distance = d
         a = normal[0]
         b = normal[1]
         c = normal[2]
