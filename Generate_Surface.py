@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #TODO: Make more general, currently only cuts on 010
 import pymatgen.core.surface as surf
+from pymatgen.core.surface import Slab
 from Helpers import *
 from Classes_Pymatgen import *
 import Vis
@@ -39,7 +40,7 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                     vasp = VaspInput(incar, kpoints, poscar, potcar)
                     vasp.write_input(folder)
 
-def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False, orth=False):
+def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False, orth=False, cancel_dipole=False):
     """
 
     Args:
@@ -70,28 +71,29 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     for s in sf.get_slabs():
         if orth:
             s = s.get_orthogonal_c_slab()
-        s = Add_Vac(s, 2, vacuum)
-        s.make_supercell([width,length,1])
-        s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
-        if vis:
-            Vis.view(s, program=vis)
-            use = input('Use this structure (y/n) or break:  ')
-            if use == 'n':
-                continue
-            elif use =='y':
+        s = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
+        for s in ss:
+            s.make_supercell([width,length,1])
+            s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
+            if vis:
+                Vis.view(s, program=vis)
+                use = input('Use this structure (y/n) or break:  ')
+                if use == 'n':
+                    continue
+                elif use =='y':
+                    surfs.append(s)
+                    i+=1
+                elif use == 'break':
+                    break
+                else:
+                    i+=1
+                    print('Bad input, assuming yes')
+            else:
                 surfs.append(s)
                 i+=1
-            elif use == 'break':
-                break
-            else:
-                i+=1
-                print('Bad input, assuming yes')
-        else:
-            surfs.append(s)
-            i+=1
-    return surfs
+        return surfs
 
-def Add_Vac(structure, vector, vacuum):
+def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
     """
 
     Args:
@@ -110,7 +112,20 @@ def Add_Vac(structure, vector, vacuum):
     lattice = structure.lattice.matrix
     vector_len = np.linalg.norm(lattice[vector])
     lattice[vector] = lattice[vector] * (1 + vacuum / vector_len)
-    s = Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)
+    if cancel_dipole:
+        separation = 4
+        max_height = max([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
+        min_height = min([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
+        displacement = -lattice[vector] * separation / np.linalg.norm(lattice[vector]) + 2* min_height
+        atomic_numbers = list(structure.atomic_numbers) + list(structure.atomic_numbers)
+        flipped_coords = [ np.array(x) - 2 * structure.frac_coords[i][vector] * structure.lattice.matrix[2] + displacement for i, x in enumerate(structure.cart_coords)]
+        # coords = list(structure.cart_coords) + [(x + displacement) for x in structure.cart_coords]
+        coords = list(structure.cart_coords) + list(flipped_coords)
+        s = Structure(lattice,
+                      atomic_numbers,
+                      coords, coords_are_cartesian=True)
+    else:
+        s = Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)
     translation = 0.5 - ((vector_len/(vector_len+vacuum)) / 4)
     s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation])
     return s
@@ -159,10 +174,12 @@ if __name__ == '__main__':
                         action='store_true')
     parser.add_argument('-o', '--no_orthogonal', help='does not attempt to orthogonalize cell.  Not recommended (less efficient, marginally harder to visualize)',
                         action='store_false')
+    parser.add_argument('--cd', '--cancel dipole', help='make two cells to cancel out dipole moment',
+                        action='store_true')
     args = parser.parse_args()
     if args.length == 0:
         args.length = args.width
-    surfs = Generate_Surface(Structure.from_file(args.bulk), args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal)
+    surfs = Generate_Surface(Structure.from_file(args.bulk), args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal, cancel_dipole=args.cancel_dipole)
     i = 0
     path_base = '_'.join(list(map(str, args.miller)))
     for surf in surfs:
