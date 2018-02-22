@@ -167,8 +167,11 @@ if __name__ == '__main__':
         nebmake(args.directory, args.initial, args.final, 1, args.tolerance, linear=True, poscar_override=args.atom_pairs)
         for f in ['WAVECAR', 'CHGCAR']:
             print('Copying {}s'.format(f))
-            shutil.copy(os.path.join(args.initial, f), os.path.join(args.directory, '00', f))
-            shutil.copy(os.path.join(args.final, f), os.path.join(args.directory, '01', f))
+            try:
+                shutil.copy(os.path.join(args.initial, f), os.path.join(args.directory, '00', f))
+                shutil.copy(os.path.join(args.final, f), os.path.join(args.directory, '01', f))
+            except:
+                print('Failed')
         shutil.move('00', '0000')
         shutil.move('01', '9999')
         shutil.copy('0000/POSCAR', 'POSCAR.1')
