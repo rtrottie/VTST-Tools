@@ -91,7 +91,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
             else:
                 surfs.append(s)
                 i+=1
-        return surfs
+    return surfs
 
 def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
     """
