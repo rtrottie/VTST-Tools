@@ -109,11 +109,11 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
     :type vacuum: np.float64
     :rtype: Structure
     """
-    lattice = structure.lattice.matrix
-    vector_len = np.linalg.norm(lattice[vector])
-    lattice[vector] = lattice[vector] * (1 + vacuum / vector_len)
     if cancel_dipole:
-        separation = 4
+        separation = 6
+        lattice = structure.lattice.matrix
+        vector_len = np.linalg.norm(lattice[vector])
+        lattice[vector] = lattice[vector] * (1 + (vacuum+separation) / vector_len)
         max_height = max([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
         min_height = min([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
 
@@ -136,6 +136,9 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
                       atomic_numbers,
                       coords, coords_are_cartesian=True))
     else:
+        lattice = structure.lattice.matrix
+        vector_len = np.linalg.norm(lattice[vector])
+        lattice[vector] = lattice[vector] * (1 + vacuum / vector_len)
         ss = [Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)]
     translation = 0.5 - ((vector_len/(vector_len+vacuum)) / 4)
     for s in ss:
