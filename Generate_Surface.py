@@ -71,7 +71,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     for s in sf.get_slabs():
         if orth:
             s = s.get_orthogonal_c_slab()
-        s = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
+        ss = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
         for s in ss:
             s.make_supercell([width,length,1])
             s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
@@ -116,19 +116,31 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
         separation = 4
         max_height = max([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
         min_height = min([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
+
         displacement = -lattice[vector] * separation / np.linalg.norm(lattice[vector]) + 2* min_height
         atomic_numbers = list(structure.atomic_numbers) + list(structure.atomic_numbers)
         flipped_coords = [ np.array(x) - 2 * structure.frac_coords[i][vector] * structure.lattice.matrix[2] + displacement for i, x in enumerate(structure.cart_coords)]
         # coords = list(structure.cart_coords) + [(x + displacement) for x in structure.cart_coords]
         coords = list(structure.cart_coords) + list(flipped_coords)
-        s = Structure(lattice,
+
+        ss = [Structure(lattice,
                       atomic_numbers,
-                      coords, coords_are_cartesian=True)
+                      coords, coords_are_cartesian=True)]
+
+        displacement = lattice[vector] * separation / np.linalg.norm(lattice[vector]) + 2* max_height
+        atomic_numbers = list(structure.atomic_numbers) + list(structure.atomic_numbers)
+        flipped_coords = [ np.array(x) - 2 * structure.frac_coords[i][vector] * structure.lattice.matrix[2] + displacement for i, x in enumerate(structure.cart_coords)]
+        # coords = list(structure.cart_coords) + [(x + displacement) for x in structure.cart_coords]
+        coords = list(structure.cart_coords) + list(flipped_coords)
+        ss.append(Structure(lattice,
+                      atomic_numbers,
+                      coords, coords_are_cartesian=True))
     else:
-        s = Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)
+        ss = [Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)]
     translation = 0.5 - ((vector_len/(vector_len+vacuum)) / 4)
-    s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation])
-    return s
+    for s in ss:
+        s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation])
+    return ss
 
 def get_SD_along_vector(structure, vector, range):
     """
