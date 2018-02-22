@@ -110,7 +110,7 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
     :rtype: Structure
     """
     if cancel_dipole:
-        separation = 6
+        separation = vacuum
         lattice = structure.lattice.matrix
         vector_len = np.linalg.norm(lattice[vector])
         lattice[vector] = lattice[vector] * (1 + (vacuum+separation) / vector_len)
