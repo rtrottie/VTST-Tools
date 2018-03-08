@@ -229,6 +229,6 @@ if __name__ == '__main__':
                 dir = os.path.join(path, 'frozen_{}'.format(region))
                 sd = get_SD_along_vector(surf, 2, get_bottom(surf, args.freeze, region))
                 os.makedirs(dir, exist_ok=True)
-                Poscar(surf, selective_dynamics=sd).write_file(dir)
+                Poscar(surf, selective_dynamics=sd).write_file(os.path.join(dir, 'POSCAR'))
 
         i += 1
