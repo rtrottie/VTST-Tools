@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #TODO: Make more general, currently only cuts on 010
 import pymatgen.core.surface as surf
-from pymatgen.core.surface import Slab
+from pymatgen.core.surface import Slab, generate_all_slabs
 from Helpers import *
 from Classes_Pymatgen import *
 import Vis
@@ -58,7 +58,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     Returns:
 
     :type material: str
-    :type miller: list
+    :type miller: int
     :type width: int
     :type depth: int
     :rtype: Structure
@@ -68,7 +68,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     surfs = []
     sf = surf.SlabGenerator(structure, miller, depth, 1,)
     i=0
-    for s in sf.get_slabs():
+    for s in generate_all_slabs(structure, miller, depth, 1):
         if orth:
             s = s.get_orthogonal_c_slab()
         ss = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
@@ -169,10 +169,24 @@ def get_SD_along_vector(structure, vector, range):
 
     return sd
 
+def get_bottom(structure, length=2, region='bot'):
+    c_dist = length/structure.lattice.c
+    if region == 'bot':
+        bot = min(structure.frac_coords[:,2])
+        top = bot + c_dist
+    elif region == 'top' :
+        top = max(structure.frac_coords[:,2])
+        bot = top - c_dist
+    else:
+        raise Exception('Region Does not exist, should be bot or top')
+
+    return [bot, top]
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--miller', help='Miller indecies of desired surface',
-                        type=int, nargs=3, required='True')
+                        type=int, default=1)
     parser.add_argument('-b', '--bulk', help='Bulk structure of surface',
                         type=str, default='', nargs='?', required='True')
     parser.add_argument('-w', '--width', help='width of supercell (in # of unit cells) (default is 1)',
@@ -191,6 +205,8 @@ if __name__ == '__main__':
                         action='store_false')
     parser.add_argument('--cd', '--cancel dipole', help='make two cells to cancel out dipole moment',
                         action='store_true')
+    parser.add_argument('--freeze', help='Freeze top and bottom set distance',
+                        type=float, default=0)
     args = parser.parse_args()
     if args.length == 0:
         args.length = args.width
