@@ -66,7 +66,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     Poscar.get_string = get_string_more_sigfig
     Incar.get_string = pretty_incar_string
     surfs = []
-    sf = surf.SlabGenerator(structure, miller, depth, 1,)
+    # sf = surf.SlabGenerator(structure, miller, depth, 1,)
     i=0
     for s in generate_all_slabs(structure, miller, depth, 1):
         if orth:
