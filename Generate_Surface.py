@@ -224,4 +224,11 @@ if __name__ == '__main__':
         if not os.path.exists(path):
             os.makedirs(path)
         p.write_file(os.path.join(path, 'POSCAR'))
+        if freeze:
+            for region in ['bot', 'top']:
+                dir = os.path.join(path, 'frozen_{}'.format(region))
+                sd = get_SD_along_vector(surf, 2, get_bottom(surf, args.freeze, region))
+                os.makedirs(dir, exist_ok=True)
+                Poscar(surf, selective_dynamics=sd).write_file(dir)
+
         i += 1
