@@ -212,7 +212,8 @@ if __name__ == '__main__':
         args.length = args.width
     surfs = Generate_Surface(Structure.from_file(args.bulk), args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal, cancel_dipole=args.cd)
     i = 0
-    path_base = '_'.join(list(map(str, args.miller)))
+    # path_base = '_'.join(list(map(str, args.miller)))
+    path_base = 'surfaces'
     for surf in surfs:
         path = os.path.join(path_base, str(i).zfill(2))
         if args.selective_dynamics:
