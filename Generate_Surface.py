@@ -71,26 +71,25 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     for s in generate_all_slabs(structure, miller, depth, 1):
         if orth:
             s = s.get_orthogonal_c_slab()
-        ss = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
-        for s in ss:
-            s.make_supercell([width,length,1])
-            s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
-            if vis:
-                Vis.view(s, program=vis)
-                use = input('Use this structure (y/n) or break:  ')
-                if use == 'n':
-                    continue
-                elif use =='y':
-                    surfs.append(s)
-                    i+=1
-                elif use == 'break':
-                    break
-                else:
-                    i+=1
-                    print('Bad input, assuming yes')
-            else:
+        s = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
+        s.make_supercell([width,length,1])
+        s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
+        if vis:
+            Vis.view(s, program=vis)
+            use = input('Use this structure (y/n) or break:  ')
+            if use == 'n':
+                continue
+            elif use =='y':
                 surfs.append(s)
                 i+=1
+            elif use == 'break':
+                break
+            else:
+                i+=1
+                print('Bad input, assuming yes')
+        else:
+            surfs.append(s)
+            i+=1
     return surfs
 
 def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
