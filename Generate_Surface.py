@@ -116,33 +116,33 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
         lattice[vector] = lattice[vector] * (1 + (vacuum+separation) / vector_len)
         max_height = max([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
         min_height = min([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
+        avg_height = (max_height + min_height) / 2
 
-        displacement = -lattice[vector] * separation / np.linalg.norm(lattice[vector]) + 2* min_height
+        displacement = -lattice[vector] / 2 + 2* avg_height
         atomic_numbers = list(structure.atomic_numbers) + list(structure.atomic_numbers)
         flipped_coords = [ np.array(x) - 2 * structure.frac_coords[i][vector] * structure.lattice.matrix[2] + displacement for i, x in enumerate(structure.cart_coords)]
         # coords = list(structure.cart_coords) + [(x + displacement) for x in structure.cart_coords]
         coords = list(structure.cart_coords) + list(flipped_coords)
 
-        ss = [Structure(lattice,
+        s = Structure(lattice,
                       atomic_numbers,
-                      coords, coords_are_cartesian=True)]
+                      coords, coords_are_cartesian=True)
 
-        displacement = lattice[vector] * separation / np.linalg.norm(lattice[vector]) + 2* max_height
-        atomic_numbers = list(structure.atomic_numbers) + list(structure.atomic_numbers)
-        flipped_coords = [ np.array(x) - 2 * structure.frac_coords[i][vector] * structure.lattice.matrix[2] + displacement for i, x in enumerate(structure.cart_coords)]
-        # coords = list(structure.cart_coords) + [(x + displacement) for x in structure.cart_coords]
-        coords = list(structure.cart_coords) + list(flipped_coords)
-        ss.append(Structure(lattice,
-                      atomic_numbers,
-                      coords, coords_are_cartesian=True))
+        # displacement = lattice[vector] * separation / np.linalg.norm(lattice[vector]) + 2* max_height
+        # atomic_numbers = list(structure.atomic_numbers) + list(structure.atomic_numbers)
+        # flipped_coords = [ np.array(x) - 2 * structure.frac_coords[i][vector] * structure.lattice.matrix[2] + displacement for i, x in enumerate(structure.cart_coords)]
+        # # coords = list(structure.cart_coords) + [(x + displacement) for x in structure.cart_coords]
+        # coords = list(structure.cart_coords) + list(flipped_coords)
+        # ss.append(Structure(lattice,
+        #               atomic_numbers,
+        #               coords, coords_are_cartesian=True))
     else:
         lattice = structure.lattice.matrix
         vector_len = np.linalg.norm(lattice[vector])
         lattice[vector] = lattice[vector] * (1 + vacuum / vector_len)
-        ss = [Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)]
+        s = Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)
     translation = 0.5 - ((vector_len/(vector_len+vacuum)) / 4)
-    for s in ss:
-        s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation])
+    s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation])
     return ss
 
 def get_SD_along_vector(structure, vector, range):
