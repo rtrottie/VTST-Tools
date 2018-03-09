@@ -168,7 +168,7 @@ def get_SD_along_vector(structure, vector, range):
 
     return sd
 
-def get_bottom(structure, length=2, region='bot'):
+def get_bottom(structure, length=4, region='bot'):
     c_dist = length/structure.lattice.c
     if region == 'bot':
         bot = min(structure.frac_coords[:,2])
@@ -176,6 +176,16 @@ def get_bottom(structure, length=2, region='bot'):
     elif region == 'top' :
         top = max(structure.frac_coords[:,2])
         bot = top - c_dist
+    elif region == 'bot_cd':
+        top = min(coord for coord in structure.frac_coords[:,2] if coord > 0.25)
+        top += c_dist
+        bot = max(coord for coord in structure.frac_coords[:,2] if coord < 0.25)
+        bot -= c_dist
+    elif region == 'top_cd':
+        top = min(coord for coord in structure.frac_coords[:,2] if coord > 0.75)
+        top += c_dist
+        bot = max(coord for coord in structure.frac_coords[:,2] if coord < 0.75)
+        bot -= c_dist
     else:
         raise Exception('Region Does not exist, should be bot or top')
 
