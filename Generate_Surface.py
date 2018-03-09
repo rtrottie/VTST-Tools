@@ -108,14 +108,15 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
     :type vacuum: np.float64
     :rtype: Structure
     """
+    max_height = max([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
+    min_height = min([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
+    lattice = structure.lattice.matrix
+    vector_len = np.linalg.norm(lattice[vector])
+    avg_height = (max_height + min_height) / 2
     if cancel_dipole:
         separation = vacuum
-        lattice = structure.lattice.matrix
-        vector_len = np.linalg.norm(lattice[vector])
         lattice[vector] = lattice[vector] * (1 + (vacuum+separation) / vector_len)
-        max_height = max([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
-        min_height = min([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
-        avg_height = (max_height + min_height) / 2
+        vector_len = np.linalg.norm(lattice[vector])
 
         displacement = -lattice[vector] / 2 + 2* avg_height
         atomic_numbers = list(structure.atomic_numbers) + list(structure.atomic_numbers)
@@ -136,11 +137,10 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
         #               atomic_numbers,
         #               coords, coords_are_cartesian=True))
     else:
-        lattice = structure.lattice.matrix
         vector_len = np.linalg.norm(lattice[vector])
         lattice[vector] = lattice[vector] * (1 + vacuum / vector_len)
         s = Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)
-    translation = 0.5 - (np.linalg.norm(avg_height) / np.linalg.norm(vector_len))
+    translation = 0.5 - (np.linalg.norm(avg_height) / vector_len)
     s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation])
     return s
 
