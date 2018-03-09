@@ -142,7 +142,7 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
         s = Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)
     translation = 0.5 - ((vector_len/(vector_len+vacuum)) / 4)
     s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation])
-    return ss
+    return s
 
 def get_SD_along_vector(structure, vector, range):
     """
