@@ -233,4 +233,9 @@ def get_midpoint(sites):
     coords /= len(sites)
     return coords
 
-
+def isint(string):
+    try:
+        int(string)
+        True
+    except ValueError:
+        return False
