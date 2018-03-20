@@ -236,6 +236,6 @@ def get_midpoint(sites):
 def isint(string):
     try:
         int(string)
-        True
+        return True
     except ValueError:
         return False
