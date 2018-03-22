@@ -22,7 +22,7 @@ def get_center_i(structure : Structure, element : Element):
             return structure.index(site)
     raise Exception('Could not find specified {}'.format(element))
 
-def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int, vis=False):
+def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int, vis=False, get_midpoints=False):
     '''
 
     Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
@@ -61,17 +61,18 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
                 structure.append('H', coords, True, True)
             except:
                 pass
+
+    # Remove symmetrically equivalent pathways:
     sga = SpacegroupAnalyzer(structure, 0.5, angle_tolerance=20)
     ss = sga.get_symmetrized_structure()
 
-    # Remove symmetrically equivalent pathways:
     final_structure = structure.copy()
     indices = []
-    for i in range(len(orig_structure), len(orig_structure)+len(edges)):
+    for i in range(len(orig_structure), len(orig_structure)+len(edges)): # get all 'original' edge sites
         sites = ss.find_equivalent_sites(ss[i])
-        new_indices = [ss.index(site) for site in sites if ss.index(site) < len(orig_structure) + len(edges)]
+        new_indices = [ss.index(site) for site in sites if ss.index(site) < len(orig_structure) + len(edges)] # Check if symmetrically equivalent to other original edge sites
         new_indices.remove(i)
-        if i not in indices:
+        if i not in indices: # Don't duplicate effort
             indices = indices + new_indices
             indices.sort()
     indices = indices + list(range(len(orig_structure)+len(edges), len(final_structure)))
@@ -81,6 +82,9 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
         view(final_structure, 'VESTA')
         print(diffusion_elements)
 
+    if get_midpoints:
+        centers = [h.coords for h in final_structure[len(orig_structure):]]
+        return (diffusion_elements, centers)
 
 
     return diffusion_elements
