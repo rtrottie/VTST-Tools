@@ -6,7 +6,7 @@ import shutil
 import logging
 from Neb_Make import nebmake
 
-def get_energy(i, structure : Structure):
+def get_energy(i, structure : Structure, target=0.01):
     cwd = os.path.abspath('.')
     handlers = []
     settings = [
@@ -24,6 +24,9 @@ def get_energy(i, structure : Structure):
             vasprun_above = Vasprun(os.path.join(folder, 'above', 'vasprun.xml'))
             vasprun_below = Vasprun(os.path.join(folder, 'below', 'vasprun.xml'))
             if vasprun_above.converged and vasprun_below.converged:
+                # if vasprun_above.final_energy -  vasprun_below.final_energy < target:
+                #     for f in ['WAVECAR', 'CHGCAR', 'vasprun.xml', 'CONTCAR', 'POSCAR', 'INCAR', 'KPOINTS', 'POTCAR']
+                #         shutil.copy(os.path.join(folder, 'above', f), f
                 with open(os.path.join(folder, 'energy.txt'), 'w') as f:
                     f.write(str(min(vasprun_above.final_energy, vasprun_below.final_energy)))
                 return min(vasprun_above.final_energy, vasprun_below.final_energy)
@@ -61,6 +64,7 @@ def get_energy(i, structure : Structure):
                 closest = dir
         except:
             pass
+    same_wfxns = 0
     for dir_i, dir in [(str(above).zfill(4), 'above'), (str(below).zfill(4), 'below')]:
         try:
             vasprun = Vasprun(os.path.join(folder, dir, 'vasprun.xml'))
@@ -83,23 +87,29 @@ def get_energy(i, structure : Structure):
                         lowest_dir = 'below'
                     shutil.copy(os.path.join(dir_i, lowest_dir, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
                     shutil.copy(os.path.join(dir_i, lowest_dir, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
+                    if vasprun_above.final_energy - vasprun_below.final_energy < target:
+                        same_wfxns += 1
 
-
-            shutil.copy('INCAR', os.path.join(folder, dir, 'INCAR'))
-            shutil.copy('KPOINTS', os.path.join(folder, dir, 'KPOINTS'))
-            shutil.copy('POTCAR', os.path.join(folder, dir, 'POTCAR'))
-            os.chdir(folder)
-            os.chdir(dir)
-            Poscar(structure).write_file('POSCAR')
-            incar = Incar.from_file('INCAR')
-            if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
-                vasp = os.environ['VASP_GAMMA']
+            if same_wfxns == 2:
+                if os.path.exists(os.path.join(folder, dir, 'below')):
+                    shutil.rmtree(os.path.join(folder, dir, 'below'))
+                shutil.copytree(os.path.join(folder, dir, 'above'), os.path.join(folder, dir, 'below'))
             else:
-                vasp = os.environ['VASP_KPTS']
-            incar.write_file('INCAR')
-            j = StandardJob([os.environ['VASP_MPI'], '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, final=True, settings_override=settings)
-            c = Custodian(handlers, [j], max_errors=10)
-            c.run()
+                shutil.copy('INCAR', os.path.join(folder, dir, 'INCAR'))
+                shutil.copy('KPOINTS', os.path.join(folder, dir, 'KPOINTS'))
+                shutil.copy('POTCAR', os.path.join(folder, dir, 'POTCAR'))
+                os.chdir(folder)
+                os.chdir(dir)
+                Poscar(structure).write_file('POSCAR')
+                incar = Incar.from_file('INCAR')
+                if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
+                    vasp = os.environ['VASP_GAMMA']
+                else:
+                    vasp = os.environ['VASP_KPTS']
+                incar.write_file('INCAR')
+                j = StandardJob([os.environ['VASP_MPI'], '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, final=True, settings_override=settings)
+                c = Custodian(handlers, [j], max_errors=10)
+                c.run()
             os.chdir(cwd)
     return get_energy(i, structure)
 
