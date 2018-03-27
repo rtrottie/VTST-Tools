@@ -77,7 +77,7 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
             indices.sort()
     indices = indices + list(range(len(orig_structure)+len(edges), len(final_structure)))
     final_structure.remove_sites(indices)
-    diffusion_elements = [ site_dir[tuple(np.round(h.coords))] for h in final_structure[len(orig_structure):] ]
+    diffusion_elements = [ site_dir[tuple(np.round(h.frac_coords))] for h in final_structure[len(orig_structure):] ]
     if vis:
         view(final_structure, 'VESTA')
         print(diffusion_elements)
