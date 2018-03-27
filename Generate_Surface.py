@@ -170,7 +170,7 @@ def get_SD_along_vector(structure, vector, range):
 
 def get_bottom(structure, length=4, region='bot'):
     c_dist = length/structure.lattice.c
-    if region == 'bot':
+    if region == 'bot' or region == 'bottom':
         bot = min(structure.frac_coords[:,2])
         top = bot + c_dist
     elif region == 'top' :
