@@ -8,7 +8,7 @@ from scipy.spatial import Voronoi
 structure = Poscar.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR').structure
 n = get_center_i(structure, Element('O'))
 # ss = Generate_Surface(structure, [1,1,0], 1, 1, 8, vacuum=12, cancel_dipole=True, vis='vesta', orth=True)
-cutoff = 10
+cutoff =  10
 targets = structure.composition.elements
 center = structure[n]
 neighbors = structure.get_sites_in_sphere(
