@@ -32,6 +32,7 @@ def get_energy(i, structure : Structure, target=0.01):
                 return min(vasprun_above.final_energy, vasprun_below.final_energy)
         except:
             try:
+                shutil.copy('../INCAR', 'INCAR')
                 vasprun = Vasprun(os.path.join(folder, 'vasprun.xml'))
                 with open(os.path.join(folder, 'energy.txt'), 'w') as f:
                     f.write(str(vasprun.final_energy))
