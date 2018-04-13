@@ -1,12 +1,13 @@
 # from align_bond_along_a import align_a_to_vector, set_vector_as_boundary
-# from Classes_Pymatgen import *
+from Classes_Pymatgen import *
 # from pymatgen.analysis.local_env import solid_angle
-# from get_migration import get_center_i
+from get_migration import *
 # from bisect import bisect_left
 # from scipy.spatial import Voronoi
 
-# structure = Poscar.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR').structure
-# n = get_center_i(structure, Element('O'))
+structure = Poscar.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR').structure
+n = get_center_i(structure, Element('O'))
+get_vacancy_diffusion_pathways_from_cell(structure, n)
 # # ss = Generate_Surface(structure, [1,1,0], 1, 1, 8, vacuum=12, cancel_dipole=True, vis='vesta', orth=True)
 # cutoff =  10
 # targets = structure.composition.elements
@@ -44,16 +45,16 @@
 #             if disordered_sp in targets:
 #                 resultweighted[nn] = angle / maxangle
 
-
-
-from pymatgen.core import Molecule
-
-m = Molecule.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\A_N_M062xDz.gjf')
-m.substitute(6, 'cyano')
-m.to('gjf','D:\\Users\\RyanTrottier\\Documents\\Scrap\\A_N_M062xDz_subs.gjf')
-
-
-
-
-
-pass
+#
+#
+# from pymatgen.core import Molecule
+#
+# m = Molecule.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\A_N_M062xDz.gjf')
+# m.substitute(6, 'cyano')
+# m.to('gjf','D:\\Users\\RyanTrottier\\Documents\\Scrap\\A_N_M062xDz_subs.gjf')
+#
+#
+#
+#
+#
+# pass
