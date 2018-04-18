@@ -121,13 +121,14 @@ class NEBJob(VaspJob):
     def postprocess(self):
         VaspJob.postprocess(self)
         images = Incar.from_file('INCAR')['IMAGES']
+        is_magnetic = 'ISPIN' in Incar.from_file('INCAR') and Incar.from_file('INCAR')['ISPIN'] == 2
         cwd = os.path.abspath('.')
         for i in range(images+2):
             dir = str(i).zfill(2)
             os.chdir(dir)
             if os.path.exists('AECCAR0') and os.path.exists('AECCAR2') and os.path.exists('CHGCAR'):
                 os.system('chgsum.pl AECCAR0 AECCAR2 &> bader_info')
-                if 'ISPIN' in Incar.from_file('INCAR') and Incar.from_file('INCAR')['ISPIN'] == 2:
+                if is_magnetic:
                     os.system('chgsplit.pl CHGCAR &>> bader_info ; bader CHGCAR_mag -ref CHGCAR_sum &>> bader_info')
                     try:
                         shutil.copy('ACF.dat', 'ACF_mag.dat')
