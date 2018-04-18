@@ -121,7 +121,7 @@ class NEBJob(VaspJob):
     def postprocess(self):
         VaspJob.postprocess(self)
         images = Incar.from_file('INCAR')['IMAGES']
-        is_magnetic = 'ISPIN' in Incar.from_file('INCAR') and Incar.from_file('INCAR')['ISPIN'] == 2
+        is_magnetic = ('ISPIN' in Incar.from_file('INCAR')) and (Incar.from_file('INCAR')['ISPIN'] == 2)
         cwd = os.path.abspath('.')
         for i in range(images+2):
             dir = str(i).zfill(2)
