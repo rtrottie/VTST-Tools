@@ -155,8 +155,6 @@ def get_queue(computer, jobtype, time, nodes):
             return 'debug'
         elif time <= 4 and nodes <= 8:
             return 'short'
-        elif time <= 24 and nodes >= 16 and nodes <= 296:
-            return 'large'
         elif time <= 48 and nodes <= 296:
             return 'batch-h'
         elif time > 48 and time <= 240 and nodes <= 120:

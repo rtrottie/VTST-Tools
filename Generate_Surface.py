@@ -73,7 +73,8 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
             s = s.get_orthogonal_c_slab()
         s = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
         s.make_supercell([width,length,1])
-        s.sort(key=lambda x: x.specie.number*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
+        site_symbols = Poscar(s).site_symbols
+        s.sort(key=lambda x: site_symbols.index(x.specie.symbol)*1000000000000 + x.c*100000000 + x.a*10000 + x.b)
         if vis:
             Vis.view(s, program=vis)
             use = input('Use this structure (y/n) or break:  ')
@@ -170,7 +171,7 @@ def get_SD_along_vector(structure, vector, range):
 
 def get_bottom(structure, length=4, region='bot'):
     c_dist = length/structure.lattice.c
-    if region == 'bot':
+    if region == 'bot' or region == 'bottom':
         bot = min(structure.frac_coords[:,2])
         top = bot + c_dist
     elif region == 'top' :

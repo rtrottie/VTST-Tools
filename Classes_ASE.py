@@ -90,18 +90,18 @@ class LockedTo3AtomPlane(InPlane):
 
         # Get equation of plane ax+by+cz+d = 0
         normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1, v2))
-        if self.distance != None:
-            d = self.distance
-        else:
-            d = np.dot(normal, self.orig_point)
-            self.distance = d
         a = normal[0]
         b = normal[1]
         c = normal[2]
+        d = np.dot(normal, p1)
+        if self.distance == None:
+            p = atoms.get_positions()[self.diffusing_i]
+            self.distance = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
 
         # Get closest point on plane
         p = newpositions[self.diffusing_i]
         k = (a*p[0] + b*p[1] + c*p[2] - d) / (a**2 + b**2 + c**2) # distance between point and plane
+        k -= self.distance # point should be displaced from plane
         position = [p[0] - k*a, p[1] - k*b, p[2] - k*c]
         newpositions[self.diffusing_i] = position
 

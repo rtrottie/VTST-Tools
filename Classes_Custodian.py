@@ -430,3 +430,47 @@ class DiffusionJob(NEBJob):
     def postprocess(self):
         shutil.copy('01/CONTCAR', 'CONTCAR')
         shutil.copy('01/OUTCAR', 'OUTCAR')
+
+class NonConvergingErrorHandler_toDamped(NonConvergingErrorHandler):
+    is_terminating = False
+    def correct(self):
+        # if change_algo is True, change ALGO = Fast to Normal if ALGO is
+        # Fast. If still not converging, following Kresse's
+        # recommendation, we will try two iterations of different mixing
+        # parameters. If this error is caught again, then kill the job
+        vi = VaspInput.from_directory(".")
+        content = "LSTOP = .TRUE."
+        algo = vi["INCAR"].get("ALGO", "Normal")
+        time = vi["INCAR"].get("TIME", "0.4")
+        actions = []
+        if self.change_algo:
+            if algo == "Fast":
+                backup(VASP_BACKUP_FILES)
+                actions.append({"file": "STOPCAR",
+                                "action": {"_file_create": {'content': content}}})
+                actions.append({"dict": "INCAR",
+                                "action": {"_set": {"ALGO": "Normal"}}})
+
+            elif algo == "Normal":
+                backup(VASP_BACKUP_FILES)
+                actions.append({"file": "STOPCAR",
+                                "action": {"_file_create": {'content': content}}})
+                actions.append({"dict": "INCAR",
+                                "action": {"_set": {"ALGO": "Damped", "TIME" : 0.1}}},
+                               )
+
+            elif algo == "Damped" and time <= 0.5 :
+                backup(VASP_BACKUP_FILES)
+                actions.append({"file": "STOPCAR",
+                                "action": {"_file_create": {'content': content}}})
+                actions.append({"dict": "INCAR",
+                                "action": {"_set": {"ALGO": "Damped", "TIME" : time+0.05}}})
+
+        if actions:
+            VaspModder(vi=vi).apply_actions(actions)
+            return {"errors": ["Non-converging job"], "actions": actions}
+
+        # Unfixable error. Just return None for actions.
+        else:
+
+            return {"errors": ["Non-converging job"], "actions": None}
