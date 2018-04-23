@@ -85,14 +85,29 @@ def get_smallest_expansion(structure : Structure, length : float):
     '''
     from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
     sga = SpacegroupAnalyzer(structure)
-    structures = [
-        structure,
-        structure.get_primitive_structure(),
-        structure.get_reduced_structure('niggli'),
-        structure.get_reduced_structure('LLL'),
-        sga.get_conventional_standard_structure(),
-        sga.get_primitive_standard_structure()
-    ]
+    structures = []
+    structures.append(structure)
+    try:
+        structures.append(structure.get_primitive_structure())
+    except:
+        pass
+    try:
+        structures.append(structure.get_reduced_structure('niggli'))
+    except:
+        pass
+    try:
+        structures.append(structure.get_reduced_structure('LLL'))
+    except:
+        pass
+    try:
+        structures.append(sga.get_conventional_standard_structure())
+    except:
+        pass
+    try:
+        structures.append(sga.get_primitive_standard_structure())
+    except:
+        pass
+
     best_structure = None
     for s in structures: # type: Structure
         l = s.lattice
