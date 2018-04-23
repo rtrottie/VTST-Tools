@@ -6,10 +6,12 @@ from pymatgen.analysis.local_env import VoronoiNN
 import numpy as np
 from Vis import view
 
-def get_atom_i(s, target_atom):
+def get_atom_i(s, target_atoms):
+    if type(target_atoms) != list and type(target_atoms )!= set:
+        target_atoms = [target_atoms]
     i = 0
     for a in s:
-        if a.specie == target_atom:
+        if a.specie in target_atoms:
             yield i
         i = i+1
 
@@ -87,3 +89,52 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
 
 
     return diffusion_elements
+
+def get_midpoint(structure : Structure, atom_1, atom_2):
+    a = structure.lattice.a
+    b = structure.lattice.b
+    c = structure.lattice.c
+    d = 999
+    for x in [0,1,-1]:
+        for y in [0,1,-1]:
+            for z in [0,1,-1]:
+                jimage = np.array([x,y,z])
+                temp_d = structure.get_distance(atom_1, atom_2, jimage=jimage)
+                if temp_d < d:
+                    d = temp_d
+                    coord = structure[atom_1].frac_coords + structure[atom_2].frac_coords - jimage
+                    coord /= 2
+                    if d < a*0.5 and d < b*0.5 and d < c*0.5:
+                        return coord
+    return coord
+
+def is_equivalent(structure : Structure, atoms_1 : tuple, atoms_2 : tuple , eps=0.05):
+    '''
+
+    Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
+
+    :param structure: Structure
+        Structure to calculate diffusion pathways
+    :param atom_i: int
+        Atom to get diffion path from
+    :return: [ Structure ]
+    '''
+
+    # To Find Pathway, look for voronoi edges
+    structure = structure.copy() # type: Structure
+
+    coords = get_midpoint(structure, atoms_1[0], atoms_1[1])
+    structure.append('H', coords)
+    coords = get_midpoint(structure, atoms_2[0], atoms_2[1])
+    structure.append('H', coords)
+
+    dist_1 = structure.get_neighbors(structure[-2], 3)
+    dist_2 = structure.get_neighbors(structure[-1], 3)
+    dist_1.sort(key=lambda x: x[1])
+    dist_2.sort(key=lambda x: x[1])
+    for (site_a, site_b) in zip(dist_1, dist_2):
+        if abs(site_a[1] - site_b[1]) > eps:
+            return False
+        elif site_a[0].specie != site_b[0].specie:
+            return False
+    return True
