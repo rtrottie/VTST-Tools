@@ -16,6 +16,31 @@ class NEBNotTerminating(FrozenJobErrorHandler):
     def correct(self):
         return {"errors": ["Frozen job"], "actions": None}
 
+class NEBWalltimeHandler(WalltimeHandler):
+    def check(self):
+        if self.wall_time:
+            run_time = datetime.datetime.now() - self.start_time
+            total_secs = run_time.total_seconds()
+            outcar = Outcar("01/OUTCAR")
+            if not self.electronic_step_stop:
+                # Determine max time per ionic step.
+                outcar.read_pattern({"timings": "LOOP\+.+real time(.+)"},
+                                    postprocess=float)
+                time_per_step = np.max(outcar.data.get('timings')) if outcar.data.get("timings", []) else 0
+            else:
+                # Determine max time per electronic step.
+                outcar.read_pattern({"timings": "LOOP:.+real time(.+)"},
+                                    postprocess=float)
+                time_per_step = np.max(outcar.data.get('timings')) if outcar.data.get("timings", []) else 0
+
+            # If the remaining time is less than average time for 3
+            # steps or buffer_time.
+            time_left = self.wall_time - total_secs
+            if time_left < max(time_per_step * 3, self.buffer_time):
+                return True
+
+        return False
+
 class DimerDivergingHandler(ErrorHandler):
     is_monitor = True
     is_terminating = True
