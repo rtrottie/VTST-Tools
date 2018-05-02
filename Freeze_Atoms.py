@@ -25,10 +25,10 @@ def freeze_atoms_except_neighbors(input : str, atom : int, output : str, invert=
     '''
     atom = atom-1
     poscar = Poscar.from_file(input)
-    if os.path.exists(os.path.join(input, 'selective_dynamics')): # if atoms are alread frozen, we don't want to overwrite original SD
+    if os.path.exists(os.path.join('selective_dynamics')): # if atoms are alread frozen, we don't want to overwrite original SD
         raise Exception('Selective Dynamics File Exists')
     sd_orig = poscar.selective_dynamics if poscar.selective_dynamics != None else [[True, True, True]]*len(poscar.structure)
-    with open(os.path.join(input, 'selective_dynamics'), 'w+') as f:
+    with open(os.path.join('selective_dynamics'), 'w+') as f:
         f.write(str(sd_orig))
     neigh = poscar.structure.get_neighbors(poscar.structure.sites[atom], unfrozen_dist, True) # find nearby atoms
     neigh = list(map(lambda x: x[2], neigh)) # get indices
