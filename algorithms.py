@@ -85,16 +85,17 @@ def get_energy(i, structure : Structure, target=0.01):
                     shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
                     shutil.copy(os.path.join(dir_i, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
                 except:
-                    vasprun_above = Vasprun(os.path.join(dir_i, 'above', 'vasprun.xml'))
-                    vasprun_below = Vasprun(os.path.join(dir_i, 'below', 'vasprun.xml'))
-                    if vasprun_above.final_energy < vasprun_below.final_energy:
-                        lowest_dir = 'above'
-                    else:
-                        lowest_dir = 'below'
-                    shutil.copy(os.path.join(dir_i, lowest_dir, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
-                    shutil.copy(os.path.join(dir_i, lowest_dir, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
-                    if vasprun_above.final_energy - vasprun_below.final_energy < target:
-                        same_wfxns += 1
+                    if os.path.exists(os.path.join(dir_i, 'above', 'vasprun.xml')) and os.path.exists(os.path.join(dir_i, 'below', 'vasprun.xml')):
+                        vasprun_above = Vasprun(os.path.join(dir_i, 'above', 'vasprun.xml'))
+                        vasprun_below = Vasprun(os.path.join(dir_i, 'below', 'vasprun.xml'))
+                        if vasprun_above.final_energy < vasprun_below.final_energy:
+                            lowest_dir = 'above'
+                        else:
+                            lowest_dir = 'below'
+                        shutil.copy(os.path.join(dir_i, lowest_dir, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
+                        shutil.copy(os.path.join(dir_i, lowest_dir, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
+                        if vasprun_above.final_energy - vasprun_below.final_energy < target:
+                            same_wfxns += 1
 
             if same_wfxns == 2:
                 logging.info('Wavefunctions are the same')
