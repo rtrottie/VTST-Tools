@@ -105,11 +105,13 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
         tolerance=0
     try:
         structures = s1.interpolate(s2, images, autosort_tol=tolerance)
-    except:
+    except Exception as e:
         a=input('Failed.  Type y to sort --> ')
         if a=='y':
             s1.sort()
             s2.sort()
+        else:
+            raise e
         structures = s1.interpolate(s2, images, autosort_tol=tolerance)
 
 
