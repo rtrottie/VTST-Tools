@@ -363,7 +363,8 @@ if __name__ == '__main__':
         queue = args.queue
     elif 'AUTO_QUEUE' in incar:
         queue = incar['AUTO_QUEUE'].lower()
-
+    elif 'VASP_DEFAULT_QUEUE' in os.environ:
+        queue = os.environ['VASP_DEFAULT_QUEUE']
     else:
         queue = get_queue(computer, jobtype, time, nodes)
 
