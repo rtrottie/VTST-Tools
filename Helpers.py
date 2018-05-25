@@ -29,16 +29,21 @@ from math import ceil
 #         pmg_structure = Poscar.from_file(f.name).structure
 #     return pmg_structure
 
-def get_FERE_chemical_potential(structure : Structure):
+# def get_FERE_chemical_potential(structure : Structure):
+#     fere = {'Fe' : -6.15,
+#             'Al' : -3.02,
+#             'O'  : -4.73
+#             }
+#     chem_pot = 0
+#     for a in structure: #type: PeriodicSite
+#         chem_pot += fere[str(a.specie)]
+#     return chem_pot
+def get_FERE_chemical_potential(element):
     fere = {'Fe' : -6.15,
             'Al' : -3.02,
             'O'  : -4.73
             }
-    chem_pot = 0
-    for a in structure: #type: PeriodicSite
-        chem_pot += fere[str(a.specie)]
-    return chem_pot
-
+    return fere[element]
 
 
 def pmg_to_pyl_poscar(poscar : Poscar):
