@@ -129,6 +129,8 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
         s = Structure(lattice,
                       atomic_numbers,
                       coords, coords_are_cartesian=True)
+        translation = 0.5 - (np.linalg.norm(avg_height) / vector_len)
+        s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation])
 
         # displacement = lattice[vector] * separation / np.linalg.norm(lattice[vector]) + 2* max_height
         # atomic_numbers = list(structure.atomic_numbers) + list(structure.atomic_numbers)
@@ -139,11 +141,11 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
         #               atomic_numbers,
         #               coords, coords_are_cartesian=True))
     else:
-        vector_len = np.linalg.norm(lattice[vector])
+        avg_height = max([x[vector] for x in structure.frac_coords]) * structure.lattice.matrix[vector]
         lattice[vector] = lattice[vector] * (1 + vacuum / vector_len)
         s = Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)
-    translation = 0.5 - (np.linalg.norm(avg_height) / vector_len)
-    s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation])
+        translation = 0.5 - vector_len / lattice[vector]
+        s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation])
     return s
 
 def get_SD_along_vector(structure, vector, range):
