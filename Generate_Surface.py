@@ -68,10 +68,10 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     surfs = []
     # sf = surf.SlabGenerator(structure, miller, depth, 1,)
     i=0
-    for s in generate_all_slabs(structure, miller, depth, 1, tol=0.2):
+    for s in generate_all_slabs(structure, miller, depth, vacuum, tol=0.2, center_slab=True):
         if orth:
             s = s.get_orthogonal_c_slab()
-        s = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
+        # s = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
 #         miller = s.miller_index
         s.make_supercell([width,length,1])
         site_symbols = Poscar(s).site_symbols
