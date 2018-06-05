@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ecb4b52a-87fc-43e9-ba87-fe98ec3e8ef5" name="Default" comment="">
+    <list default="true" id="ecb4b52a-87fc-43e9-ba87-fe98ec3e8ef5" name="Default" comment="just translate by half">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Generate_Surface.py" beforeDir="false" afterPath="$PROJECT_DIR$/Generate_Surface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chain/ws_chains.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chain/ws_chains.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,11 +17,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ws_chains.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ws_chains.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../chain/ws_chains.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-784">
-              <caret line="302" column="7" lean-forward="true" selection-start-line="302" selection-start-column="7" selection-end-line="302" selection-end-column="7" />
+            <state relative-caret-position="508">
+              <caret line="118" column="93" selection-start-line="118" selection-start-column="93" selection-end-line="118" selection-end-column="93" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -29,11 +29,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Generate_Surface.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Generate_Surface.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Generate_Surface.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="382">
-              <caret line="145" column="25" selection-start-line="145" selection-start-column="25" selection-end-line="145" selection-end-column="25" />
+            <state relative-caret-position="110">
+              <caret line="102" column="29" selection-start-line="102" selection-start-column="29" selection-end-line="102" selection-end-column="29" />
               <folding>
                 <element signature="e#413#1971#0" />
               </folding>
@@ -50,13 +50,13 @@
     </findStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../chain" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/../chain/ws_chains.py" />
         <option value="$PROJECT_DIR$/Generate_Surface.py" />
+        <option value="$PROJECT_DIR$/../chain/ws_chains.py" />
       </list>
     </option>
   </component>
@@ -158,7 +158,14 @@
       <option name="project" value="LOCAL" />
       <updated>1528166154883</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="just translate by half">
+      <created>1528170408009</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1528170408009</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -196,25 +203,26 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="make small surface as well" />
-    <option name="LAST_COMMIT_MESSAGE" value="make small surface as well" />
+    <MESSAGE value="just translate by half" />
+    <option name="LAST_COMMIT_MESSAGE" value="just translate by half" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../chain/ws_chains.py">
+    <entry file="file://$PROJECT_DIR$/Generate_Surface.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-784">
-          <caret line="302" column="7" lean-forward="true" selection-start-line="302" selection-start-column="7" selection-end-line="302" selection-end-column="7" />
+        <state relative-caret-position="110">
+          <caret line="102" column="29" selection-start-line="102" selection-start-column="29" selection-end-line="102" selection-end-column="29" />
           <folding>
-            <element signature="e#0#28#0" expanded="true" />
+            <element signature="e#413#1971#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Generate_Surface.py">
+    <entry file="file://$PROJECT_DIR$/../chain/ws_chains.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="382">
-          <caret line="145" column="25" selection-start-line="145" selection-start-column="25" selection-end-line="145" selection-end-column="25" />
+        <state relative-caret-position="508">
+          <caret line="118" column="93" selection-start-line="118" selection-start-column="93" selection-end-line="118" selection-end-column="93" />
           <folding>
-            <element signature="e#413#1971#0" />
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
