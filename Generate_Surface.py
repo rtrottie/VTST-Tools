@@ -144,6 +144,7 @@ def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
         lattice[vector] = lattice[vector] * (1 + vacuum / vector_len)
         s = Structure(lattice, structure.atomic_numbers, structure.cart_coords, coords_are_cartesian=True)
         translation = 0.5 - vector_len / np.linalg.norm(lattice[vector])
+        translation = 0.5
         s.translate_sites(range(0, len(s.atomic_numbers)), [0,0,translation], frac_coords=True)
     return s
 
