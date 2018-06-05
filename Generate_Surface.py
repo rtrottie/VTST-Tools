@@ -71,7 +71,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     for s in generate_all_slabs(structure, miller, depth, 1, tol=0.2, center_slab=True, max_normal_search=miller*2):
         # if orth:
         #     s = s.get_orthogonal_c_slab()
-        s = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
+        s = Add_Vac(s, 2, vacuum, cancel_dipole=cancel_dipole)
 #         miller = s.miller_index
         s.make_supercell([width,length,1])
         site_symbols = Poscar(s).site_symbols
