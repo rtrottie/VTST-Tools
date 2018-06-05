@@ -68,10 +68,10 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     surfs = []
     # sf = surf.SlabGenerator(structure, miller, depth, 1,)
     i=0
-    for s in generate_all_slabs(structure, miller, depth, vacuum, tol=0.2, center_slab=True ):
+    for s in generate_all_slabs(structure, miller, depth, vacuum, tol=0.2, center_slab=False ):
         if orth:
             s = s.get_orthogonal_c_slab()
-        # s = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
+        s = Add_Vac(s, 2, vacuum+depth, cancel_dipole=cancel_dipole)
 #         miller = s.miller_index
         s.make_supercell([width,length,1])
         site_symbols = Poscar(s).site_symbols
@@ -223,6 +223,7 @@ if __name__ == '__main__':
     if args.length == 0:
         args.length = args.width
     surfs = Generate_Surface(Structure.from_file(args.bulk), args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal, cancel_dipole=args.cd)
+    Structure.from_file(args.bulk).to('poscar', 'POSCAR')
     i = 0
     # path_base = '_'.join(list(map(str, args.miller)))
     path_base = 'surfaces'
