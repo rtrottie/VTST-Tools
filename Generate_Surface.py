@@ -68,7 +68,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     surfs = []
     # sf = surf.SlabGenerator(structure, miller, depth, 1,)
     i=0
-    for s in generate_all_slabs(structure, miller, depth, 1, tol=0.5, center_slab=False, max_normal_search=miller ):
+    for s in generate_all_slabs(structure, miller, depth, 1, tol=0.2, center_slab=False, max_normal_search=miller ):
         # if orth:
         #     s = s.get_orthogonal_c_slab()
         s = Add_Vac(s, 2, vacuum, cancel_dipole=cancel_dipole)
