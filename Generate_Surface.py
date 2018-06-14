@@ -69,6 +69,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     # sf = surf.SlabGenerator(structure, miller, depth, 1,)
     i=0
     for s in generate_all_slabs(structure, miller, depth, 1, tol=0.2, center_slab=False, max_normal_search=miller ):
+        miller = s.miller_index
         # if orth:
         #     s = s.get_orthogonal_c_slab()
         s = Add_Vac(s, 2, vacuum, cancel_dipole=cancel_dipole)
@@ -177,9 +178,11 @@ def get_bottom(structure, length=4, region='bot'):
     if region == 'bot' or region == 'bottom':
         bot = min(structure.frac_coords[:,2])
         top = bot + c_dist
+        bot = 0
     elif region == 'top' :
         top = max(structure.frac_coords[:,2])
         bot = top - c_dist
+        top = 1
     elif region == 'bot_cd':
         top = min(coord for coord in structure.frac_coords[:,2] if coord > 0.25)
         top += c_dist
