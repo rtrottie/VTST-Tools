@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ecb4b52a-87fc-43e9-ba87-fe98ec3e8ef5" name="Default" comment="just translate by half">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chain/ws_chains.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chain/ws_chains.py" afterDir="false" />
-    </list>
+    <list default="true" id="ecb4b52a-87fc-43e9-ba87-fe98ec3e8ef5" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -69,7 +66,7 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="2080" />
     <option name="y" value="34" />
     <option name="width" value="1400" />
@@ -165,12 +162,18 @@
       <option name="project" value="LOCAL" />
       <updated>1528170408009</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Normal prec">
+      <created>1528172098833</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1528172098833</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="2080" y="34" width="1400" height="1000" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
@@ -204,7 +207,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="make small surface as well" />
     <MESSAGE value="just translate by half" />
-    <option name="LAST_COMMIT_MESSAGE" value="just translate by half" />
+    <MESSAGE value="Normal prec" />
+    <option name="LAST_COMMIT_MESSAGE" value="Normal prec" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Generate_Surface.py">
