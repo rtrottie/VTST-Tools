@@ -27,7 +27,7 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
 
     '''
     instructions = {}
-    instructions["commands"] = ['rm *.sh *.log *.out *.err STOPCAR *.e[0-9][0-9][0-9]* *.o[1-9][1-9][1-9]* *.log* &> /dev/null']
+    instructions["commands"] = ['rm *.sh *.out *.err STOPCAR *.e[0-9][0-9][0-9]* *.o[1-9][1-9][1-9]* &> /dev/null']
     instructions['backup'] = []
     instructions['move'] = []
     if jobtype == 'Standard':
