@@ -141,7 +141,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             start_folder = os.path.join(start_folder, '00')
             final_folder = os.path.join(start_folder, str(images+1).zfill(2))
             final_file = os.path.join(final_folder, 'POSCAR')
-            final = final_file
+            final = ase.io.read(final_file, format='vasp')
             initial.append(final)
         incar.write_file(os.path.join(new_gsm_dir, 'INCAR'))
     except:
