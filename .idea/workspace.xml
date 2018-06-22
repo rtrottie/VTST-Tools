@@ -20,8 +20,8 @@
       <file leaf-file-name="GSM_Setup.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GSM_Setup.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
-              <caret line="143" column="59" selection-start-line="143" selection-start-column="59" selection-end-line="143" selection-end-column="59" />
+            <state relative-caret-position="408">
+              <caret line="144" column="30" selection-start-line="144" selection-start-column="30" selection-end-line="144" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -217,7 +217,21 @@
       <option name="project" value="LOCAL" />
       <updated>1529176143179</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="write gsm from neb">
+      <created>1529683020914</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1529683020915</updated>
+    </task>
+    <task id="LOCAL-00013" summary="write gsm from neb">
+      <created>1529683097646</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1529683097646</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -259,7 +273,8 @@
     <MESSAGE value="Normal prec" />
     <MESSAGE value="added elements" />
     <MESSAGE value="makedir" />
-    <option name="LAST_COMMIT_MESSAGE" value="makedir" />
+    <MESSAGE value="write gsm from neb" />
+    <option name="LAST_COMMIT_MESSAGE" value="write gsm from neb" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../chain/ws_chains.py">
@@ -404,8 +419,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GSM_Setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="143" column="59" selection-start-line="143" selection-start-column="59" selection-end-line="143" selection-end-column="59" />
+        <state relative-caret-position="408">
+          <caret line="144" column="30" selection-start-line="144" selection-start-column="30" selection-end-line="144" selection-end-column="30" />
         </state>
       </provider>
     </entry>
