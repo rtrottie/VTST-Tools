@@ -232,9 +232,11 @@ if __name__ == '__main__':
     parser.add_argument('--name', help='Changes INCAR SYSTEM variable to value provided',
                         type=str, default=None)
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms (1 indexed)', type=int, nargs='*', default=[])
+    parser.add_argument('--neb', help='make GSM from NEB Directory',
+                        action='store_true')
     args = parser.parse_args()
 
     args.atom_pairs = [ x-1 for x in args.atom_pairs ]
 
     GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn,
-              tolerance=args.tolerance, poscar_override=args.atom_pairs, name=args.name)
+              tolerance=args.tolerance, poscar_override=args.atom_pairs, name=args.name, is_neb=args.neb)
