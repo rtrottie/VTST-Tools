@@ -110,7 +110,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         else:
             initial.append(final)
 
-    ase.io.write('scratch/initial0000.temp.xyz', initial, )
     try:
         shutil.copy(os.path.join(start_folder, 'KPOINTS'), os.path.join(new_gsm_dir, 'KPOINTS'))
     except:
@@ -143,6 +142,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             final_folder = os.path.join(start_folder, str(images+1).zfill(2))
             final_file = os.path.join(final_folder, 'POSCAR')
             final = final_file
+            initial.append(final)
         incar.write_file(os.path.join(new_gsm_dir, 'INCAR'))
     except:
         print('Copying INCAR failed, make sure to add an appropriate INCAR to the directory')
@@ -163,6 +163,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     else:
         sd = [(True, True, True)] * Poscar.from_file('POSCAR.start').natoms
 
+    ase.io.write('scratch/initial0000.temp.xyz', initial, )
     with open('scratch/initial0000.temp.xyz', 'r') as f:
         # Convert True SD to frozen atoms
         sd = list(map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd))
