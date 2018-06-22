@@ -140,7 +140,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
                 if tag in incar:
                     del incar[tag]
             start_folder = os.path.join(start_folder, '00')
-            final_folder = os.path.join(start_folder, str(images).zfill(2))
+            final_folder = os.path.join(start_folder, str(images+1).zfill(2))
             final_file = os.path.join(final_folder, 'POSCAR')
             final = final_file
         incar.write_file(os.path.join(new_gsm_dir, 'INCAR'))
