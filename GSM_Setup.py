@@ -29,7 +29,7 @@ def wrap_positions_right(positions, center, cell):
 
     return (x,y,z)
 
-def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None, copy_wavefunction=False, tolerance=None, poscar_override=[], name=None):
+def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None, copy_wavefunction=False, tolerance=None, poscar_override=[], name=None, is_neb=True):
 
     # Initializing Variables to be called later in function
 
@@ -38,7 +38,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     if f_center == None:
         f_center = center
     if images == None:
-        if final: #is GSM
+        if final or is_neb: #is GSM
             images = 9
             jinja_vars["SM_TYPE"] = 'GSM'
             print('Setting up GSM run')
@@ -47,7 +47,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             jinja_vars["SM_TYPE"] = 'SSM'
             print('Setting up SSM run, make sure to create ISOMERS File at scratch/ISOMERS0000')
     else:
-        if final: #is GSM
+        if final or is_neb: #is GSM
             jinja_vars["SM_TYPE"] = 'GSM'
             print('Setting up GSM run')
         else: # is SSM
@@ -57,7 +57,10 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     jinja_vars["IMAGES"] = images
 
     # Finding the Starting Structure
-    if os.path.isfile(start):
+    if is_neb:
+        start_file = os.path.join(start, '00', 'POSCAR')
+        start_folder = os.path.join(start)
+    elif os.path.isfile(start):
         start_file = start
         start_folder = os.path.dirname(start)
     else:
@@ -107,19 +110,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         else:
             initial.append(final)
 
-    ase.io.write('scratch/initial0000.temp.xyz', initial, )
-    try:
-        incar = Incar.from_file(os.path.join(start_folder, 'INCAR'))
-        incar['NSW']=0
-        if final and 'NUPDOWN' in incar:
-            incar_final = Incar.from_file(os.path.join(final_folder, 'INCAR'))
-            incar['AUTO_NUPDOWN'] = 'r {} {}'.format(incar['NUPDOWN'], incar_final['NUPDOWN'])
-            incar['AUTO_NUPDOWN_ITERS'] = 20
-        if name:
-            incar['SYSTEM'] = name
-        incar.write_file(os.path.join(new_gsm_dir, 'INCAR'))
-    except:
-        print('Copying INCAR failed, make sure to add an appropriate INCAR to the directory')
     try:
         shutil.copy(os.path.join(start_folder, 'KPOINTS'), os.path.join(new_gsm_dir, 'KPOINTS'))
     except:
@@ -134,6 +124,28 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         potcar.write_file(os.path.join(new_gsm_dir, 'POTCAR'))
     except:
         print('Copying POTCAR failed, make sure to add an appropriate POTCAR to the directory')
+    try:
+        incar = Incar.from_file(os.path.join(start_folder, 'INCAR'))
+        incar['NSW']=0
+        if final and 'NUPDOWN' in incar:
+            incar_final = Incar.from_file(os.path.join(final_folder, 'INCAR'))
+            incar['AUTO_NUPDOWN'] = 'r {} {}'.format(incar['NUPDOWN'], incar_final['NUPDOWN'])
+            incar['AUTO_NUPDOWN_ITERS'] = 20
+        if name:
+            incar['SYSTEM'] = name
+        if is_neb:
+            images = incar['IMAGES']
+            for tag in ['IMAGES', 'LCLIMB']:
+                if tag in incar:
+                    del incar[tag]
+            final_folder = os.path.join(start_folder, str(images+1).zfill(2))
+            final_file = os.path.join(final_folder, 'POSCAR')
+            final = ase.io.read(final_file, format='vasp')
+            initial.append(final)
+            start_folder = os.path.join(start_folder, '00')
+        incar.write_file(os.path.join(new_gsm_dir, 'INCAR'))
+    except:
+        print('Copying INCAR failed, make sure to add an appropriate INCAR to the directory')
 
     currdir = os.path.abspath('.')
     os.chdir(new_gsm_dir)
@@ -151,6 +163,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     else:
         sd = [(True, True, True)] * Poscar.from_file('POSCAR.start').natoms
 
+    ase.io.write('scratch/initial0000.temp.xyz', initial, )
     with open('scratch/initial0000.temp.xyz', 'r') as f:
         # Convert True SD to frozen atoms
         sd = list(map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd))
@@ -221,9 +234,11 @@ if __name__ == '__main__':
     parser.add_argument('--name', help='Changes INCAR SYSTEM variable to value provided',
                         type=str, default=None)
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms (1 indexed)', type=int, nargs='*', default=[])
+    parser.add_argument('--neb', help='make GSM from NEB Directory',
+                        action='store_true')
     args = parser.parse_args()
 
     args.atom_pairs = [ x-1 for x in args.atom_pairs ]
 
     GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn,
-              tolerance=args.tolerance, poscar_override=args.atom_pairs, name=args.name)
+              tolerance=args.tolerance, poscar_override=args.atom_pairs, name=args.name, is_neb=args.neb)
