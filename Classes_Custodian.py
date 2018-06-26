@@ -175,7 +175,7 @@ class DimerJob(VaspJob):
         if not set(files).issuperset({"INCAR", "POSCAR", "POTCAR", "KPOINTS"}):
             for f in files:
                 try:
-                    struct = read_structure(f)
+                    struct = Structure.from_file(f)
                     num_structures += 1
                 except:
                     pass
