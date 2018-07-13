@@ -172,7 +172,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             cell = start.get_cell()
             sfp = final.get_scaled_positions() # Scaled Final Positions
             start_i = 2
-            final_i = start_i + len(sfp)
+            final_i = 2*start_i + len(sfp)
             for i, pos in enumerate(sfp):
                 atom = lines[start_i + i].split()[0]
                 start_coord = np.array([ float(x) for x in lines[start_i + i].split()[1:4] ])
