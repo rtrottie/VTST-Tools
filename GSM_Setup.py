@@ -168,15 +168,15 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     ase.io.write('scratch/initial0000.temp.xyz', initial, )
     if fix_positions:
         with open('scratch/initial0000.temp.xyz', 'r') as f:
-            lines = f.readlines()
+            lines = [ x.split() for x in f.readlines() ]
             cell = start.get_cell()
             sfp = final.get_scaled_positions() # Scaled Final Positions
             start_i = 2
             final_i = 2*start_i + len(sfp)
             for i, pos in enumerate(sfp):
-                atom = lines[start_i + i].split()[0]
-                start_coord = np.array([ float(x) for x in lines[start_i + i].split()[1:4] ])
-                final_coord = np.array([ float(x) for x in lines[final_i + i].split()[1:4] ])
+                atom = lines[start_i + i][0]
+                start_coord = np.array([ float(x) for x in lines[start_i + i][1:4] ])
+                final_coord = np.array([ float(x) for x in lines[final_i + i][1:4] ])
                 final_coord_temp = final_coord
                 distance = np.linalg.norm(start_coord - final_coord)
                 for x in [-1, 0 , 1]:
@@ -191,6 +191,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             lines[final_i][2] = final_coord_temp[1]
             lines[final_i][3] = final_coord_temp[2]
         with open('scratch/initial0000.temp.xyz', 'w') as f:
+            lines = [' '.join(line) for line in lines]
             f.writelines(lines)
 
 
