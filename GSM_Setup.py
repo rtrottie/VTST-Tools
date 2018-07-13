@@ -184,8 +184,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
                             final_coord_diff = np.matrix([x,y,z]) * cell
                             distance_temp = np.linalg.norm(start_coord - (final_coord+final_coord_diff))
                             if distance_temp < distance:
-                                print(start_i+i)
-                                print('{} {} {}'.format(x,y,z))
                                 final_coord_temp = final_coord+final_coord_diff
                                 distance = distance_temp
                 lines[final_i+i][1] = final_coord_temp[0,0]
