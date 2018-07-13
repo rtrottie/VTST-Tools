@@ -190,7 +190,9 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             lines[final_i][1] = final_coord_temp[0]
             lines[final_i][2] = final_coord_temp[1]
             lines[final_i][3] = final_coord_temp[2]
+
         with open('scratch/initial0000.temp.xyz', 'w') as f:
+            print(lines)
             lines = [' '.join([ str(x) for x in line ]) for line in lines]
             f.writelines(lines)
 
