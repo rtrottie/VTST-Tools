@@ -184,13 +184,13 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
                             final_coord_diff = np.matrix([x,y,z]) * cell
                             distance_temp = np.linalg.norm(start_coord - (final_coord+final_coord_diff))
                             if distance_temp < distance:
-                                print(start_i)
+                                print(start_i+i)
                                 print('{} {} {}'.format(x,y,z))
                                 final_coord_temp = final_coord+final_coord_diff
                                 distance = distance_temp
-                lines[final_i][1] = final_coord_temp[0,0]
-                lines[final_i][2] = final_coord_temp[0,1]
-                lines[final_i][3] = final_coord_temp[0,2]
+                lines[final_i+i][1] = final_coord_temp[0,0]
+                lines[final_i+i][2] = final_coord_temp[0,1]
+                lines[final_i+i][3] = final_coord_temp[0,2]
 
         with open('scratch/initial0000.temp.xyz', 'w') as f:
             lines = [' '.join([ str(x) for x in line ]) for line in lines]
