@@ -174,7 +174,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             start_i = 2
             final_i = 2*start_i + len(sfp)
             for i, pos in enumerate(sfp):
-                atom = lines[start_i + i][0]
                 start_coord = np.array([ float(x) for x in lines[start_i + i][1:4] ])
                 final_coord = np.array([ float(x) for x in lines[final_i + i][1:4] ])
                 final_coord_temp = final_coord
@@ -187,9 +186,9 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
                             if distance_temp < distance:
                                 final_coord_temp = final_coord+final_coord_diff
                                 distance = distance_temp
-            lines[final_i][1] = final_coord_temp[0]
-            lines[final_i][2] = final_coord_temp[1]
-            lines[final_i][3] = final_coord_temp[2]
+                lines[final_i][1] = final_coord_temp[0]
+                lines[final_i][2] = final_coord_temp[1]
+                lines[final_i][3] = final_coord_temp[2]
 
         with open('scratch/initial0000.temp.xyz', 'w') as f:
             lines = [' '.join([ str(x) for x in line ]) for line in lines]
