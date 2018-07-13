@@ -29,7 +29,9 @@ def wrap_positions_right(positions, center, cell):
 
     return (x,y,z)
 
-def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None, copy_wavefunction=False, tolerance=None, poscar_override=[], name=None, is_neb=True):
+def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None,
+              copy_wavefunction=False, tolerance=None, poscar_override=[], name=None, is_neb=True,
+              fix_positions=True):
 
     # Initializing Variables to be called later in function
 
@@ -164,6 +166,35 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         sd = [(True, True, True)] * Poscar.from_file('POSCAR.start').natoms
 
     ase.io.write('scratch/initial0000.temp.xyz', initial, )
+    if fix_positions:
+        with open('scratch/initial0000.temp.xyz', 'r') as f:
+            lines = f.readlines()
+            cell = start.get_cell()
+            sfp = final.get_scaled_positions() # Scaled Final Positions
+            start_i = 2
+            final_i = start_i + len(sfp)
+            for i, pos in enumerate(sfp):
+                atom = lines[start_i + i].split()[0]
+                start_coord = [ float(x) for x in lines[start_i + i].split()[1:4] ]
+                final_coord = [ float(x) for x in lines[final_i + i].split()[1:4] ]
+                final_coord_temp = final_coord
+                distance = np.linalg.norm(start_coord - final_coord)
+                for x in [-1, 0 , 1]:
+                    for y in [-1, 0, 1]:
+                        for z in [-1, 0, 1]:
+                            final_coord_diff = np.matrix([x,y,z]) * cell
+                            distance_temp = np.linalg.norm(start_coord - (final_coord_temp+final_coord_diff))
+                            if distance_temp < distance:
+                                final_coord_temp = final_coord_temp+final_coord_diff
+                                distance = distance_temp
+            lines[final_i][1] = final_coord_temp[0]
+            lines[final_i][2] = final_coord_temp[1]
+            lines[final_i][3] = final_coord_temp[2]
+        with open('scratch/initial0000.temp.xyz', 'w') as f:
+            f.writelines(lines)
+
+
+
     with open('scratch/initial0000.temp.xyz', 'r') as f:
         # Convert True SD to frozen atoms
         sd = list(map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd))
