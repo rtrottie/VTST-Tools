@@ -174,8 +174,8 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
             start_i = 2
             final_i = 2*start_i + len(sfp)
             for i, pos in enumerate(sfp):
-                start_coord = np.array([ np.float128(x) for x in lines[start_i + i][1:4] ])
-                final_coord = np.array([ np.float128(x) for x in lines[final_i + i][1:4] ])
+                start_coord = np.matrix([ np.float128(x) for x in lines[start_i + i][1:4] ])
+                final_coord = np.matrix([ np.float128(x) for x in lines[final_i + i][1:4] ])
                 final_coord_temp = final_coord
                 distance = np.linalg.norm(start_coord - final_coord)
                 for x in [-1, 0 , 1]:
