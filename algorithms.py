@@ -13,7 +13,7 @@ def get_energy(i, structure : Structure, target=0.01):
         {'dict': 'INCAR',
          'action': {'_set': {'NSW': 5000,
                              'IOPT': 0,
-                             'IBRION': -1,
+                             'IBRION': 3,
                              'EDIFFG': 1e-5,
                              'POTIM' : 0},
                     }}
