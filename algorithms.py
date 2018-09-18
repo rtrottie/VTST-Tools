@@ -5,10 +5,11 @@ import os
 import shutil
 import logging
 from Neb_Make import nebmake
+from custodian.vasp.handlers import *
 
 def get_energy(i, structure : Structure, target=0.01):
     cwd = os.path.abspath('.')
-    handlers = []
+    handlers = VaspErrorHandler('vasp.log'), PositiveEnergyErrorHandler(), NonConvergingErrorHandler(nionic_steps=10, change_algo=True)]
     settings = [
         {'dict': 'INCAR',
          'action': {'_set': {'NSW': 5000,
