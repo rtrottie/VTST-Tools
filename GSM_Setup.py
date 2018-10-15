@@ -166,12 +166,12 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         sd = [(True, True, True)] * Poscar.from_file('POSCAR.start').natoms
 
     ase.io.write('scratch/initial0000.temp.xyz', initial, )
-    if fix_positions:
+    if fix_positions and final:
         with open('scratch/initial0000.temp.xyz', 'r') as f:
             lines = [ x.split() for x in f.readlines() ]
             cell = start.get_cell()
-            # sfp = final.get_scaled_positions() # Scaled Final Positions
-            ssp = start.get_scaled_positions() # Scaled Final Positions
+            sfp = final.get_scaled_positions() # Scaled Final Positions
+            # ssp = start.get_scaled_positions() # Scaled Final Positions
             start_i = 2
             final_i = 2*start_i + len(ssp)
             for i, pos in enumerate(ssp):
@@ -269,9 +269,12 @@ if __name__ == '__main__':
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms (1 indexed)', type=int, nargs='*', default=[])
     parser.add_argument('--neb', help='make GSM from NEB Directory',
                         action='store_true')
+    parser.add_argument('--dont_fix_positions', help='Dont tryp to align positions',
+                        action='store_false')
     args = parser.parse_args()
 
     args.atom_pairs = [ x-1 for x in args.atom_pairs ]
 
     GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn,
-              tolerance=args.tolerance, poscar_override=args.atom_pairs, name=args.name, is_neb=args.neb)
+              tolerance=args.tolerance, poscar_override=args.atom_pairs, name=args.name, is_neb=args.neb,
+              fix_positions=(args.dont_fix_positions and args.final))
