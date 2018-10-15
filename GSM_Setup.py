@@ -170,7 +170,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         with open('scratch/initial0000.temp.xyz', 'r') as f:
             lines = [ x.split() for x in f.readlines() ]
             cell = start.get_cell()
-            sfp = final.get_scaled_positions() # Scaled Final Positions
+            # sfp = final.get_scaled_positions() # Scaled Final Positions
             ssp = start.get_scaled_positions() # Scaled Final Positions
             start_i = 2
             final_i = 2*start_i + len(ssp)
