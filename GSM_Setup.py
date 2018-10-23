@@ -77,7 +77,6 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
     # shutil.copy(os.path.join(file_loc, 'gfstringq.exe'), os.path.join(new_gsm_dir, 'gfstringq.exe'))
     shutil.copy(os.path.join(file_loc, 'status'), os.path.join(new_gsm_dir, 'status'))
     shutil.copy(start_file, os.path.join(new_gsm_dir, 'POSCAR.start'))
-    poscar = Poscar.from_file('POSCAR.start')
     if not os.path.exists(os.path.join(new_gsm_dir, 'scratch')):
         os.makedirs(os.path.join(new_gsm_dir, 'scratch'))
 
@@ -119,7 +118,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         print('Copying KPOINTS failed, make sure to add an appropriate KPOINTS to the directory')
     try:
         potcar = Potcar()
-        for symbol in Poscar.from_file(os.path.join(new_gsm_dir, 'POSCAR.start')).site_symbols:
+        for symbol in Poscar.from_file(os.path.join(new_gsm_dir, 'POSCAR.start'), check_for_POTCAR=False).site_symbols:
             for potcar_single in Potcar.from_file(os.path.join(start_folder, 'POTCAR')): # pymatgen.io.vasp.PotcarSingle
                 if symbol == potcar_single.element:
                     potcar.append(potcar_single)
@@ -160,11 +159,11 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         f.write(template.render(jinja_vars))
     os.chmod('grad.py', 0o755)
     os.chmod('status', 0o755)
-    poscar = Poscar.from_file('POSCAR.start')
+    poscar = Poscar.from_file('POSCAR.start', check_for_POTCAR=False)
     if poscar.selective_dynamics:
-        sd = Poscar.from_file('POSCAR.start').selective_dynamics
+        sd = poscar.selective_dynamics
     else:
-        sd = [(True, True, True)] * Poscar.from_file('POSCAR.start').natoms
+        sd = [(True, True, True)] * poscar.natoms
 
     ase.io.write('scratch/initial0000.temp.xyz', initial, )
     if fix_positions and final:
