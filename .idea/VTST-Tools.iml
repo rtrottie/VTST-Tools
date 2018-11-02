@@ -5,8 +5,5 @@
     <orderEntry type="jdk" jdkName="Python 3.5.2 (C:\Users\RyanTrottier\Anaconda3\python.exe)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Database" />
-    <orderEntry type="module" module-name="VASP-Templates" />
-    <orderEntry type="module" module-name="chain" />
-    <orderEntry type="module" module-name="chain" />
   </component>
 </module>
