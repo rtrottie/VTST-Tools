@@ -259,3 +259,28 @@ def isint(string):
         return True
     except ValueError:
         return False
+
+def get_corresponding_atom_i(structure1, structure2, init_distance=0.5, same_atom=True):
+    corresponding_atom_i = []
+    if len(structure1) < len(structure2):
+        smaller_structure = structure1
+        larger_structure = structure2
+        swap = False
+    else:
+        smaller_structure = structure2
+        larger_structure = structure1
+        swap = True
+    for i in range(len(smaller_structure)):
+        a1 = smaller_structure[i]
+        j_least = None
+        least_distance = 9999999
+        for j in range(len(larger_structure)):
+            a2 = larger_structure[j]
+            distance = a1.distance(a2)
+            if distance < least_distance:
+                least_distance = distance
+                j_least = j
+        corresponding_atom_i.append( (i, j_least))
+    if swap:
+        corresponding_atom_i = [(j,i) for i,j in corresponding_atom_i]
+    return corresponding_atom_i
