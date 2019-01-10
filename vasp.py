@@ -371,7 +371,10 @@ if __name__ == '__main__':
         queue = get_queue(computer, jobtype, time, nodes)
 
 
-
+    if computer == 'summit' :
+        vasp_command = ['{{ mpi }}', '-np', '{{ tasks }}', vasp]
+    else:
+        vasp_command = [mpi, '-np', int(nodes*cores), vasp]
 
     if args.frozen:
         jobtype = jobtype + '-Halting'
@@ -396,7 +399,7 @@ if __name__ == '__main__':
                 'vasp_gamma'    : os.environ["VASP_GAMMA"],
                 'vasp_bashrc'   : os.environ['VASP_BASHRC'] if 'VASP_BASHRC' in os.environ else '~/.bashrc_vasp',
                 'jobtype'       : jobtype,
-                'tasks'         : int(nodes*cores/openmp),
+                'tasks'         : int(nodes*cores),
                 'openmp'        : openmp}
     keywords.update(additional_keywords)
 
