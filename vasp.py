@@ -371,11 +371,6 @@ if __name__ == '__main__':
         queue = get_queue(computer, jobtype, time, nodes)
 
 
-    if computer == 'summit' :
-        vasp_command = ['{{ mpi }}', '-np', '{{ tasks }}', vasp]
-    else:
-        vasp_command = [mpi, '-np', int(nodes*cores), vasp]
-
     if args.frozen:
         jobtype = jobtype + '-Halting'
 
