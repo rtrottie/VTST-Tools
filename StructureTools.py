@@ -84,10 +84,10 @@ def check_distances_from_plane(structure, atom_i, angle_is, exclude_element=[Ele
                 d = get_distance_from_plane(structure, atom_i, i, j, k)
                 if d < min_distance:
                     angle = get_angle_from_plane(structure, atom_i, angle_is[0], angle_is[1], i,j,k)
+                    if verbose:
+                        print(d,angle)
                     if angle > min_angle:
                         min_angle = angle
-                        if verbose:
-                            print(d,angle)
                         best = (i,j,k)
     if best:
         return best
