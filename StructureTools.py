@@ -83,8 +83,8 @@ def check_distances_from_plane(structure, atom_i, angle_is, exclude_element=[Ele
         for j in metal_atoms:
             for k in metal_atoms:
                 d = get_distance_from_plane(structure, atom_i, i, j, k)
-                print(d)
                 if d < min_distance:
+                    print(d)
                     angle = get_angle_from_plane(structure, atom_i, angle_is[0], angle_is[1], i,j,k)
                     if angle > min_angle:
                         min_angle = angle
