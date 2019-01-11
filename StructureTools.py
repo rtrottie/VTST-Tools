@@ -73,8 +73,7 @@ def get_angle_from_plane(structure : Structure, i, i1, i2, x, y, z):
     return np.arcsin(abs(np.dot(v, plane)) / (np.linalg.norm(v)*np.linalg.norm(plane)))*180/np.pi
 
 
-def check_distances_from_plane(structure, atom_i, angle_is, exclude_element=[Element('O')], min_distance=0.002, min_angle=58
-                               ):
+def check_distances_from_plane(structure, atom_i, angle_is, exclude_element=[Element('O')], min_distance=0.002, min_angle=58, verbose=False):
     metal_atoms = [i for i, a in enumerate(structure) if a.specie not in exclude_element]
     metal_atoms.remove(atom_i)
     best = None
@@ -84,10 +83,11 @@ def check_distances_from_plane(structure, atom_i, angle_is, exclude_element=[Ele
             for k in metal_atoms:
                 d = get_distance_from_plane(structure, atom_i, i, j, k)
                 if d < min_distance:
-                    print(d)
                     angle = get_angle_from_plane(structure, atom_i, angle_is[0], angle_is[1], i,j,k)
                     if angle > min_angle:
                         min_angle = angle
+                        if verbose:
+                            print(d,angle)
                         best = (i,j,k)
     if best:
         return best
