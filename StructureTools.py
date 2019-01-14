@@ -91,9 +91,9 @@ def check_distances_from_plane(structure, atom_i, angle_is, exclude_element=[Ele
                         best = (i,j,k)
     if best:
         return best
-    atoms = list(range(len(structure)))
     print('Could not find Metal Bounding Atoms, checking Oxygen')
-    atoms = [i for i, a in enumerate(structure) if a.specie not in [Element('H')]]
+    atoms = list(range(len(structure)))
+    atoms.remove(atom_i)
     for i in copy.deepcopy(atoms):
         atoms.remove(i)
         for j in atoms:
