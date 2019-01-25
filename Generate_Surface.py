@@ -38,6 +38,7 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                     poscar.selective_dynamics = sd
                     update_incar(s, incar)
                     potcar = Potcar(poscar.site_symbols)
+                    poscar.comment = str(miller)
                     vasp = VaspInput(incar, kpoints, poscar, potcar)
                     vasp.write_input(folder)
 
