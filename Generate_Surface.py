@@ -235,12 +235,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.length == 0:
         args.length = args.width
-    surfs = Generate_Surface(Structure.from_file(args.bulk), args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal, cancel_dipole=args.cd, give_miller=True)
+    surfs, millers = Generate_Surface(Structure.from_file(args.bulk), args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal, cancel_dipole=args.cd, give_miller=True)
     Structure.from_file(args.bulk).to('poscar', 'POSCAR')
     i = 0
     # path_base = '_'.join(list(map(str, args.miller)))
     path_base = 'surfaces'
-    for surf, miller in surfs:
+    for surf, miller in zip(surfs,millers):
         path = os.path.join(path_base, str(i).zfill(2))
         if args.selective_dynamics:
             sd = get_SD_along_vector(surf, 2, args.selective_dynamics)
