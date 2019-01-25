@@ -42,7 +42,8 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                     vasp = VaspInput(incar, kpoints, poscar, potcar)
                     vasp.write_input(folder)
 
-def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False, orth=False, cancel_dipole=False):
+def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=10, incar=None, kpoints=None, vis=False, orth=False,
+                     cancel_dipole=False, give_miller=False):
     """
 
     Args:
@@ -68,6 +69,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
     Poscar.get_string = get_string_more_sigfig
     Incar.get_string = pretty_incar_string
     surfs = []
+    millers = []
     # sf = surf.SlabGenerator(structure, miller, depth, 1,)
     i=0
     for s in generate_all_slabs(structure, miller, depth, 1, tol=0.2, center_slab=False, max_normal_search=miller ):
@@ -86,6 +88,7 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
                 continue
             elif use =='y':
                 surfs.append(s)
+                millers.append(miller)
                 i+=1
             elif use == 'break':
                 break
@@ -93,9 +96,13 @@ def Generate_Surface(structure, miller, width, length, depth, freeze=0, vacuum=1
                 i+=1
                 print('Bad input, assuming yes')
         else:
+            millers.append(miller)
             surfs.append(s)
             i+=1
-    return surfs
+    if give_miller:
+        return (surfs, millers)
+    else
+        return surfs
 
 def Add_Vac(structure, vector, vacuum, cancel_dipole=False):
     """
@@ -228,18 +235,18 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.length == 0:
         args.length = args.width
-    surfs = Generate_Surface(Structure.from_file(args.bulk), args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal, cancel_dipole=args.cd)
+    surfs = Generate_Surface(Structure.from_file(args.bulk), args.miller, args.width, args.length, args.depth, vacuum=args.vacuum, vis=args.vis, orth=args.no_orthogonal, cancel_dipole=args.cd, give_miller=True)
     Structure.from_file(args.bulk).to('poscar', 'POSCAR')
     i = 0
     # path_base = '_'.join(list(map(str, args.miller)))
     path_base = 'surfaces'
-    for surf in surfs:
+    for surf, miller in surfs:
         path = os.path.join(path_base, str(i).zfill(2))
         if args.selective_dynamics:
             sd = get_SD_along_vector(surf, 2, args.selective_dynamics)
         else:
             sd = None
-        p = Poscar(surf, selective_dynamics=sd)
+        p = Poscar(surf, selective_dynamics=sd, comment=str(miller))
         if not os.path.exists(path):
             os.makedirs(path)
         p.write_file(os.path.join(path, 'POSCAR'))
