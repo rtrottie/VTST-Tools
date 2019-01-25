@@ -25,7 +25,8 @@ def Generate_Surfaces(material, depth_min, depth_max, width_min, width_max, free
                 for poscar in sf.get_slabs():
                     folder = unicode('d' + str(depth) + '-w' + str(width) + '-f' + str(freeze) + '-s' + str(i))
                     i+=1
-                    poscar = Poscar(poscar)
+                    miller = poscar.miller_index
+                    poscar = Poscar(poscar, comment=str(miller))
                     sd = []
                     for site in poscar.structure.sites:
                         if site.c * site.lattice.c < frozen_depth:
