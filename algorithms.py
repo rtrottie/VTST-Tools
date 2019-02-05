@@ -98,6 +98,7 @@ def get_energy(i, structure : Structure, target=0.01):
                             shutil.copy(os.path.join(dir_i, lowest_dir, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
                             shutil.copy(os.path.join(dir_i, lowest_dir, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
                         except:
+                            print('Unable to Copy CHGCAR and WAVECAR')
                             pass
                         if vasprun_above.final_energy - vasprun_below.final_energy < target:
                             same_wfxns += 1
