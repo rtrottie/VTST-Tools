@@ -356,7 +356,7 @@ def write_input_scell(self, atoms, properties=None, system_changes=None):
 
 def converged_fmax_or_emax(self, forces=None):
     try:
-        convergedP = abs(self.previous_energy - self.atoms.get_potential_energy()) < (self.fmax / 10000)
+        convergedP = abs(self.previous_energy - self.atoms.get_potential_energy()) < (self.fmax / 1000000)
         self.previous_energy = self.atoms.get_potential_energy()
         if not convergedP:
             if forces is None:
