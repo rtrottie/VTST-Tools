@@ -70,7 +70,7 @@ def get_angle_from_plane(structure : Structure, i, i1, i2, x, y, z):
     c = normal[2]
     plane = np.array([a,b,c])
 
-    return np.arcsin(abs(np.dot(v, plane)) / (np.linalg.norm(v)*np.linalg.norm(plane)))*180/np.pi
+    return np.arcsin(abs(np.dot(v, plane)) / (np.linalg.norm(v)*np.linalg.norm(plane))) * 180/np.pi
 
 
 def check_distances_from_plane(structure, atom_i, angle_is, exclude_element=[Element('O'), Element('S')], min_distance=0.002, min_angle=15, verbose=False):
