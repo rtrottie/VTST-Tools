@@ -170,6 +170,7 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     # Remove symmetrically equivalent pathways:
     sga = SpacegroupAnalyzer(pathway_structure, 0.5, angle_tolerance=20)
     ss = sga.get_symmetrized_structure()
+    Poscar(ss).write_file('testing.vasp')
     return
     '''
     final_structure = structure.copy()
