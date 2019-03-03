@@ -4,7 +4,12 @@ from pymatgen import Structure, Element, PeriodicSite
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.analysis.local_env import VoronoiNN
 import numpy as np
-from Vis import view
+from Vis import view, open_in_VESTA
+from pymatgen.analysis.defects.generators import InterstitialGenerator, VoronoiInterstitialGenerator
+from pymatgen.analysis.defects.core import create_saturated_interstitial_structure
+from Classes_Pymatgen import Poscar
+import time
+from pymatgen.core.structure import StructureError
 
 def get_atom_i(s, target_atoms):
     if type(target_atoms) != list and type(target_atoms )!= set:
@@ -88,6 +93,106 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
         return (diffusion_elements, centers)
 
 
+    return diffusion_elements
+
+def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interstitial_atom : str, vis=False,
+                                                  get_midpoints=False, dummy='He', min_dist=0.5):
+    '''
+
+    Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
+
+    :param structure: Structure
+        Structure to calculate diffusion pathways
+    :param atom_i: int
+        Atom to get diffion path from
+    :return: [ Structure ]
+    '''
+
+    # To Find Pathway, look for voronoi edges
+    orig_structure = structure.copy()
+    structure = structure.copy() # type: Structure
+    combined_structure = structure.copy()
+    combined_structure.DISTANCE_TOLERANCE = 0.01
+    vnn = VoronoiNN(targets=[interstitial_atom])
+
+    if vis:
+        Poscar(structure).write_file(vis)
+        open_in_VESTA(vis)
+    inter_gen = list(VoronoiInterstitialGenerator(orig_structure, interstitial_atom))
+    if vis:
+        print(len(inter_gen))
+    for interstitial in inter_gen:
+        sat_structure = create_saturated_interstitial_structure(interstitial) # type: Structure
+        sat_structure.remove_site_property('velocities')
+        if vis:
+            Poscar(sat_structure).write_file(vis)
+            open_in_VESTA(vis)
+            time.sleep(0.5)
+        for site in sat_structure: # type: PeriodicSite
+            if site.specie == interstitial_atom:
+                try:
+                    combined_structure.append(site.specie, site.coords, coords_are_cartesian=True, validate_proximity=True)
+                except StructureError:
+                    pass
+
+    # combined_structure.merge_sites(mode='delete')
+    combined_structure.remove_site_property('velocities')
+    if vis:
+        Poscar(combined_structure).write_file(vis)
+        open_in_VESTA(vis)
+
+
+
+
+    # edges = vnn.get_nn_info(structure, atom_i)
+    # base_coords = structure[atom_i].coords
+    pathway_structure = combined_structure.copy()
+    # Add H for all other diffusion atoms, so symmetry is preserved
+    for i in get_atom_i(combined_structure, interstitial_atom):
+        sym_edges = vnn.get_nn_info(combined_structure, i)
+        base = pathway_structure[i] # type: PeriodicSite
+        for edge in sym_edges:
+            dest = edge['site']
+            if base.distance(dest) > min_dist:
+                coords = (base.coords + dest.coords) / 2
+                try:
+                    neighbors = [i, edge['site_index']]
+                    neighbors.sort()
+                    pathway_structure.append(dummy, coords, True, False, properties={'neighbors': neighbors})
+                except StructureError:
+                    pass
+    if vis:
+        Poscar(pathway_structure).write_file(vis)
+        open_in_VESTA(vis)
+
+
+
+    # Remove symmetrically equivalent pathways:
+    sga = SpacegroupAnalyzer(pathway_structure, 0.5, angle_tolerance=20)
+    ss = sga.get_symmetrized_structure()
+    return
+    '''
+    final_structure = structure.copy()
+    indices = []
+    for i in range(len(orig_structure), len(orig_structure)+len(edges)): # get all 'original' edge sites
+        sites = ss.find_equivalent_sites(ss[i])
+        new_indices = [ss.index(site) for site in sites if ss.index(site) < len(orig_structure) + len(edges)] # Check if symmetrically equivalent to other original edge sites
+        new_indices.remove(i)
+        if i not in indices: # Don't duplicate effort
+            indices = indices + new_indices
+            indices.sort()
+    indices = indices + list(range(len(orig_structure)+len(edges), len(final_structure)))
+    final_structure.remove_sites(indices)
+    diffusion_elements = [ site_dir[tuple(np.round(h.coords))] for h in final_structure[len(orig_structure):] ]
+    if vis:
+        view(final_structure, 'VESTA')
+        print(diffusion_elements)
+
+    if get_midpoints:
+        centers = [h.frac_coords for h in final_structure[len(orig_structure):]]
+        return (diffusion_elements, centers)
+
+    '''
     return diffusion_elements
 
 def get_midpoint(structure : Structure, atom_1, atom_2):

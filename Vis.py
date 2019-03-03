@@ -3,7 +3,7 @@ import os
 import subprocess
 from tempfile import NamedTemporaryFile
 
-def open_in_VESTA(molecule,type='cif'):
+def open_in_VESTA(molecule,type='poscar'):
     '''
 
     :param molecule: A file or structure of a structure to view
