@@ -10,6 +10,8 @@ from pymatgen.analysis.defects.core import create_saturated_interstitial_structu
 from Classes_Pymatgen import Poscar
 import time
 from pymatgen.core.structure import StructureError
+from pymatgen.symmetry.structure import SymmetrizedStructure
+import itertools
 
 def get_atom_i(s, target_atoms):
     if type(target_atoms) != list and type(target_atoms )!= set:
@@ -111,8 +113,8 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     # To Find Pathway, look for voronoi edges
     orig_structure = structure.copy()
     structure = structure.copy() # type: Structure
-    combined_structure = structure.copy()
-    combined_structure.DISTANCE_TOLERANCE = 0.01
+    interstitial_structure = structure.copy()
+    interstitial_structure.DISTANCE_TOLERANCE = 0.01
     vnn = VoronoiNN(targets=[interstitial_atom])
 
     if vis:
@@ -131,14 +133,14 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
         for site in sat_structure: # type: PeriodicSite
             if site.specie == interstitial_atom:
                 try:
-                    combined_structure.append(site.specie, site.coords, coords_are_cartesian=True, validate_proximity=True)
+                    interstitial_structure.append(site.specie, site.coords, coords_are_cartesian=True, validate_proximity=True)
                 except StructureError:
                     pass
 
     # combined_structure.merge_sites(mode='delete')
-    combined_structure.remove_site_property('velocities')
+    interstitial_structure.remove_site_property('velocities')
     if vis:
-        Poscar(combined_structure).write_file(vis)
+        Poscar(interstitial_structure).write_file(vis)
         open_in_VESTA(vis)
 
 
@@ -146,10 +148,11 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
 
     # edges = vnn.get_nn_info(structure, atom_i)
     # base_coords = structure[atom_i].coords
-    pathway_structure = combined_structure.copy()
+    pathway_structure = interstitial_structure.copy() # type: Structure
+    pathway_structure.DISTANCE_TOLERANCE = 0.01
     # Add H for all other diffusion atoms, so symmetry is preserved
-    for i in get_atom_i(combined_structure, interstitial_atom):
-        sym_edges = vnn.get_nn_info(combined_structure, i)
+    for i in get_atom_i(interstitial_structure, interstitial_atom):
+        sym_edges = vnn.get_nn_info(interstitial_structure, i)
         base = pathway_structure[i] # type: PeriodicSite
         for edge in sym_edges:
             dest = edge['site']
@@ -158,8 +161,10 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
                 try:
                     neighbors = [i, edge['site_index']]
                     neighbors.sort()
-                    pathway_structure.append(dummy, coords, True, False, properties={'neighbors': neighbors})
+                    pathway_structure.append(dummy, coords, True, validate_proximity=True, properties={'neighbors': neighbors})
                 except StructureError:
+                    pass
+                except ValueError:
                     pass
     if vis:
         Poscar(pathway_structure).write_file(vis)
@@ -168,10 +173,51 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
 
 
     # Remove symmetrically equivalent pathways:
-    sga = SpacegroupAnalyzer(pathway_structure, 0.5, angle_tolerance=20)
-    ss = sga.get_symmetrized_structure()
-    Poscar(ss).write_file('testing.vasp')
-    return
+    # sga = SpacegroupAnalyzer(pathway_structure, 0.1, angle_tolerance=10)
+    # ss = sga.get_symmetrized_structure()
+    return interstitial_structure, pathway_structure
+
+def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: Element, site_i: int = -1):
+    if type(structure) != SymmetrizedStructure:
+        sga = SpacegroupAnalyzer(structure)
+        structure = sga.get_symmetrized_structure()
+    equivalent_dummies = [ x for x in structure.equivalent_indices if structure[x[0]].specie == dummy_atom]
+    best_sites = equivalent_dummies*2
+    best_pathway = None
+    most_overlap = 0
+    for dummy_is in itertools.product(*equivalent_dummies):
+        sites = {}
+        pathway = []
+        for i in dummy_is:
+            neighbors = structure[i].properties['neighbors']
+            pathway.append(neighbors)
+            for neighbor_i in neighbors:
+                if neighbor_i in sites:
+                    sites[neighbor_i] = sites[neighbor_i] + 1
+                else:
+                    sites[neighbor_i] = 1
+
+        if site_i in sites and (len(sites) < len(best_sites) or
+                                (len(sites) == len(best_sites) and most_overlap < sites[site_i])):
+            best_sites = sites
+            best_pathway = pathway
+            most_overlap = sites[site_i]
+
+    return best_pathway
+
+
+
+
+    # for i in range(len(structure)): # type: PeriodicSite
+    #     site = structure[i]
+    #     if site.specie == dummy_atom and i not in considered_sites:
+
+
+
+    '''
+    structure
+    :return:
+    '''
     '''
     final_structure = structure.copy()
     indices = []
