@@ -124,7 +124,12 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     if vis:
         print(len(inter_gen))
     for interstitial in inter_gen:
-        sat_structure = create_saturated_interstitial_structure(interstitial) # type: Structure
+        for dist_tol in [0.2, 0.15, 0.1, 0.05, 0.01, 0.001]:
+            try:
+                sat_structure = create_saturated_interstitial_structure(interstitial, dist_tol=dist_tol) # type: Structure
+                break
+            except ValueError:
+                continue
         sat_structure.remove_site_property('velocities')
         if vis:
             Poscar(sat_structure).write_file(vis)
