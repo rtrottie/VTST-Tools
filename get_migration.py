@@ -24,11 +24,11 @@ def get_atom_i(s, target_atoms):
 
 def get_center_i(structure : Structure, element : Element):
     center_coords = structure.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
-    sites = structure.get_sites_in_sphere(center_coords, 4)
+    sites = structure.get_sites_in_sphere(center_coords, 4, include_index=True)
     sites.sort(key=lambda x : x[1])
-    for (site, _) in sites:
+    for (site, _, i) in sites:
         if site.specie == element:
-            return structure.index(site)
+            return i
     raise Exception('Could not find specified {}'.format(element))
 
 def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int, vis=False, get_midpoints=False):
