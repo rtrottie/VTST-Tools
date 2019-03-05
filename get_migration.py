@@ -22,13 +22,22 @@ def get_atom_i(s, target_atoms):
             yield i
         i = i+1
 
-def get_center_i(structure : Structure, element : Element):
+def get_center_i(structure : Structure, element : Element, skew_positive=True, delta=0.05):
     center_coords = structure.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
     sites = structure.get_sites_in_sphere(center_coords, 4, include_index=True)
     sites.sort(key=lambda x : x[1])
-    for (site, _, i) in sites:
+    best_i = None
+    best_dist = 999999
+    best_location = 3
+    for (site, dist, i) in sites: #type: PeriodicSite
         if site.specie == element:
-            return i
+            if dist < best_dist+delta:
+                if sum(1 - site.frac_coords) < best_location:
+                    best_i = i
+                    best_dist = best_dist
+                    best_location = sum(1 - site.frac_coords)
+    if best_i:
+        return best_i
     raise Exception('Could not find specified {}'.format(element))
 
 def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int, vis=False, get_midpoints=False):
