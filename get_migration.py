@@ -160,8 +160,8 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
                 coords = (base.coords + dest.coords) / 2
                 try:
                     neighbors = [i, edge['site_index']]
-                    neighbors.sort()
-                    pathway_structure.append(dummy, coords, True, validate_proximity=True, properties={'neighbors': neighbors})
+                    # neighbors.sort()
+                    pathway_structure.append(dummy, coords, True, validate_proximity=True, properties={'neighbors': neighbors, 'image' : edge['image']})
                 except StructureError:
                     pass
                 except ValueError:
@@ -177,7 +177,9 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     # ss = sga.get_symmetrized_structure()
     return interstitial_structure, pathway_structure
 
-def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: Element, site_i: int = -1):
+def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: Element, site_i: int = -1, only_positive_direction=True):
+    if only_positive_direction:
+        break_early = False
     if type(structure) != SymmetrizedStructure:
         sga = SpacegroupAnalyzer(structure)
         structure = sga.get_symmetrized_structure()
@@ -189,21 +191,41 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
         sites = {}
         pathway = []
         for i in dummy_is:
-            neighbors = structure[i].properties['neighbors']
+            neighbors = structure[i].properties['neighbors'].copy()
+            image = structure[i].properties['image']
+            if -1 in image or -2 in image:
+                break_early = True
+                break
+            neighbors[0] = (neighbors[0], (0,0,0))
+            neighbors[1] = (neighbors[1], image)
             pathway.append(neighbors)
             for neighbor_i in neighbors:
                 if neighbor_i in sites:
                     sites[neighbor_i] = sites[neighbor_i] + 1
                 else:
                     sites[neighbor_i] = 1
-
-        if site_i in sites and (len(sites) < len(best_sites) or
-                                (len(sites) == len(best_sites) and most_overlap < sites[site_i])):
+        if only_positive_direction:
+            if break_early:
+                break_early = False
+                continue
+        if (site_i, (0,0,0)) in sites and (len(sites) < len(best_sites) or
+                                (len(sites) == len(best_sites) and most_overlap < sites[(site_i, (0,0,0))])):
             best_sites = sites
             best_pathway = pathway
-            most_overlap = sites[site_i]
+            most_overlap = sites[(site_i, (0,0,0))]
 
     return best_pathway
+
+def get_supercell_site(unit: Structure, supercell: Structure, site_i: int, image: tuple):
+    coords = unit[site_i].frac_coords # get coords from unit_cell
+    scale = np.array(unit.lattice.abc) / supercell.lattice.abc
+    coords = coords * scale # Scale coords from supercell
+    coords = coords + (scale * image) # scale coords to image
+    sites = supercell.get_sites_in_sphere(supercell.lattice.get_cartesian_coords(coords), 0.001, include_index=True)
+    if len(sites) != 1:
+        raise Exception('Wrong number of sites at supercell destination {}'.format(sites))
+    new_site = sites[0][2]
+    return new_site
 
 
 
@@ -241,6 +263,23 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
 
     '''
     return diffusion_elements
+
+def get_supercell_for_diffusion(decorated_unit: Structure, unit_pathways, min_size=7.5):
+    supercell_pathways = []
+    supercell = decorated_unit * np.ceil(min_size / np.array(decorated_unit.lattice.abc))
+    for unit_pathway in unit_pathways:
+        new_pathway = []
+        for (i, image) in unit_pathway:
+            new_pathway.append(get_supercell_site(decorated_unit, supercell, i, image))
+        supercell_pathways.append(new_pathway)
+    return supercell, supercell_pathways
+
+def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Element('H'), dummy=Element('He'), min_size=7.5):
+    interstitial_structure, pathway_structure = get_interstitial_diffusion_pathways_from_cell(structure, interstitial, dummy=dummy)
+    paths = get_unique_diffusion_pathways(pathway_structure, dummy, get_center_i(interstitial_structure, interstitial))
+    supercell, paths = get_supercell_for_diffusion(interstitial_structure, paths, min_size=min_size)
+    return supercell, paths
+
 
 def get_midpoint(structure : Structure, atom_1, atom_2):
     a = structure.lattice.a
