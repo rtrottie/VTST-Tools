@@ -32,7 +32,7 @@ def get_center_i(structure : Structure, element : Element, skew_positive=True, d
     for (site, dist, i) in sites: #type: PeriodicSite
         if site.specie == element:
             if dist < best_dist+delta:
-                if sum(1 - site.frac_coords) < best_location:
+                if sum(1 - (site.frac_coords % 1)) < best_location:
                     best_i = i
                     best_dist = best_dist
                     best_location = sum(1 - site.frac_coords)
