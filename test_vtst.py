@@ -11,7 +11,7 @@ os.environ['VESTA_DIR']='"C:\\Program Files\\VESTA\\VESTA.exe"'
 from pymatgen.core import Structure
 
 temp_file = 'D:\\Users\\RyanTrottier\\Documents\\Scrap\\temp.vasp'
-temp_file = False
+# temp_file = False
 # temp_file = ''
 
 structure = Poscar.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR').structure

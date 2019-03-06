@@ -107,7 +107,7 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
     return diffusion_elements
 
 def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interstitial_atom : str, vis=False,
-                                                  get_midpoints=False, dummy='He', min_dist=0.5):
+                                                  get_midpoints=False, dummy='He', min_dist=0.5, weight_cutoff=0.001):
     '''
 
     Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
@@ -170,7 +170,7 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
         base = pathway_structure[i] # type: PeriodicSite
         for edge in sym_edges:
             dest = edge['site']
-            if base.distance(dest) > min_dist:
+            if base.distance(dest) > min_dist and edge['weight'] > weight_cutoff:
                 coords = (base.coords + dest.coords) / 2
                 try:
                     neighbors = [i, edge['site_index']]
@@ -195,7 +195,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
     if only_positive_direction:
         break_early = False
     if type(structure) != SymmetrizedStructure:
-        sga = SpacegroupAnalyzer(structure)
+        sga = SpacegroupAnalyzer(structure, symprec=0.1)
         structure = sga.get_symmetrized_structure()
     equivalent_dummies = [ x for x in structure.equivalent_indices if structure[x[0]].specie == dummy_atom]
     best_sites = equivalent_dummies*2
@@ -203,6 +203,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
     most_overlap = 0
     for dummy_is in itertools.product(*equivalent_dummies):
         sites = {}
+        sites[(site_i, (0,0,0))] = 0
         pathway = []
         for i in dummy_is:
             neighbors = structure[i].properties['neighbors'].copy()
@@ -240,43 +241,6 @@ def get_supercell_site(unit: Structure, supercell: Structure, site_i: int, image
         raise Exception('Wrong number of sites at supercell destination {}'.format(sites))
     new_site = sites[0][2]
     return new_site
-
-
-
-
-    # for i in range(len(structure)): # type: PeriodicSite
-    #     site = structure[i]
-    #     if site.specie == dummy_atom and i not in considered_sites:
-
-
-
-    '''
-    structure
-    :return:
-    '''
-    '''
-    final_structure = structure.copy()
-    indices = []
-    for i in range(len(orig_structure), len(orig_structure)+len(edges)): # get all 'original' edge sites
-        sites = ss.find_equivalent_sites(ss[i])
-        new_indices = [ss.index(site) for site in sites if ss.index(site) < len(orig_structure) + len(edges)] # Check if symmetrically equivalent to other original edge sites
-        new_indices.remove(i)
-        if i not in indices: # Don't duplicate effort
-            indices = indices + new_indices
-            indices.sort()
-    indices = indices + list(range(len(orig_structure)+len(edges), len(final_structure)))
-    final_structure.remove_sites(indices)
-    diffusion_elements = [ site_dir[tuple(np.round(h.coords))] for h in final_structure[len(orig_structure):] ]
-    if vis:
-        view(final_structure, 'VESTA')
-        print(diffusion_elements)
-
-    if get_midpoints:
-        centers = [h.frac_coords for h in final_structure[len(orig_structure):]]
-        return (diffusion_elements, centers)
-
-    '''
-    return diffusion_elements
 
 def get_supercell_for_diffusion(decorated_unit: Structure, unit_pathways, min_size=7.5):
     supercell_pathways = []
