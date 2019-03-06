@@ -288,8 +288,8 @@ def get_supercell_for_diffusion(decorated_unit: Structure, unit_pathways, min_si
         supercell_pathways.append(new_pathway)
     return supercell, supercell_pathways
 
-def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Element('H'), dummy=Element('He'), min_size=7.5):
-    interstitial_structure, pathway_structure = get_interstitial_diffusion_pathways_from_cell(structure, interstitial, dummy=dummy)
+def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Element('H'), dummy=Element('He'), min_size=7.5, vis=False):
+    interstitial_structure, pathway_structure = get_interstitial_diffusion_pathways_from_cell(structure, interstitial, dummy=dummy, vis=vis)
     paths = get_unique_diffusion_pathways(pathway_structure, dummy, get_center_i(interstitial_structure, interstitial))
     supercell, paths = get_supercell_for_diffusion(interstitial_structure, paths, min_size=min_size)
     return supercell, paths

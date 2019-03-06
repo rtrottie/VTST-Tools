@@ -15,7 +15,7 @@ temp_file = False
 # temp_file = ''
 
 structure = Poscar.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR').structure
-supercell, paths = get_supercell_and_path_interstitial_diffusion(structure)
+supercell, paths = get_supercell_and_path_interstitial_diffusion(structure, vis=temp_file)
 # structure = get_smallest_expansion(structure, 7.5)
 # _, structure = get_interstitial_diffusion_pathways_from_cell(structure, Element('H'), vis=temp_file, dummy='Li')
 # # Poscar(structure).write_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\temp.vasp')
