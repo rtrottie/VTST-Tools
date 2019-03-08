@@ -191,7 +191,8 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     # ss = sga.get_symmetrized_structure()
     return interstitial_structure, pathway_structure
 
-def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: Element, site_i: int = -1, only_positive_direction=True):
+def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: Element, site_i: int = -1,
+                                  only_positive_direction=False, positive_weight=10):
     if only_positive_direction:
         break_early = False
     if type(structure) != SymmetrizedStructure:
@@ -200,9 +201,10 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
     equivalent_dummies = [ x for x in structure.equivalent_indices if structure[x[0]].specie == dummy_atom]
     combinations_to_check = np.prod([ len(x) for x in equivalent_dummies])
     print(combinations_to_check)
-    best_sites = equivalent_dummies*2
+    best_sites = equivalent_dummies*2 + [[]] + [[]]
     best_pathway = None
     most_overlap = 0
+    best_weight = 9e9
     for dummy_is in itertools.product(*equivalent_dummies):
         sites = {}
         sites[(site_i, (0,0,0))] = 0
@@ -225,8 +227,14 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
             if break_early:
                 break_early = False
                 continue
-        if (site_i, (0,0,0)) in sites and (len(sites) < len(best_sites) or
-                                (len(sites) == len(best_sites) and most_overlap < sites[(site_i, (0,0,0))])):
+        cell_directions = [None,None,None]
+        for _, direction in sites.keys(): # make sure directions are consistent
+            for i, d in enumerate(direction):
+                if d: # if it is in a cell outside unit
+                    if not cell_directions[i]:
+                        cell_directions[i] = d
+
+        if len(sites) < len(best_sites) or (len(sites) == len(best_sites) and most_overlap < sites[(site_i, (0,0,0))]):
             best_sites = sites
             best_pathway = pathway
             most_overlap = sites[(site_i, (0,0,0))]
