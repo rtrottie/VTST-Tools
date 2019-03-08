@@ -198,6 +198,8 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
         sga = SpacegroupAnalyzer(structure, symprec=0.1)
         structure = sga.get_symmetrized_structure()
     equivalent_dummies = [ x for x in structure.equivalent_indices if structure[x[0]].specie == dummy_atom]
+    combinations_to_check = np.prod([ len(x) for x in equivalent_dummies])
+    print(combinations_to_check)
     best_sites = equivalent_dummies*2
     best_pathway = None
     most_overlap = 0
@@ -208,7 +210,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
         for i in dummy_is:
             neighbors = structure[i].properties['neighbors'].copy()
             image = structure[i].properties['image']
-            if -1 in image or -2 in image:
+            if only_positive_direction and (-1 in image or -2 in image):
                 break_early = True
                 break
             neighbors[0] = (neighbors[0], (0,0,0))
@@ -254,7 +256,8 @@ def get_supercell_for_diffusion(decorated_unit: Structure, unit_pathways, min_si
 
 def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Element('H'), dummy=Element('He'), min_size=7.5, vis=False):
     interstitial_structure, pathway_structure = get_interstitial_diffusion_pathways_from_cell(structure, interstitial, dummy=dummy, vis=vis)
-    paths = get_unique_diffusion_pathways(pathway_structure, dummy, get_center_i(interstitial_structure, interstitial))
+    # paths = get_unique_diffusion_pathways(pathway_structure, dummy, get_center_i(interstitial_structure, interstitial), only_positive_direction=True)
+    paths = get_unique_diffusion_pathways(pathway_structure, dummy, only_positive_direction=True)
     supercell, paths = get_supercell_for_diffusion(interstitial_structure, paths, min_size=min_size)
     return supercell, paths
 
