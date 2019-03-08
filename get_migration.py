@@ -193,8 +193,7 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
 
 def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: Element, site_i: int = -1,
                                   only_positive_direction=False, positive_weight=10, abreviated_search=1e6):
-    if only_positive_direction:
-        break_early = False
+
     if type(structure) != SymmetrizedStructure:
         sga = SpacegroupAnalyzer(structure, symprec=0.1)
         structure = sga.get_symmetrized_structure()
@@ -217,6 +216,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
     best_weight = 9e9
     path_count = 0
     for dummy_is in itertools.product(*equivalent_dummies):
+        break_early = False
         path_count = path_count + 1
         sites = {}
         sites[(site_i, (0,0,0))] = 0
@@ -240,16 +240,31 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
                 break_early = False
                 continue
         cell_directions = [None,None,None]
+        weight = 0
         for _, direction in sites.keys(): # make sure directions are consistent
             for i, d in enumerate(direction):
                 if d: # if it is in a cell outside unit
-                    if not cell_directions[i]:
+                    if d > 0:
+                        weight = weight + 1
+                    elif d < 0:
+                        weight = weight + positive_weight
+                    if not cell_directions[i]: # haven't looked outside unit cell in this direction yet
                         cell_directions[i] = d
-
+                    elif cell_directions[i] != d: # if the directions dont match
+                        break_early = True
+                        break
+                else:
+                    weight = weight - positive_weight
+            if break_early:
+                break
+        if break_early:
+            continue
         if len(sites) < len(best_sites) or (len(sites) == len(best_sites) and most_overlap < sites[(site_i, (0,0,0))]):
-            best_sites = sites
-            best_pathway = pathway
-            most_overlap = sites[(site_i, (0,0,0))]
+            if weight <= best_weight:
+                best_sites = sites
+                best_pathway = pathway
+                most_overlap = sites[(site_i, (0,0,0))]
+                best_weight = weight
 
     return best_pathway
 
@@ -277,7 +292,7 @@ def get_supercell_for_diffusion(decorated_unit: Structure, unit_pathways, min_si
 def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Element('H'), dummy=Element('He'), min_size=7.5, vis=False):
     interstitial_structure, pathway_structure = get_interstitial_diffusion_pathways_from_cell(structure, interstitial, dummy=dummy, vis=vis)
     # paths = get_unique_diffusion_pathways(pathway_structure, dummy, get_center_i(interstitial_structure, interstitial), only_positive_direction=True)
-    paths = get_unique_diffusion_pathways(pathway_structure, dummy, only_positive_direction=True)
+    paths = get_unique_diffusion_pathways(pathway_structure, dummy, only_positive_direction=False)
     supercell, paths = get_supercell_for_diffusion(interstitial_structure, paths, min_size=min_size)
     return supercell, paths
 
