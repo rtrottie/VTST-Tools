@@ -192,20 +192,32 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     return interstitial_structure, pathway_structure
 
 def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: Element, site_i: int = -1,
-                                  only_positive_direction=False, positive_weight=10):
+                                  only_positive_direction=False, positive_weight=10, abreviated_search=1e6):
     if only_positive_direction:
         break_early = False
     if type(structure) != SymmetrizedStructure:
         sga = SpacegroupAnalyzer(structure, symprec=0.1)
         structure = sga.get_symmetrized_structure()
     equivalent_dummies = [ x for x in structure.equivalent_indices if structure[x[0]].specie == dummy_atom]
-    combinations_to_check = np.prod([ len(x) for x in equivalent_dummies])
-    print(combinations_to_check)
+    combinations_to_check = np.prod([ float(len(x)) for x in equivalent_dummies])
+    if combinations_to_check > abreviated_search:
+        new_eq_dummies = [ [] for _ in equivalent_dummies ]
+        radius = 0.5
+        pt = structure.lattice.get_cartesian_coords([0.75,0.75,0.75])
+        while not all( new_eq_dummies ):
+            sites_in_sphere = structure.get_sites_in_sphere(pt, radius, include_index=True, include_image=True)
+            sites = [ i for _,_,i,image in sites_in_sphere if all(image == (0,0,0)) ]
+            new_eq_dummies = [ [y for y in x if y in sites] for x in equivalent_dummies ]
+            radius = radius + 0.1
+        equivalent_dummies = new_eq_dummies
+        print(np.prod([ float(len(x)) for x in equivalent_dummies]))
     best_sites = equivalent_dummies*2 + [[]] + [[]]
     best_pathway = None
     most_overlap = 0
     best_weight = 9e9
+    path_count = 0
     for dummy_is in itertools.product(*equivalent_dummies):
+        path_count = path_count + 1
         sites = {}
         sites[(site_i, (0,0,0))] = 0
         pathway = []
