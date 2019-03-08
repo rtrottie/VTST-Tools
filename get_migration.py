@@ -107,7 +107,7 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
     return diffusion_elements
 
 def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interstitial_atom : str, vis=False,
-                                                  get_midpoints=False, dummy='He', min_dist=0.5, weight_cutoff=0.001):
+                                                  get_midpoints=False, dummy='He', min_dist=0.5, weight_cutoff=0.0001):
     '''
 
     Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
@@ -133,12 +133,17 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     if vis:
         print(len(inter_gen))
     for interstitial in inter_gen:
+        sat_structure = None
         for dist_tol in [0.2, 0.15, 0.1, 0.05, 0.01, 0.001]:
             try:
                 sat_structure = create_saturated_interstitial_structure(interstitial, dist_tol=dist_tol) # type: Structure
                 break
             except ValueError:
                 continue
+            except TypeError:
+                continue
+        if not sat_structure:
+            continue
         sat_structure.remove_site_property('velocities')
         if vis:
             Poscar(sat_structure).write_file(vis)
@@ -282,10 +287,16 @@ def get_supercell_site(unit: Structure, supercell: Structure, site_i: int, image
 def get_supercell_for_diffusion(decorated_unit: Structure, unit_pathways, min_size=7.5):
     supercell_pathways = []
     supercell = decorated_unit * np.ceil(min_size / np.array(decorated_unit.lattice.abc))
+    origin = np.array([0,0,0])
+    for unit_pathway in unit_pathways:
+        for (_, image) in unit_pathway:
+            for i in range(len(origin)):
+                origin[i] = min(origin[i], image[i])
+
     for unit_pathway in unit_pathways:
         new_pathway = []
         for (i, image) in unit_pathway:
-            new_pathway.append(get_supercell_site(decorated_unit, supercell, i, image))
+            new_pathway.append(get_supercell_site(decorated_unit, supercell, i, image - origin))
         supercell_pathways.append(new_pathway)
     return supercell, supercell_pathways
 
