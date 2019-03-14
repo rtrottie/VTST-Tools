@@ -121,7 +121,12 @@ def get_energy(i, structure : Structure, target=0.01):
                 else:
                     vasp = os.environ['VASP_KPTS']
                 incar.write_file('INCAR')
+
                 j = StandardJob([os.environ['VASP_MPI'], '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, final=True, settings_override=settings)
+                if os.environ['VASP_MPI'] == 'srun':
+                    j = StandardJob([os.environ['VASP_MPI'], vasp], 'vasp.log', auto_npar=False, final=True, settings_override=settings)
+                else:
+                    j = StandardJob([os.environ['VASP_MPI'], '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, final=True, settings_override=settings)
                 c = Custodian(handlers, [j], max_errors=10)
                 c.run()
             os.chdir(cwd)
