@@ -72,8 +72,7 @@ def get_angle_from_plane(structure : Structure, i, i1, i2, x, y, z):
 
     return np.arcsin(abs(np.dot(v, plane)) / (np.linalg.norm(v)*np.linalg.norm(plane))) * 180/np.pi
 
-
-def check_distances_from_plane(structure, atom_i, angle_is, exclude_element=[Element('O'), Element('S')], min_distance=0.002, min_angle=15, verbose=False):
+def check_distances_from_plane(structure, atom_i, angle_is, exclude_element=[Element('O'), Element('S')], try_exclude=True, min_distance=0.002, min_angle=15, verbose=False):
     metal_atoms = [i for i, a in enumerate(structure) if a.specie not in exclude_element]
     metal_atoms.remove(atom_i)
     best = None
@@ -91,6 +90,8 @@ def check_distances_from_plane(structure, atom_i, angle_is, exclude_element=[Ele
                         best = (i,j,k)
     if best:
         return best
+    if not try_exclude:
+        raise Exception('could not find bounding atoms')
     print('Could not find Metal Bounding Atoms, checking Oxygen')
     atoms = list(range(len(structure)))
     atoms.remove(atom_i)
