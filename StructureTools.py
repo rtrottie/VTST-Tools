@@ -6,7 +6,7 @@ from ase import Atoms
 import copy
 
 def get_distance_from_plane(structure : Structure, i,  x,y,z):
-    '''
+    """
     Get distance of atom i from the plane formed by atoms x, y, and z
     :param structure:
     :param i:
@@ -14,7 +14,7 @@ def get_distance_from_plane(structure : Structure, i,  x,y,z):
     :param y:
     :param z:
     :return:
-    '''
+    """
     atoms = AseAtomsAdaptor.get_atoms(structure)
     atoms.wrap(atoms.get_scaled_positions()[i])
     positions = atoms.get_positions()
@@ -40,7 +40,7 @@ def get_distance_from_plane(structure : Structure, i,  x,y,z):
     return abs((a * p[0] + b * p[1] + c * p[2] - d) / (a ** 2 + b ** 2 + c ** 2))  # distance between point and plane
 
 def get_angle_from_plane(structure : Structure, i, i1, i2, x, y, z):
-    '''
+    """
     Get distance of atom i from the plane formed by atoms x, y, and z
     :param structure:
     :param i:
@@ -48,7 +48,7 @@ def get_angle_from_plane(structure : Structure, i, i1, i2, x, y, z):
     :param y:
     :param z:
     :return:
-    '''
+    """
     atoms = AseAtomsAdaptor.get_atoms(structure)
     atoms.wrap(atoms.get_scaled_positions()[i])
     positions = atoms.get_positions()

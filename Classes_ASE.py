@@ -12,30 +12,46 @@ from ase.calculators.calculator import FileIOCalculator
 from ase.geometry import wrap_positions
 from ase import Atoms
 
+
 class StandardVasp(Vasp):
+
     def set_results(self, atoms):
         self.get_spin_polarized()
         return super().set_results(atoms)
+
     def initialize(self, atoms):
         self.resort = list(range(len(atoms)))
         return
-    def write_input(self, atoms : Atoms, directory='./'):
+
+    def write_input(self, atoms: Atoms, directory='./'):
         atoms.write(os.path.join(directory, 'POSCAR'))
 
+
 class InPlane:
-    '''
+    """
     Keeps Atoms in Plane between 3 atoms
-    '''
-    def __init__(self, diffusing_i, plane_i):
+    """
+    def __init__(self, diffusing_i: int, plane_i: list):
+        """
+
+        :param diffusing_i: diffuing atom
+        :param plane_i: list of plane atoms
+        """
         self.diffusing_i = diffusing_i
         self.plane_i = plane_i
 
-    def adjust_positions(self, atoms : Atoms, newpositions):
+    def adjust_positions(self, atoms: Atoms, newpositions):
+        """
+
+        :param atoms: structure to be adjusted
+        :param newpositions: positions from dft code
+        :return:
+        """
         # get Normal Vector
         atoms.wrap(atoms.get_scaled_positions()[self.diffusing_i])
-        p1 = newpositions[self.plane_i[0]] # type: np.array
-        p2 = newpositions[self.plane_i[1]] # type: np.array
-        p3 = newpositions[self.plane_i[2]] # type: np.array
+        p1 = newpositions[self.plane_i[0]]  # type: np.array
+        p2 = newpositions[self.plane_i[1]]  # type: np.array
+        p3 = newpositions[self.plane_i[2]]  # type: np.array
         v1 = p2 - p1
         v2 = p3 - p1
 
@@ -70,9 +86,9 @@ class InPlane:
         forces[self.diffusing_i] = forces[self.diffusing_i] - perp_projection
 
 class LockedTo3AtomPlane(InPlane):
-    '''
+    """
     Keeps Atoms in Plane between 3 atoms.  Keeps atom in same parrallel plane it starts in
-    '''
+    """
 
     def __init__(self, diffusing_i, plane_i, orig_point):
         self.diffusing_i = diffusing_i
@@ -271,9 +287,9 @@ class HookeanPlane:
 
     def adjust_forces(self, atoms, forces):
         # get Normal Vector
-        p1 = atoms.positions[self.plane_i[0]] # type: np.array
-        p2 = atoms.positions[self.plane_i[1]] # type: np.array
-        p3 = atoms.positions[self.plane_i[2]] # type: np.array
+        p1 = atoms.positions[self.plane_i[0]]  # type: np.array
+        p2 = atoms.positions[self.plane_i[1]]  # type: np.array
+        p3 = atoms.positions[self.plane_i[2]]  # type: np.array
         v1 = p2 - p1
         v2 = p3 - p1
         normal = np.cross(v1, v2) / np.linalg.norm(np.cross(v1,v2))

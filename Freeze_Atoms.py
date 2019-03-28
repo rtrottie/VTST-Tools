@@ -12,7 +12,7 @@ import pymatgen.io.vasp
 
 
 def freeze_atoms_except_neighbors(input : str, atom : int, output : str, invert=False, unfrozen_dist=4):
-    '''
+    """
 
     #!/usr/bin/env python
     Freezes all atoms around a specified atom, by default, 4 angstrom radius (chosen arbitrarily).  Creates file named
@@ -22,7 +22,7 @@ def freeze_atoms_except_neighbors(input : str, atom : int, output : str, invert=
     :param atom: number of atom in POSCAR of dir
     :param invert: Normally will leave all atoms in radius able to move, setting this to true will freeze all atoms in radius
     :param unfrozen_dist: radius to freeze atom in
-    '''
+    """
     atom = atom-1
     poscar = Poscar.from_file(input)
     if os.path.exists(os.path.join('selective_dynamics')): # if atoms are alread frozen, we don't want to overwrite original SD
@@ -47,13 +47,13 @@ def freeze_atoms_except_neighbors(input : str, atom : int, output : str, invert=
     return
 
 def unfreeze_atoms(input, output, sd_file='.selective_dynamics'):
-    '''
+    """
     Unfreeze atoms in given directory
     :param directory:
     :param sd_file:
         file that is a str(list) of selective dynamics
     :return:
-    '''
+    """
 
     # Parse sd_file
     with open(sd_file) as f:

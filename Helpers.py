@@ -81,13 +81,13 @@ def pyl_to_pmg(structure):
     return Structure(np.transpose(structure.cell), species, coords, coords_are_cartesian=True, site_properties=pmg_dict)
 
 def get_smallest_expansion(structure : Structure, length : float):
-    '''
+    """
     Finds the smallest expansion of the provided cell such that all sides are at minimum length.  Will change shape of
     cell if it creates a better match
     :param structure: Unit cell to convert
     :param length: Minimum vector difference
     :return:
-    '''
+    """
     from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
     sga = SpacegroupAnalyzer(structure)
     structures = []

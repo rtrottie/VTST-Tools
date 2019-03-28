@@ -14,11 +14,11 @@ type = 'xyz'
 # surf = surf.to(type, 'D:\\Users\\RyanTrottier\\Documents\\Scrap\\tmp.'+type)
 
 def get_elements_count(structure: pymatgen.Molecule):
-    '''
+    """
 
     :param structure: gets count of all element in structure
     :return: Dict
-    '''
+    """
     element_dict = {}
     for element in structure.types_of_specie: # Make dictionary with all elements
         element_dict[element] = 0
@@ -27,12 +27,12 @@ def get_elements_count(structure: pymatgen.Molecule):
     return element_dict
 
 def get_stoichiometry(structure: pymatgen.Molecule):
-    '''
+    """
         Gets Stoichiometry of all element in structure
     :param structure:
     :return: Dict
         Dictionary of stoichiometric ratios
-    '''
+    """
     element_dict = get_elements_count(structure)
     if len(element_dict) < 2:
         for element, count in element_dict.items():
@@ -47,11 +47,11 @@ def get_stoichiometry(structure: pymatgen.Molecule):
     return element_dict
 
 def get_weight(stoich: dict):
-    '''
+    """
     Inverts stoichiometric ratios, maintains integers, does not consider lcm
     :param stoich: dict
     :return: dict
-    '''
+    """
     weights = {}
     common_multiple = 1
     for key,count in stoich.items():  # Find common multiple
@@ -76,12 +76,12 @@ def lcm_list(values):
     return lcm
 
 def get_remainder(structure: pymatgen.Molecule, stoich: dict):
-    '''
+    """
     Gets number of atoms that must be added to match stoichiometry
     :param structure: Strcutre to find additional atoms that must be added
     :param stoich: Desired Stoichiometry
     :return: dict of number of atoms to add
-    '''
+    """
     remainder = {}
     count_dict = get_elements_count(structure)
     weights = get_weight(stoich)

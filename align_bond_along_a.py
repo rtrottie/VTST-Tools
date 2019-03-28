@@ -23,13 +23,13 @@ def align_a_to_vector(structure : Structure, vector):
     return Structure(structure.lattice, s.species, s.cart_coords, coords_are_cartesian=True, site_properties=s.site_properties)
 
 def intersection(v, p, bv):
-    '''
+    """
 
     :param v: vector starting at origin
     :param p: point for starting bounding vector
     :param bv: bounding vector
     :return:
-    '''
+    """
     a = bv[0] ; b = bv[1] ; c = bv[2]
     A = v[0]  ; B = v[1]  ; C = v[2]
     x0 = p[0] ; y0 = p[1] ; z0 = p[2]

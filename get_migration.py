@@ -41,7 +41,7 @@ def get_center_i(structure : Structure, element : Element, skew_positive=True, d
     raise Exception('Could not find specified {}'.format(element))
 
 def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int, vis=False, get_midpoints=False):
-    '''
+    """
 
     Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
 
@@ -50,7 +50,7 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
     :param atom_i: int
         Atom to get diffion path from
     :return: [ Structure ]
-    '''
+    """
 
     # To Find Pathway, look for voronoi edges
     orig_structure = structure.copy()
@@ -108,7 +108,7 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
 
 def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interstitial_atom : str, vis=False,
                                                   get_midpoints=False, dummy='He', min_dist=0.5, weight_cutoff=0.0001):
-    '''
+    """
 
     Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
 
@@ -117,7 +117,7 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     :param atom_i: int
         Atom to get diffion path from
     :return: [ Structure ]
-    '''
+    """
 
     # To Find Pathway, look for voronoi edges
     orig_structure = structure.copy()
@@ -327,7 +327,7 @@ def get_midpoint(structure : Structure, atom_1, atom_2):
     return coord
 
 def is_equivalent(structure : Structure, atoms_1 : tuple, atoms_2 : tuple , eps=0.05):
-    '''
+    """
 
     Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
 
@@ -336,7 +336,7 @@ def is_equivalent(structure : Structure, atoms_1 : tuple, atoms_2 : tuple , eps=
     :param atom_i: int
         Atom to get diffion path from
     :return: [ Structure ]
-    '''
+    """
 
     # To Find Pathway, look for voronoi edges
     structure = structure.copy() # type: Structure
