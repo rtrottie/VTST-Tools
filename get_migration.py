@@ -110,7 +110,8 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
     return diffusion_elements
 
 def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interstitial_atom : str, vis=False,
-                                                  get_midpoints=False, dummy='He', min_dist=0.5, weight_cutoff=0.0001):
+                                                  get_midpoints=False, dummy='He', min_dist=0.5, weight_cutoff=0.0001,
+                                                  is_interstital_structure=False):
     """
 
     Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
@@ -123,47 +124,48 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     """
 
     # To Find Pathway, look for voronoi edges
-    orig_structure = structure.copy()
-    structure = structure.copy() # type: Structure
-    interstitial_structure = structure.copy()
-    interstitial_structure.DISTANCE_TOLERANCE = 0.01
-    vnn = VoronoiNN(targets=[interstitial_atom])
+    if not is_interstital_structure:
+        orig_structure = structure.copy()
+        structure = structure.copy() # type: Structure
+        interstitial_structure = structure.copy()
+        interstitial_structure.DISTANCE_TOLERANCE = 0.01
+        vnn = VoronoiNN(targets=[interstitial_atom])
 
-    if vis:
-        Poscar(structure).write_file(vis)
-        open_in_VESTA(vis)
-    inter_gen = list(VoronoiInterstitialGenerator(orig_structure, interstitial_atom))
-    if vis:
-        print(len(inter_gen))
-    for interstitial in inter_gen:
-        sat_structure = None
-        for dist_tol in [0.2, 0.15, 0.1, 0.05, 0.01, 0.001]:
-            try:
-                sat_structure = create_saturated_interstitial_structure(interstitial, dist_tol=dist_tol) # type: Structure
-                break
-            except ValueError:
-                continue
-            except TypeError:
-                continue
-        if not sat_structure:
-            continue
-        sat_structure.remove_site_property('velocities')
         if vis:
-            Poscar(sat_structure).write_file(vis)
+            Poscar(structure).write_file(vis)
             open_in_VESTA(vis)
-            time.sleep(0.5)
-        for site in sat_structure: # type: PeriodicSite
-            if site.specie == interstitial_atom:
+        inter_gen = list(VoronoiInterstitialGenerator(orig_structure, interstitial_atom))
+        if vis:
+            print(len(inter_gen))
+        for interstitial in inter_gen:
+            sat_structure = None
+            for dist_tol in [0.2, 0.15, 0.1, 0.05, 0.01, 0.001]:
                 try:
-                    interstitial_structure.append(site.specie, site.coords, coords_are_cartesian=True, validate_proximity=True)
-                except StructureError:
-                    pass
+                    sat_structure = create_saturated_interstitial_structure(interstitial, dist_tol=dist_tol) # type: Structure
+                    break
+                except ValueError:
+                    continue
+                except TypeError:
+                    continue
+            if not sat_structure:
+                continue
+            sat_structure.remove_site_property('velocities')
+            if vis:
+                Poscar(sat_structure).write_file(vis)
+                open_in_VESTA(vis)
+                time.sleep(0.5)
+            for site in sat_structure: # type: PeriodicSite
+                if site.specie == interstitial_atom:
+                    try:
+                        interstitial_structure.append(site.specie, site.coords, coords_are_cartesian=True, validate_proximity=True)
+                    except StructureError:
+                        pass
 
-    # combined_structure.merge_sites(mode='delete')
-    interstitial_structure.remove_site_property('velocities')
-    if vis:
-        Poscar(interstitial_structure).write_file(vis)
-        open_in_VESTA(vis)
+        # combined_structure.merge_sites(mode='delete')
+        interstitial_structure.remove_site_property('velocities')
+        if vis:
+            Poscar(interstitial_structure).write_file(vis)
+            open_in_VESTA(vis)
 
 
 
@@ -302,8 +304,10 @@ def get_supercell_for_diffusion(decorated_unit: Structure, unit_pathways, min_si
         supercell_pathways.append(new_pathway)
     return supercell, supercell_pathways
 
-def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Element('H'), dummy=Element('He'), min_size=7.5, vis=False):
-    interstitial_structure, pathway_structure = get_interstitial_diffusion_pathways_from_cell(structure, interstitial, dummy=dummy, vis=vis)
+def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Element('H'), dummy=Element('He'),
+                                                  min_size=7.5, vis=False, is_interstital_structure=False):
+    interstitial_structure, pathway_structure = get_interstitial_diffusion_pathways_from_cell(structure, interstitial,
+                                                                                              dummy=dummy, vis=vis, is_interstital_structure=is_interstital_structure)
     # paths = get_unique_diffusion_pathways(pathway_structure, dummy, get_center_i(interstitial_structure, interstitial), only_positive_direction=True)
     paths = get_unique_diffusion_pathways(pathway_structure, dummy, only_positive_direction=False)
     supercell, paths = get_supercell_for_diffusion(interstitial_structure, paths, min_size=min_size)
@@ -344,6 +348,8 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
         if len(sites) != 1: # make sure only one site is found
             raise Exception('Found {} sites'.format(len(sites)))
         index = sites[0][2]
+        print(index)
+        print(to_keep)
         if index in to_keep: # Already keeping this index
             continue
         for indices in structure.equivalent_indices:  #look at all sets of equivalent indices
