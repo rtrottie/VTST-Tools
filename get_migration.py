@@ -124,19 +124,19 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     """
 
     # To Find Pathway, look for voronoi edges
+    vnn = VoronoiNN(targets=[interstitial_atom])
     if not is_interstitial_structure:
         orig_structure = structure.copy()
         structure = structure.copy() # type: Structure
         interstitial_structure = structure.copy()
         interstitial_structure.DISTANCE_TOLERANCE = 0.01
-        vnn = VoronoiNN(targets=[interstitial_atom])
 
         if vis:
             Poscar(structure).write_file(vis)
             open_in_VESTA(vis)
         inter_gen = list(VoronoiInterstitialGenerator(orig_structure, interstitial_atom))
         if vis:
-            print(len(inter_gen))
+            print(len(inter_gen)
         for interstitial in inter_gen:
             sat_structure = None
             for dist_tol in [0.2, 0.15, 0.1, 0.05, 0.01, 0.001]:
