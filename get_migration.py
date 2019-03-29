@@ -249,7 +249,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
                 continue
         cell_directions = [None,None,None]
         weight = 0
-        for _, direction in sites.keys(): # make sure directions are consistent
+        for _, direction in sites.keys():  # make sure directions are consistent
             for i, d in enumerate(direction):
                 if d: # if it is in a cell outside unit
                     if d > 0:
