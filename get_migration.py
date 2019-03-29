@@ -355,8 +355,6 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
                 break
     to_remove = [i for i in range(len(structure)) if i not in to_keep]
     structure.remove_sites(to_remove)
-    sga = SpacegroupAnalyzer(structure, symprec=0.1)
-    structure = sga.get_symmetrized_structure()
     return structure
 
 def is_equivalent(structure : Structure, atoms_1 : tuple, atoms_2 : tuple , eps=0.05):
