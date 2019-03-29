@@ -354,7 +354,7 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
             continue
         for indices in structure.equivalent_indices:  #look at all sets of equivalent indices
             if index in indices:
-                to_keep.append(indices)  #keep equivalent indices
+                to_keep = to_keep + indices  #keep equivalent indices
                 break
     to_remove = [i for i in range(len(structure)) if i not in to_keep]
     structure.remove_sites(to_remove)
