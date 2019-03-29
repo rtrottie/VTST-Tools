@@ -166,9 +166,8 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
         if vis:
             Poscar(interstitial_structure).write_file(vis)
             open_in_VESTA(vis)
-
-
-
+    else:
+        interstitial_structure = structure.copy()
 
     # edges = vnn.get_nn_info(structure, atom_i)
     # base_coords = structure[atom_i].coords
