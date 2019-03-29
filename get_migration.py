@@ -331,7 +331,7 @@ def get_midpoint(structure : Structure, atom_1, atom_2):
                         return coord
     return coord
 
-def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: list, dist=0.2):
+def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: list, dist=0.2, site_indices=None):
     """
 
     :param structure: Structure decorated with all interstitials
@@ -345,6 +345,8 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
     for ri in relaxed_interstitials:  #type:  Structure
         sites=structure.get_sites_in_sphere(ri.cart_coords[-1], dist, include_index=True)
         if len(sites) != 1: # make sure only one site is found
+            if site_indices:
+                raise Exception('Found {} sites for {}'.format(len(sites), site_indices[relaxed_interstitials.index(ri)]))
             raise Exception('Found {} sites'.format(len(sites)))
         index = sites[0][2]
         if index in to_keep: # Already keeping this index
