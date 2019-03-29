@@ -347,8 +347,6 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
         if len(sites) != 1: # make sure only one site is found
             raise Exception('Found {} sites'.format(len(sites)))
         index = sites[0][2]
-        print(index)
-        print(to_keep)
         if index in to_keep: # Already keeping this index
             continue
         for indices in structure.equivalent_indices:  #look at all sets of equivalent indices
