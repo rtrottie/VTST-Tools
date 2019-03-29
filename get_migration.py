@@ -5,7 +5,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.analysis.local_env import VoronoiNN
 import numpy as np
 from Vis import view, open_in_VESTA
-from pymatgen.analysis.defects.generators import InterstitialGenerator, VoronoiInterstitialGenerator
+from pymatgen.analysis.defects.generators import VoronoiInterstitialGenerator
 from pymatgen.analysis.defects.core import create_saturated_interstitial_structure
 from Classes_Pymatgen import Poscar
 import time
@@ -13,14 +13,16 @@ from pymatgen.core.structure import StructureError
 from pymatgen.symmetry.structure import SymmetrizedStructure
 import itertools
 
+
 def get_atom_i(s, target_atoms):
-    if type(target_atoms) != list and type(target_atoms )!= set:
+    if type(target_atoms) != list and type(target_atoms) != set:
         target_atoms = [target_atoms]
     i = 0
     for a in s:
         if a.specie in target_atoms:
             yield i
         i = i+1
+
 
 def get_center_i(structure : Structure, element : Element, skew_positive=True, delta=0.05):
     center_coords = structure.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
@@ -39,6 +41,7 @@ def get_center_i(structure : Structure, element : Element, skew_positive=True, d
     if best_i:
         return best_i
     raise Exception('Could not find specified {}'.format(element))
+
 
 def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int, vis=False, get_midpoints=False):
     """
@@ -223,8 +226,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
     for dummy_is in itertools.product(*equivalent_dummies):
         break_early = False
         path_count = path_count + 1
-        sites = {}
-        sites[(site_i, (0,0,0))] = 0
+        sites = {(site_i, (0,0,0)): 0}
         pathway = []
         for i in dummy_is:
             neighbors = structure[i].properties['neighbors'].copy()
@@ -325,6 +327,34 @@ def get_midpoint(structure : Structure, atom_1, atom_2):
                     if d < a*0.5 and d < b*0.5 and d < c*0.5:
                         return coord
     return coord
+
+def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: list, dist=0.2):
+    """
+
+    :param structure: Structure decorated with all interstitials
+    :param relaxed_interstitials: list of structures with interstitial as last index
+    :param dist: tolerance for determining if site belongs to another site
+    :return:
+    """
+    to_keep = list(range(len(relaxed_interstitials[0])-1))
+    sga = SpacegroupAnalyzer(structure, symprec=0.1)
+    structure = sga.get_symmetrized_structure()
+    for ri in relaxed_interstitials:  #type:  Structure
+        sites=structure.get_sites_in_sphere(ri.cart_coords[-1], dist, include_index=True)
+        if len(sites) != 1: # make sure only one site is found
+            raise Exception('Found {} sites'.format(len(sites)))
+        index = sites[0][2]
+        if index in to_keep: # Already keeping this index
+            continue
+        for indices in structure.equivalent_indices:  #look at all sets of equivalent indices
+            if index in indices:
+                to_keep.append(indices)  #keep equivalent indices
+                break
+    to_remove = [i for i in range(len(structure)) if i not in to_keep]
+    structure.remove_sites(to_remove)
+    sga = SpacegroupAnalyzer(structure, symprec=0.1)
+    structure = sga.get_symmetrized_structure()
+    return structure
 
 def is_equivalent(structure : Structure, atoms_1 : tuple, atoms_2 : tuple , eps=0.05):
     """
