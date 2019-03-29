@@ -111,7 +111,7 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
 
 def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interstitial_atom : str, vis=False,
                                                   get_midpoints=False, dummy='He', min_dist=0.5, weight_cutoff=0.0001,
-                                                  is_interstital_structure=False):
+                                                  is_interstitial_structure=False):
     """
 
     Find Vacancy Strucutres for diffusion into and out of the specified atom_i site.
@@ -124,7 +124,7 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
     """
 
     # To Find Pathway, look for voronoi edges
-    if not is_interstital_structure:
+    if not is_interstitial_structure:
         orig_structure = structure.copy()
         structure = structure.copy() # type: Structure
         interstitial_structure = structure.copy()
@@ -304,9 +304,9 @@ def get_supercell_for_diffusion(decorated_unit: Structure, unit_pathways, min_si
     return supercell, supercell_pathways
 
 def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Element('H'), dummy=Element('He'),
-                                                  min_size=7.5, vis=False, is_interstital_structure=False):
+                                                  min_size=7.5, vis=False, is_interstitial_structure=False):
     interstitial_structure, pathway_structure = get_interstitial_diffusion_pathways_from_cell(structure, interstitial,
-                                                                                              dummy=dummy, vis=vis, is_interstital_structure=is_interstital_structure)
+                                                                                              dummy=dummy, vis=vis, is_interstitial_structure=is_interstitial_structure)
     # paths = get_unique_diffusion_pathways(pathway_structure, dummy, get_center_i(interstitial_structure, interstitial), only_positive_direction=True)
     paths = get_unique_diffusion_pathways(pathway_structure, dummy, only_positive_direction=False)
     supercell, paths = get_supercell_for_diffusion(interstitial_structure, paths, min_size=min_size)
