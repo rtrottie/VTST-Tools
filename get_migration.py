@@ -345,9 +345,14 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
     for ri in relaxed_interstitials:  #type:  Structure
         sites=structure.get_sites_in_sphere(ri.cart_coords[-1], dist, include_index=True)
         if len(sites) != 1: # make sure only one site is found
-            if site_indices:
-                raise Exception('Found {} sites for {}'.format(len(sites), site_indices[relaxed_interstitials.index(ri)]))
-            raise Exception('Found {} sites'.format(len(sites)))
+            okay = False
+            if len(sites) > 1:
+                if all([ x[0] in structure.find_equivalent_sites(sites[0][0]) for x in sites[1:]]):
+                    okay = True
+            if not okay:
+                if site_indices:
+                    raise Exception('Found {} sites for {}'.format(len(sites), site_indices[relaxed_interstitials.index(ri)]))
+                raise Exception('Found {} sites'.format(len(sites)))
         index = sites[0][2]
         if index in to_keep: # Already keeping this index
             continue
