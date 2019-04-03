@@ -7,7 +7,7 @@ import os
 import shutil
 
 def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atoms=[], autosort_tol=0.5):
-    '''
+    """
 
     :param structure_1_mutable: Structure
         Structure to interpolate between
@@ -16,7 +16,7 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
     :param atoms:
         list of tuples of atoms that should be the same between structures
     :return: Structure
-    '''
+    """
 
     # parse Atoms into two lists
     atom_is_1 = []

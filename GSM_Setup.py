@@ -29,7 +29,9 @@ def wrap_positions_right(positions, center, cell):
 
     return (x,y,z)
 
-def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None, copy_wavefunction=False, tolerance=None, poscar_override=[], name=None, is_neb=True):
+def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0.5], f_center=None,
+              copy_wavefunction=False, tolerance=None, poscar_override=[], name=None, is_neb=True,
+              fix_positions=True):
 
     # Initializing Variables to be called later in function
 
@@ -116,7 +118,7 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         print('Copying KPOINTS failed, make sure to add an appropriate KPOINTS to the directory')
     try:
         potcar = Potcar()
-        for symbol in Poscar.from_file(os.path.join(new_gsm_dir, 'POSCAR.start')).site_symbols:
+        for symbol in Poscar.from_file(os.path.join(new_gsm_dir, 'POSCAR.start'), check_for_POTCAR=False).site_symbols:
             for potcar_single in Potcar.from_file(os.path.join(start_folder, 'POTCAR')): # pymatgen.io.vasp.PotcarSingle
                 if symbol == potcar_single.element:
                     potcar.append(potcar_single)
@@ -157,13 +159,44 @@ def GSM_Setup(start, final=None, new_gsm_dir='.', images=None, center=[0.5,0.5,0
         f.write(template.render(jinja_vars))
     os.chmod('grad.py', 0o755)
     os.chmod('status', 0o755)
-    poscar = Poscar.from_file('POSCAR.start')
+    poscar = Poscar.from_file('POSCAR.start', check_for_POTCAR=False)
     if poscar.selective_dynamics:
-        sd = Poscar.from_file('POSCAR.start').selective_dynamics
+        sd = poscar.selective_dynamics
     else:
-        sd = [(True, True, True)] * Poscar.from_file('POSCAR.start').natoms
+        sd = [(True, True, True)] * poscar.natoms
 
     ase.io.write('scratch/initial0000.temp.xyz', initial, )
+    if fix_positions and final:
+        with open('scratch/initial0000.temp.xyz', 'r') as f:
+            lines = [ x.split() for x in f.readlines() ]
+            cell = start.get_cell()
+            sfp = final.get_scaled_positions() # Scaled Final Positions
+            # ssp = start.get_scaled_positions() # Scaled Final Positions
+            start_i = 2
+            final_i = 2*start_i + len(sfp)
+            for i, pos in enumerate(sfp):
+                start_coord = np.matrix([ np.float128(x) for x in lines[start_i + i][1:4] ])
+                final_coord = np.matrix([ np.float128(x) for x in lines[final_i + i][1:4] ])
+                final_coord_temp = final_coord
+                distance = np.linalg.norm(start_coord - final_coord)
+                for x in [-1, 0 , 1]:
+                    for y in [-1, 0, 1]:
+                        for z in [-1, 0, 1]:
+                            final_coord_diff = np.matrix([x,y,z]) * cell
+                            distance_temp = np.linalg.norm(start_coord - (final_coord+final_coord_diff))
+                            if distance_temp < distance:
+                                final_coord_temp = final_coord+final_coord_diff
+                                distance = distance_temp
+                lines[final_i+i][1] = final_coord_temp[0,0]
+                lines[final_i+i][2] = final_coord_temp[0,1]
+                lines[final_i+i][3] = final_coord_temp[0,2]
+
+        with open('scratch/initial0000.temp.xyz', 'w') as f:
+            lines = [' '.join([ str(x) for x in line ]) for line in lines]
+            f.write( '\n'.join(lines) )
+
+
+
     with open('scratch/initial0000.temp.xyz', 'r') as f:
         # Convert True SD to frozen atoms
         sd = list(map(lambda l : '\n' if (l[0] or l[1] or l[2]) else ' "X"\n', sd))
@@ -236,9 +269,12 @@ if __name__ == '__main__':
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms (1 indexed)', type=int, nargs='*', default=[])
     parser.add_argument('--neb', help='make GSM from NEB Directory',
                         action='store_true')
+    parser.add_argument('--dont_fix_positions', help='Dont tryp to align positions',
+                        action='store_false')
     args = parser.parse_args()
 
     args.atom_pairs = [ x-1 for x in args.atom_pairs ]
 
     GSM_Setup(args.initial, args.final, args.directory, args.nodes, args.center, args.finalcenter, args.wfxn,
-              tolerance=args.tolerance, poscar_override=args.atom_pairs, name=args.name, is_neb=args.neb)
+              tolerance=args.tolerance, poscar_override=args.atom_pairs, name=args.name, is_neb=args.neb,
+              fix_positions=(args.dont_fix_positions and args.final))

@@ -17,7 +17,7 @@ import argparse
 import subprocess
 
 def get_instructions_for_backup(jobtype, incar='INCAR'):
-    '''
+    """
 
     Args:
         jobtype:
@@ -25,9 +25,9 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
 
     Returns: A dictionary that contains lists to backup, move, and execute in a shell
 
-    '''
+    """
     instructions = {}
-    instructions["commands"] = ['rm *.sh *.out *.err STOPCAR *.e[0-9][0-9][0-9]* *.o[1-9][1-9][1-9]* &> /dev/null']
+    instructions["commands"] = ['rm *.sh *.err STOPCAR *.e[0-9][0-9][0-9]* *.o[0-9][0-9][0-9]* &> /dev/null']
     instructions['backup'] = []
     instructions['move'] = []
     if jobtype == 'Standard':
@@ -62,7 +62,7 @@ def get_instructions_for_backup(jobtype, incar='INCAR'):
     return instructions
 
 def backup_vasp(dir, backup_dir='backup'):
-    '''
+    """
     Do backup of given directory
 
     Args:
@@ -71,7 +71,7 @@ def backup_vasp(dir, backup_dir='backup'):
 
     Returns: None
 
-    '''
+    """
     jobtype = getJobType(dir)
 
     if os.path.isdir(backup_dir):  # Find what directory to backup to
@@ -106,14 +106,14 @@ def backup_vasp(dir, backup_dir='backup'):
     return
 
 def restart_vasp(dir):
-    '''
+    """
 
     Args:
         dir:
 
     Returns:
 
-    '''
+    """
     jobtype = getJobType(dir)
     instructions = get_instructions_for_backup(jobtype, os.path.join(dir, 'INCAR'))
     for (old_file, new_file) in instructions["move"]:
@@ -161,6 +161,8 @@ def get_queue(computer, jobtype, time, nodes):
             return'long'
         else:
             raise Exception('Peregrine Queue Configuration not Valid: ' + time + ' hours ' + nodes + ' nodes ')
+    elif computer == "eagle":
+        return ''
     elif computer == "psiops":
         if nodes <= 1:
             return 'gb'
@@ -352,7 +354,7 @@ if __name__ == '__main__':
     else:
         openmp = 1
 
-    if computer == 'janus' or computer == 'rapunzel' or computer=='summit':
+    if computer == 'janus' or computer == 'rapunzel' or computer=='summit' or computer=='eagle':
         queue_type = 'slurm'
         submit = 'sbatch'
     else:
@@ -367,8 +369,6 @@ if __name__ == '__main__':
         queue = os.environ['VASP_DEFAULT_QUEUE']
     else:
         queue = get_queue(computer, jobtype, time, nodes)
-
-
 
 
     if args.frozen:
@@ -394,7 +394,7 @@ if __name__ == '__main__':
                 'vasp_gamma'    : os.environ["VASP_GAMMA"],
                 'vasp_bashrc'   : os.environ['VASP_BASHRC'] if 'VASP_BASHRC' in os.environ else '~/.bashrc_vasp',
                 'jobtype'       : jobtype,
-                'tasks'         : int(nodes*cores/openmp),
+                'tasks'         : int(nodes*cores),
                 'openmp'        : openmp}
     keywords.update(additional_keywords)
 

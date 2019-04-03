@@ -3,13 +3,13 @@ import os
 import subprocess
 from tempfile import NamedTemporaryFile
 
-def open_in_VESTA(molecule,type='cif'):
-    '''
+def open_in_VESTA(molecule,type='poscar'):
+    """
 
     :param molecule: A file or structure of a structure to view
     :param type: if structure needs to be written, what type of file.  Use Pymatgen standard
     :return: subprocess.Popen
-    '''
+    """
     vesta = os.path.join(os.environ['VESTA_DIR'])
     if isinstance(molecule, str):
         SCRATCH = molecule

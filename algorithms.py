@@ -5,6 +5,7 @@ import os
 import shutil
 import logging
 from Neb_Make import nebmake
+from custodian.vasp.handlers import *
 
 
 def get_energy(i, structure: Structure, target=0.01):
@@ -16,13 +17,14 @@ def get_energy(i, structure: Structure, target=0.01):
     :return: energy in eV
     """
     cwd = os.path.abspath('.')
-    handlers = []
+    handlers = [VaspErrorHandler('vasp.log'), PositiveEnergyErrorHandler(), NonConvergingErrorHandler(nionic_steps=10, change_algo=True)]
     settings = [
         {'dict': 'INCAR',
-         'action': {'_set': {'NSW': 0,
+         'action': {'_set': {'NSW': 5000,
                              'IOPT': 0,
-                             'IBRION': -1,
-                             'EDIFFG': -1000},
+                             'IBRION': 3,
+                             'EDIFFG': 1e-5,
+                             'POTIM' : 0},
                     }}
     ]
     folder = os.path.join(cwd, str(i).zfill(4))
@@ -124,8 +126,11 @@ def get_energy(i, structure: Structure, target=0.01):
                 else:
                     vasp = os.environ['VASP_KPTS']
                 incar.write_file('INCAR')
-                j = StandardJob([os.environ['VASP_MPI'], '-np', os.environ['PBS_NP'], vasp], 'vasp.log',
-                                auto_npar=False, final=True, settings_override=settings)
+
+                if os.environ['VASP_MPI'] == 'srun':
+                    j = StandardJob([os.environ['VASP_MPI'], vasp], 'vasp.log', auto_npar=False, final=True, settings_override=settings)
+                else:
+                    j = StandardJob([os.environ['VASP_MPI'], '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, final=True, settings_override=settings)
                 c = Custodian(handlers, [j], max_errors=10)
                 c.run()
             os.chdir(cwd)
