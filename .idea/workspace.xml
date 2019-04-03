@@ -46,7 +46,8 @@
       <find>get_bottom</find>
       <find>be</find>
       <find>bottom</find>
-      <find />
+      <find>final = ase.io.read(final_file, format='vasp')final</find>
+      <find>intersection</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
