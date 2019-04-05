@@ -12,6 +12,7 @@ import time
 from pymatgen.core.structure import StructureError
 from pymatgen.symmetry.structure import SymmetrizedStructure
 import itertools
+import random
 
 
 def get_atom_i(s, target_atoms):
@@ -226,6 +227,8 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
         equivalent_dummies = new_eq_dummies
         combinations_to_check = np.prod([float(len(x)) for x in equivalent_dummies])
         print(combinations_to_check)
+        if combinations_to_check > abreviated_search:
+            equivalent_dummies = random.sample(equivalent_dummies, abreviated_search*10)
         print(np.prod([ float(len(x)) for x in equivalent_dummies]))
     best_sites = equivalent_dummies*2 + [[]] + [[]]
     best_pathway = None
