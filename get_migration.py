@@ -206,7 +206,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
         sga = SpacegroupAnalyzer(structure, symprec=0.1)
         structure = sga.get_symmetrized_structure()
     equivalent_dummies = [ x for x in structure.equivalent_indices if structure[x[0]].specie == dummy_atom]
-    print(equivalent_dummies)
+    # print(equivalent_dummies)
     combinations_to_check = np.prod([ float(len(x)) for x in equivalent_dummies])
     if combinations_to_check > abreviated_search:
         new_eq_dummies = [ [] for _ in equivalent_dummies ]
@@ -225,7 +225,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
     best_weight = 9e9
     path_count = 0
     for dummy_is in itertools.product(*equivalent_dummies):
-        print(dummy_is)
+        # print(dummy_is)
         break_early = False
         path_count = path_count + 1
         sites = {(site_i, (0,0,0)): 0}
@@ -315,7 +315,7 @@ def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Elemen
     if vis:
         int_is = [i for x in paths for i in x]
         supercell_vis = supercell.copy()
-        supercell_vis.remove_sites([i for i,a in enumerate(supercell_vis) if i not in int_is and a.specie != Element('H')])
+        supercell_vis.remove_sites([i for i,a in enumerate(supercell_vis) if i not in int_is and a.specie == Element('H')])
         Poscar(supercell_vis).write_file(vis)
         open_in_VESTA(vis)
     return supercell, paths
