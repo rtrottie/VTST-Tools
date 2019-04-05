@@ -203,8 +203,13 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
 def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: Element, site_i: int = -1,
                                   only_positive_direction=False, positive_weight=10, abreviated_search=1e6):
     if type(structure) != SymmetrizedStructure:
-        sga = SpacegroupAnalyzer(structure, symprec=0.1)
-        structure = sga.get_symmetrized_structure()
+        try:
+            sga = SpacegroupAnalyzer(structure, symprec=0.1)
+            structure = sga.get_symmetrized_structure()
+        except TypeError:
+            sga = SpacegroupAnalyzer(structure, symprec=0.01)
+            structure = sga.get_symmetrized_structure()
+
     equivalent_dummies = [ x for x in structure.equivalent_indices if structure[x[0]].specie == dummy_atom]
     # print(equivalent_dummies)
     combinations_to_check = np.prod([ float(len(x)) for x in equivalent_dummies])
