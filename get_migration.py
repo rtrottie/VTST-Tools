@@ -180,7 +180,7 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
         base = pathway_structure[i] # type: PeriodicSite
         for edge in sym_edges:
             dest = edge['site']
-            if base.distance(dest) > min_dist and edge['weight'] > weight_cutoff:
+            if base.distance(dest, jimage=edge['image']) > min_dist and edge['weight'] > weight_cutoff:
                 coords = (base.coords + dest.coords) / 2
                 try:
                     neighbors = [i, edge['site_index']]
@@ -212,6 +212,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
             structure = sga.get_symmetrized_structure()
 
     equivalent_dummies = [ x for x in structure.equivalent_indices if structure[x[0]].specie == dummy_atom]
+    all_combinations = itertools.product(*equivalent_dummies)
     # print(equivalent_dummies)
     combinations_to_check = np.prod([ float(len(x)) for x in equivalent_dummies])
     if combinations_to_check > abreviated_search:
@@ -234,7 +235,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
     most_overlap = 0
     best_weight = 9e9
     path_count = 0
-    for dummy_is in itertools.product(*equivalent_dummies):
+    for dummy_is in all_combinations:
         # print(dummy_is)
         break_early = False
         path_count = path_count + 1
