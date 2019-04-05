@@ -202,11 +202,11 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
 
 def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: Element, site_i: int = -1,
                                   only_positive_direction=False, positive_weight=10, abreviated_search=1e6):
-
     if type(structure) != SymmetrizedStructure:
         sga = SpacegroupAnalyzer(structure, symprec=0.1)
         structure = sga.get_symmetrized_structure()
     equivalent_dummies = [ x for x in structure.equivalent_indices if structure[x[0]].specie == dummy_atom]
+    print(equivalent_dummies)
     combinations_to_check = np.prod([ float(len(x)) for x in equivalent_dummies])
     if combinations_to_check > abreviated_search:
         new_eq_dummies = [ [] for _ in equivalent_dummies ]
@@ -225,6 +225,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
     best_weight = 9e9
     path_count = 0
     for dummy_is in itertools.product(*equivalent_dummies):
+        print(dummy_is)
         break_early = False
         path_count = path_count + 1
         sites = {(site_i, (0,0,0)): 0}
@@ -256,17 +257,18 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
                         weight = weight + 1
                     elif d < 0:
                         weight = weight + positive_weight
-                    if not cell_directions[i]: # haven't looked outside unit cell in this direction yet
-                        cell_directions[i] = d
-                    elif cell_directions[i] != d: # if the directions dont match
-                        break_early = True
-                        break
-                else:
-                    weight = weight - positive_weight
-            if break_early:
-                break
-        if break_early:
-            continue
+                    # if not cell_directions[i]: # haven't looked outside unit cell in this direction yet
+                    #     cell_directions[i] = d
+                    # elif cell_directions[i] != d: # if the directions dont match
+                    #     pass
+                    #     break_early = True
+                    #     break
+                # else:
+                #     weight = weight - positive_weight
+            # if break_early:
+            #     break
+        # if break_early:
+        #     continue
         if len(sites) < len(best_sites) or (len(sites) == len(best_sites) and most_overlap < sites[(site_i, (0,0,0))]):
             if weight <= best_weight:
                 best_sites = sites
