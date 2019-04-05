@@ -216,7 +216,7 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
     if combinations_to_check > abreviated_search:
         print(combinations_to_check)
         new_eq_dummies = [ [] for _ in equivalent_dummies ]
-        radius = 0.2
+        radius = 0.1
         pt = structure.lattice.get_cartesian_coords([0.75,0.75,0.75])
         while not all( new_eq_dummies ):
             sites_in_sphere = structure.get_sites_in_sphere(pt, radius, include_index=True, include_image=True)
@@ -224,6 +224,8 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
             new_eq_dummies = [ [y for y in x if y in sites] for x in equivalent_dummies ]
             radius = radius + 0.1
         equivalent_dummies = new_eq_dummies
+        combinations_to_check = np.prod([float(len(x)) for x in equivalent_dummies])
+        print(combinations_to_check)
         print(np.prod([ float(len(x)) for x in equivalent_dummies]))
     best_sites = equivalent_dummies*2 + [[]] + [[]]
     best_pathway = None
