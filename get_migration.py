@@ -312,6 +312,12 @@ def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Elemen
     # paths = get_unique_diffusion_pathways(pathway_structure, dummy, get_center_i(interstitial_structure, interstitial), only_positive_direction=True)
     paths = get_unique_diffusion_pathways(pathway_structure, dummy, only_positive_direction=False)
     supercell, paths = get_supercell_for_diffusion(interstitial_structure, paths, min_size=min_size)
+    if vis:
+        int_is = [i for x in paths for i in x]
+        supercell_vis = supercell.copy()
+        supercell_vis.remove_sites([i for i,a in enumerate(supercell_vis) if i not in int_is or a.specie != Element('H')])
+        Poscar(supercell_vis).write_file(vis)
+        open_in_VESTA(vis)
     return supercell, paths
 
 
