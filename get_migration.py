@@ -329,6 +329,7 @@ def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Elemen
         supercell_vis.remove_sites([i for i,a in enumerate(supercell_vis) if i not in int_is and a.specie == Element('H')])
         Poscar(supercell_vis).write_file(vis)
         open_in_VESTA(vis)
+    print(paths)
     return supercell, paths
 
 
