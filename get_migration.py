@@ -369,10 +369,16 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
         structure = sga.get_symmetrized_structure()
     for ri in relaxed_interstitials:  #type:  Structure
         sites=structure.get_sites_in_sphere(ri.cart_coords[-1], dist, include_index=True)
+
+        for indices in structure.equivalent_indices:  #look at all sets of equivalent indices
+            if index in indices:
+                to_keep = to_keep + indices  #keep equivalent indices
+                break
+
         if len(sites) != 1: # make sure only one site is found
             okay = False
             if len(sites) > 1:
-                if all([ x[0] in structure.find_equivalent_sites(sites[0][0]) for x in sites[1:]]):
+                if all([ x[2] in indices for x in sites]):
                     okay = True
             if not okay:
                 if site_indices:
@@ -381,10 +387,6 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
         index = sites[0][2]
         if index in to_keep: # Already keeping this index
             continue
-        for indices in structure.equivalent_indices:  #look at all sets of equivalent indices
-            if index in indices:
-                to_keep = to_keep + indices  #keep equivalent indices
-                break
     to_remove = [i for i in range(len(structure)) if i not in to_keep]
     structure.remove_sites(to_remove)
     return structure
