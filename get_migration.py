@@ -371,6 +371,9 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
         sites=structure.get_sites_in_sphere(ri.cart_coords[-1], dist, include_index=True)
 
         for indices in structure.equivalent_indices:  #look at all sets of equivalent indices
+            index = sites[0][2]
+            if index in to_keep: # Already keeping this index
+                continue
             if index in indices:
                 to_keep = to_keep + indices  #keep equivalent indices
                 break
@@ -384,9 +387,6 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
                 if site_indices:
                     raise Exception('Found {} sites for {}'.format(len(sites), site_indices[relaxed_interstitials.index(ri)]))
                 raise Exception('Found {} sites'.format(len(sites)))
-        index = sites[0][2]
-        if index in to_keep: # Already keeping this index
-            continue
     to_remove = [i for i in range(len(structure)) if i not in to_keep]
     structure.remove_sites(to_remove)
     return structure
