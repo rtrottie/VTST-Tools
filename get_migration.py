@@ -327,6 +327,7 @@ def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Elemen
         int_is = [i for x in paths for i in x]
         supercell_vis = supercell.copy()
         supercell_vis.remove_sites([i for i,a in enumerate(supercell_vis) if i not in int_is and a.specie == Element('H')])
+        Poscar(supercell).write_file(vis)
         Poscar(supercell_vis).write_file(vis)
         open_in_VESTA(vis)
     print(paths)
@@ -360,8 +361,12 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
     :return:
     """
     to_keep = list(range(len(relaxed_interstitials[0])-1))
-    sga = SpacegroupAnalyzer(structure, symprec=0.1)
-    structure = sga.get_symmetrized_structure()
+    try:
+        sga = SpacegroupAnalyzer(structure, symprec=0.1)
+        structure = sga.get_symmetrized_structure()
+    except TypeError:
+        sga = SpacegroupAnalyzer(structure, symprec=0.01)
+        structure = sga.get_symmetrized_structure()
     for ri in relaxed_interstitials:  #type:  Structure
         sites=structure.get_sites_in_sphere(ri.cart_coords[-1], dist, include_index=True)
         if len(sites) != 1: # make sure only one site is found
