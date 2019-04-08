@@ -14,12 +14,14 @@ os.environ['VESTA_DIR']='"C:\\Program Files\\VESTA\\VESTA.exe"'
 from pymatgen.core import Structure
 
 temp_file = 'D:\\Users\\RyanTrottier\\Documents\\Scrap\\temp.vasp'
+# temp_file = 'D:\\Users\\RyanTrottier\\Documents\\Scrap\\Ti\\interstitials.vasp'
 # temp_file = False
 # temp_file = ''
 
 structure = Poscar.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\CONTCAR').structure
+structure = Poscar.from_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\Ti\\interstitials.vasp').structure
 vis = temp_file
-supercell, paths = get_supercell_and_path_interstitial_diffusion(structure, vis=vis)
+supercell, paths = get_supercell_and_path_interstitial_diffusion(structure, vis=vis, is_interstitial_structure=True)
 # structure = get_smallest_expansion(structure, 7.5)
 # _, structure = get_interstitial_diffusion_pathways_from_cell(structure, Element('H'), vis=temp_file, dummy='Li')
 # # Poscar(structure).write_file('D:\\Users\\RyanTrottier\\Documents\\Scrap\\temp.vasp')
