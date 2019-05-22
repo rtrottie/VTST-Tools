@@ -7,7 +7,15 @@ import logging
 from Neb_Make import nebmake
 from custodian.vasp.handlers import *
 
-def get_energy(i, structure : Structure, target=0.01):
+
+def get_energy(i, structure: Structure, target=0.01):
+    """
+
+    :param i: folder for structure to be placed in
+    :param structure: Structure
+    :param target: energy to converge to
+    :return: energy in eV
+    """
     cwd = os.path.abspath('.')
     handlers = [VaspErrorHandler('vasp.log'), PositiveEnergyErrorHandler(), NonConvergingErrorHandler(nionic_steps=10, change_algo=True)]
     settings = [
@@ -39,7 +47,7 @@ def get_energy(i, structure : Structure, target=0.01):
                         energy = float(f.read().split()[0])
                     return energy
                 else:
-                    shutil.copy('INCAR', os.path.join(folder, 'INCAR' ))
+                    shutil.copy('INCAR', os.path.join(folder, 'INCAR'))
                     vasprun = Vasprun(os.path.join(folder, 'vasprun.xml'))
                     with open(os.path.join(folder, 'energy.txt'), 'w') as f:
                         f.write(str(vasprun.final_energy))
@@ -56,17 +64,17 @@ def get_energy(i, structure : Structure, target=0.01):
             if i == dir_i:
                 pass
             if dir_i > i:
-                if above == None:
+                if above is None:
                     above = dir_i
                 elif dir_i - i < above - i:
                     above = dir_i
             elif dir_i < i:
-                if below == None:
+                if below is None:
                     below = dir_i
                 elif dir_i - i < below - i:
                     below = dir_i
 
-            elif closest == None:
+            elif closest is None:
                 closest = dir
             elif abs(i - int(closest)) >= abs(i - int(dir)):
                 closest = dir
@@ -87,19 +95,16 @@ def get_energy(i, structure : Structure, target=0.01):
                     shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
                     shutil.copy(os.path.join(dir_i, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
                 except:
-                    if os.path.exists(os.path.join(dir_i, 'above', 'vasprun.xml')) and os.path.exists(os.path.join(dir_i, 'below', 'vasprun.xml')):
+                    if os.path.exists(os.path.join(dir_i, 'above', 'vasprun.xml')) and \
+                            os.path.exists(os.path.join(dir_i, 'below', 'vasprun.xml')):
                         vasprun_above = Vasprun(os.path.join(dir_i, 'above', 'vasprun.xml'))
                         vasprun_below = Vasprun(os.path.join(dir_i, 'below', 'vasprun.xml'))
                         if vasprun_above.final_energy < vasprun_below.final_energy:
                             lowest_dir = 'above'
                         else:
                             lowest_dir = 'below'
-                        try:
-                            shutil.copy(os.path.join(dir_i, lowest_dir, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
-                            shutil.copy(os.path.join(dir_i, lowest_dir, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
-                        except:
-                            print('Unable to Copy CHGCAR and WAVECAR')
-                            pass
+                        shutil.copy(os.path.join(dir_i, lowest_dir, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
+                        shutil.copy(os.path.join(dir_i, lowest_dir, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
                         if vasprun_above.final_energy - vasprun_below.final_energy < target:
                             same_wfxns += 1
 
@@ -116,7 +121,7 @@ def get_energy(i, structure : Structure, target=0.01):
                 os.chdir(dir)
                 Poscar(structure).write_file('POSCAR')
                 incar = Incar.from_file('INCAR')
-                if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
+                if 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
                     vasp = os.environ['VASP_GAMMA']
                 else:
                     vasp = os.environ['VASP_KPTS']
@@ -130,6 +135,7 @@ def get_energy(i, structure : Structure, target=0.01):
                 c.run()
             os.chdir(cwd)
     return get_energy(i, structure)
+
 
 def get_ts(low, mp, high, target=0.01):
     logging.info('Finding Max from locations : {} {} {}'.format(low, mp, high))
@@ -170,4 +176,4 @@ def get_ts(low, mp, high, target=0.01):
     elif q1_e >= mp_e and q1_e >= q3_e:
         return get_ts(low, q1, mp)
     else:
-        raise Exception('WHHHHYYY')
+        raise Exception('Unknown error occured, check algorithms.py file')
