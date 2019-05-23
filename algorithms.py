@@ -110,9 +110,11 @@ def get_energy(i, structure: Structure, target=0.01):
 
             if same_wfxns == 2:
                 logging.info('Wavefunctions are the same')
-                if os.path.exists(os.path.join(folder, dir, 'below')):
-                    shutil.rmtree(os.path.join(folder, dir, 'below'))
-                shutil.copytree(os.path.join(folder, dir, 'above'), os.path.join(folder, dir, 'below'))
+                if os.path.exists(os.path.join(folder, 'below')):
+                    shutil.rmtree(os.path.join(folder, 'below'))
+                shutil.copytree(os.path.join(folder, 'above'), os.path.join(folder, 'below'))
+                os.chdir(folder)
+                os.chdir(dir)
             else:
                 shutil.copy('INCAR', os.path.join(folder, dir, 'INCAR'))
                 shutil.copy('KPOINTS', os.path.join(folder, dir, 'KPOINTS'))
