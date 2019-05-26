@@ -39,7 +39,7 @@ def get_center_i(structure : Structure, element : Element, skew_positive=True, d
                     best_i = i
                     best_dist = best_dist
                     best_location = sum(1 - site.frac_coords)
-    if best_i:
+    if best_i != None:
         return best_i
     raise Exception('Could not find specified {}'.format(element))
 
