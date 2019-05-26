@@ -27,7 +27,7 @@ def get_atom_i(s, target_atoms):
 
 def get_center_i(structure : Structure, element : Element, skew_positive=True, delta=0.05):
     center_coords = structure.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
-    sites = structure.get_sites_in_sphere(center_coords, 4, include_index=True)
+    sites = structure.get_sites_in_sphere(center_coords, 8, include_index=True)
     sites.sort(key=lambda x : x[1])
     best_i = None
     best_dist = 999999
