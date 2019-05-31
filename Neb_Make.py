@@ -80,10 +80,11 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
             for l in [atom_is_1, atom_is_2]: # remove minimum index
                 l.pop(i)
 
+    return new_s_1, new_s_2
 
-    return (new_s_1, new_s_2)
 
-def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_override=[], linear=False, write=True):
+def nebmake(directory, start, final, images, tolerance=0,
+            ci=False, poscar_override=[], linear=False, write=True, start_i=0):
 
     if type(start) == str:
         start_POSCAR = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) and os.path.getsize(os.path.join(start, 'CONTCAR')) > 0 else os.path.join(start, 'POSCAR')
@@ -134,8 +135,8 @@ def nebmake(directory, start, final, images, tolerance=0, ci=False, poscar_overr
         incar['LCLIMB'] = ci
 
         for i, s in enumerate(structures):
-            folder = os.path.join(directory, str(i).zfill(2))
-            os.mkdir(folder)
+            folder = os.path.join(directory, str(i+start_i).zfill(2))
+            os.mkdir(folder, exist_ok=True)
             Poscar(s, selective_dynamics=p1.selective_dynamics).write_file(os.path.join(folder, 'POSCAR'))
             if i == 0:
                 shutil.copy(start_OUTCAR, os.path.join(folder, 'OUTCAR'))
@@ -163,6 +164,7 @@ if __name__ == '__main__':
     parser.add_argument('-a', '--atom_pairs', help='pair certain atoms', type=int, nargs='*', default=[])
     parser.add_argument('--linear', help='Use linear interpolation instead of idpp', action='store_true')
     parser.add_argument('--sp_opt', help='Set up single_point optimization', action='store_true')
+    parser.add_argument('--startindex', help='initialize index from something other than 0', type=int, default=0)
     args = parser.parse_args()
     if args.sp_opt:
         print('Initializing Structures')
@@ -189,4 +191,5 @@ if __name__ == '__main__':
         del i['LCLIMB']
         i.write_file(os.path.join(args.directory, 'INCAR'))
     else:
-        nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image, poscar_override=args.atom_pairs, linear=args.linear)
+        nebmake(args.directory, args.initial, args.final, args.images+1, args.tolerance, args.climbing_image,
+                poscar_override=args.atom_pairs, linear=args.linear, start_i=args.startindex)
