@@ -136,7 +136,7 @@ def nebmake(directory, start, final, images, tolerance=0,
 
         for i, s in enumerate(structures):
             folder = os.path.join(directory, str(i+start_i).zfill(2))
-            os.mkdir(folder, exist_ok=True)
+            os.makedirs(folder, exist_ok=True)
             Poscar(s, selective_dynamics=p1.selective_dynamics).write_file(os.path.join(folder, 'POSCAR'))
             if i == 0:
                 shutil.copy(start_OUTCAR, os.path.join(folder, 'OUTCAR'))
