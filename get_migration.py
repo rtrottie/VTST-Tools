@@ -12,6 +12,7 @@ import time
 from pymatgen.core.structure import StructureError
 from pymatgen.symmetry.structure import SymmetrizedStructure
 import itertools
+import random
 
 
 def get_atom_i(s, target_atoms):
@@ -24,9 +25,9 @@ def get_atom_i(s, target_atoms):
         i = i+1
 
 
-def get_center_i(structure : Structure, element : Element, skew_positive=True, delta=0.05):
+def get_center_i(structure : Structure, element : Element, skew_positive=True, delta=0.05, radius=4):
     center_coords = structure.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
-    sites = structure.get_sites_in_sphere(center_coords, 4, include_index=True)
+    sites = structure.get_sites_in_sphere(center_coords, radius, include_index=True)
     sites.sort(key=lambda x : x[1])
     best_i = None
     best_dist = 999999
@@ -38,7 +39,7 @@ def get_center_i(structure : Structure, element : Element, skew_positive=True, d
                     best_i = i
                     best_dist = best_dist
                     best_location = sum(1 - site.frac_coords)
-    if best_i:
+    if best_i != None:
         return best_i
     raise Exception('Could not find specified {}'.format(element))
 
@@ -70,7 +71,7 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
         coords = np.round((base_coords + edge['site'].coords)/2,3)
         structure.append('H', coords, True)
        # site_dir[tuple(np.round(coords))] = structure.index(edge['site']) # Use Tuple for indexing dict, need to round
-        site_dir[tuple(np.round(coords))] =  [list(x) for x in np.round(structure.frac_coords % 1,2) ].index(list(np.round(edge['site'].frac_coords % 1, 2))) # Use Tuple for indexing dict, need to round
+        site_dir[tuple(np.round(coords))] =  [list(x % 1) for x in np.round(structure.frac_coords % 1,2) ].index(list(np.round(edge['site'].frac_coords % 1, 2))) # Use Tuple for indexing dict, need to round
     # Add H for all other diffusion atoms, so symmetry is preserved
     for i in get_atom_i(orig_structure, target_atom):
         sym_edges = vnn.get_nn_info(orig_structure, i)
@@ -179,7 +180,7 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
         base = pathway_structure[i] # type: PeriodicSite
         for edge in sym_edges:
             dest = edge['site']
-            if base.distance(dest) > min_dist and edge['weight'] > weight_cutoff:
+            if base.distance(dest, jimage=edge['image']) > min_dist and edge['weight'] > weight_cutoff:
                 coords = (base.coords + dest.coords) / 2
                 try:
                     neighbors = [i, edge['site_index']]
@@ -202,15 +203,22 @@ def get_interstitial_diffusion_pathways_from_cell(structure : Structure, interst
 
 def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: Element, site_i: int = -1,
                                   only_positive_direction=False, positive_weight=10, abreviated_search=1e6):
-
     if type(structure) != SymmetrizedStructure:
-        sga = SpacegroupAnalyzer(structure, symprec=0.1)
-        structure = sga.get_symmetrized_structure()
+        try:
+            sga = SpacegroupAnalyzer(structure, symprec=0.1)
+            structure = sga.get_symmetrized_structure()
+        except TypeError:
+            sga = SpacegroupAnalyzer(structure, symprec=0.01)
+            structure = sga.get_symmetrized_structure()
+
     equivalent_dummies = [ x for x in structure.equivalent_indices if structure[x[0]].specie == dummy_atom]
+    all_combinations = itertools.product(*equivalent_dummies)
+    # print(equivalent_dummies)
     combinations_to_check = np.prod([ float(len(x)) for x in equivalent_dummies])
     if combinations_to_check > abreviated_search:
+        print(combinations_to_check)
         new_eq_dummies = [ [] for _ in equivalent_dummies ]
-        radius = 0.5
+        radius = 0.1
         pt = structure.lattice.get_cartesian_coords([0.75,0.75,0.75])
         while not all( new_eq_dummies ):
             sites_in_sphere = structure.get_sites_in_sphere(pt, radius, include_index=True, include_image=True)
@@ -218,13 +226,17 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
             new_eq_dummies = [ [y for y in x if y in sites] for x in equivalent_dummies ]
             radius = radius + 0.1
         equivalent_dummies = new_eq_dummies
-        print(np.prod([ float(len(x)) for x in equivalent_dummies]))
+        combinations_to_check = np.prod([float(len(x)) for x in equivalent_dummies])
+        if combinations_to_check > abreviated_search:
+            equivalent_dummies = random.sample(equivalent_dummies, abreviated_search)
+        print(combinations_to_check)
     best_sites = equivalent_dummies*2 + [[]] + [[]]
     best_pathway = None
     most_overlap = 0
     best_weight = 9e9
     path_count = 0
-    for dummy_is in itertools.product(*equivalent_dummies):
+    for dummy_is in all_combinations:
+        # print(dummy_is)
         break_early = False
         path_count = path_count + 1
         sites = {(site_i, (0,0,0)): 0}
@@ -256,17 +268,18 @@ def get_unique_diffusion_pathways(structure: SymmetrizedStructure, dummy_atom: E
                         weight = weight + 1
                     elif d < 0:
                         weight = weight + positive_weight
-                    if not cell_directions[i]: # haven't looked outside unit cell in this direction yet
-                        cell_directions[i] = d
-                    elif cell_directions[i] != d: # if the directions dont match
-                        break_early = True
-                        break
-                else:
-                    weight = weight - positive_weight
-            if break_early:
-                break
-        if break_early:
-            continue
+                    # if not cell_directions[i]: # haven't looked outside unit cell in this direction yet
+                    #     cell_directions[i] = d
+                    # elif cell_directions[i] != d: # if the directions dont match
+                    #     pass
+                    #     break_early = True
+                    #     break
+                # else:
+                #     weight = weight - positive_weight
+            # if break_early:
+            #     break
+        # if break_early:
+        #     continue
         if len(sites) < len(best_sites) or (len(sites) == len(best_sites) and most_overlap < sites[(site_i, (0,0,0))]):
             if weight <= best_weight:
                 best_sites = sites
@@ -310,6 +323,14 @@ def get_supercell_and_path_interstitial_diffusion(structure, interstitial=Elemen
     # paths = get_unique_diffusion_pathways(pathway_structure, dummy, get_center_i(interstitial_structure, interstitial), only_positive_direction=True)
     paths = get_unique_diffusion_pathways(pathway_structure, dummy, only_positive_direction=False)
     supercell, paths = get_supercell_for_diffusion(interstitial_structure, paths, min_size=min_size)
+    if vis:
+        int_is = [i for x in paths for i in x]
+        supercell_vis = supercell.copy()
+        supercell_vis.remove_sites([i for i,a in enumerate(supercell_vis) if i not in int_is and a.specie == Element('H')])
+        Poscar(supercell).write_file(vis)
+        Poscar(supercell_vis).write_file(vis)
+        open_in_VESTA(vis)
+    print(paths)
     return supercell, paths
 
 
@@ -340,26 +361,32 @@ def remove_unstable_interstitials(structure: Structure, relaxed_interstitials: l
     :return:
     """
     to_keep = list(range(len(relaxed_interstitials[0])-1))
-    sga = SpacegroupAnalyzer(structure, symprec=0.1)
-    structure = sga.get_symmetrized_structure()
+    try:
+        sga = SpacegroupAnalyzer(structure, symprec=0.1)
+        structure = sga.get_symmetrized_structure()
+    except TypeError:
+        sga = SpacegroupAnalyzer(structure, symprec=0.01)
+        structure = sga.get_symmetrized_structure()
     for ri in relaxed_interstitials:  #type:  Structure
         sites=structure.get_sites_in_sphere(ri.cart_coords[-1], dist, include_index=True)
+
+        for indices in structure.equivalent_indices:  #look at all sets of equivalent indices
+            index = sites[0][2]
+            if index in to_keep: # Already keeping this index
+                continue
+            if index in indices:
+                to_keep = to_keep + indices  #keep equivalent indices
+                break
+
         if len(sites) != 1: # make sure only one site is found
             okay = False
             if len(sites) > 1:
-                if all([ x[0] in structure.find_equivalent_sites(sites[0][0]) for x in sites[1:]]):
+                if all([ x[2] in indices for x in sites]):
                     okay = True
             if not okay:
                 if site_indices:
                     raise Exception('Found {} sites for {}'.format(len(sites), site_indices[relaxed_interstitials.index(ri)]))
                 raise Exception('Found {} sites'.format(len(sites)))
-        index = sites[0][2]
-        if index in to_keep: # Already keeping this index
-            continue
-        for indices in structure.equivalent_indices:  #look at all sets of equivalent indices
-            if index in indices:
-                to_keep = to_keep + indices  #keep equivalent indices
-                break
     to_remove = [i for i in range(len(structure)) if i not in to_keep]
     structure.remove_sites(to_remove)
     return structure

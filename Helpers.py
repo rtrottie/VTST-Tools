@@ -284,3 +284,50 @@ def get_corresponding_atom_i(structure1, structure2, init_distance=0.5, same_ato
     if swap:
         corresponding_atom_i = [(j,i) for i,j in corresponding_atom_i]
     return corresponding_atom_i
+
+fere_orbitals = {
+#2p
+    'O': ['2p', '2s'],
+#3s
+    'Na': ['3s', '2p'],
+    'Mg': ['3s'],
+#3p
+    'Al': ['3p', '3s'],
+#4s
+    'K': ['4s', '3p', '3s'],
+    'Ca': ['4s', '3p'],
+#3d
+    'Sc': ['3p', '3d', '3s', '4s'],
+    'Ti': ['3p', '3d', '4s'],
+    'V': ['3p', '3d', '4s'],
+    'Cr': ['3p', '3d', '4s'],
+    'Mn': ['3p', '3d', '4s'],
+    'Fe': ['3p', '3d', '4s'],
+    'Co': ['3p', '3d', '4s', '4p'],
+    'Ni': ['3p', '3d', '4s', '4p'],
+    'Cu': ['3p', '3d', '4s', '4p'],
+    'Zn': ['4s', '3d', '4p'],
+#4p
+    'Ga': ['4p', '4s'],
+    'Ge': ['4p', '4s', '3d'],
+    'Se': ['4s', '4p'],
+#5s
+    'Sr': ['5s', '4s', '4p'],
+#4d
+    'Y': ['4d', '5s', '4s', '4p'],
+    'Zr': ['4s', '4p', '5s', '4d'],
+    'Cd' : ['4d', '5s', '5p'],
+#5p
+    'Sn': ['5s', '5p', '4d', '6s'],
+    'Sb': ['5s', '5p'],
+#6s
+    'Ba': ['6s', '5p', '5s'],
+#4f
+    'La': ['4f', '6s', '5s', '5p', '5d'],
+#5d
+    'Hf': ['5d', '6s', '5p'],
+    'Ta': ['5d', '6s', '5p'],
+#6p
+    'Bi' : ['6p', '5d', '6s'],
+
+}
