@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../VASP-Templates/.idea/VASP-Templates.iml" filepath="$PROJECT_DIR$/../VASP-Templates/.idea/VASP-Templates.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/VTST-Tools.iml" filepath="$PROJECT_DIR$/.idea/VTST-Tools.iml" />
       <module fileurl="file://$PROJECT_DIR$/../chain/.idea/chain.iml" filepath="$PROJECT_DIR$/../chain/.idea/chain.iml" />
     </modules>
