@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ecb4b52a-87fc-43e9-ba87-fe98ec3e8ef5" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/../VASP-Templates/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../VASP-Templates/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/VTST-Tools.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/VTST-Tools.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/algorithms.py" beforeDir="false" afterPath="$PROJECT_DIR$/algorithms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/align_bond_along_a.py" beforeDir="false" afterPath="$PROJECT_DIR$/align_bond_along_a.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Classes_Custodian.py" beforeDir="false" afterPath="$PROJECT_DIR$/Classes_Custodian.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,13 +20,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="align_bond_along_a.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/align_bond_along_a.py">
+      <file leaf-file-name="Classes_Custodian.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Classes_Custodian.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="290">
-              <caret line="45" column="12" lean-forward="true" selection-start-line="45" selection-start-column="12" selection-end-line="45" selection-end-column="12" />
+            <state relative-caret-position="340">
+              <caret line="263" column="16" lean-forward="true" selection-start-line="263" selection-start-column="16" selection-end-line="263" selection-end-column="16" />
               <folding>
-                <element signature="e#23#53#0" expanded="true" />
+                <element signature="e#417#521#0" />
+                <element signature="e#570#1693#0" />
+                <element signature="e#1742#2955#0" />
+                <element signature="e#2997#3807#0" />
+                <element signature="e#3836#6618#0" />
+                <element signature="e#6649#9930#0" />
+                <element signature="e#10739#10776#0" />
+                <element signature="e#10830#12487#0" />
+                <element signature="e#12542#14321#0" />
+                <element signature="e#14375#16105#0" />
+                <element signature="e#16140#17995#0" />
+                <element signature="e#18070#19989#0" />
               </folding>
             </state>
           </provider>
@@ -62,6 +74,7 @@
         <option value="$PROJECT_DIR$/GSM_Setup.py" />
         <option value="$PROJECT_DIR$/algorithms.py" />
         <option value="$PROJECT_DIR$/align_bond_along_a.py" />
+        <option value="$PROJECT_DIR$/Classes_Custodian.py" />
       </list>
     </option>
   </component>
@@ -86,6 +99,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -97,12 +111,11 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../VASP-Templates" />
     <property name="settings.editor.selected.configurable" value="preferences.general" />
   </component>
   <component name="PyConsoleOptionsProvider">
@@ -292,7 +305,21 @@
       <option name="project" value="LOCAL" />
       <updated>1529684080401</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="PEP8">
+      <created>1554261070567</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1554261070567</updated>
+    </task>
+    <task id="LOCAL-00020" summary="PEP8">
+      <created>1554261300477</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1554261300477</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -301,16 +328,16 @@
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="right" x="0" y="0" width="434" height="856" id="Documentation" side_tool="true" visible="true" weight="0.32995737" />
+      <window_info anchor="right" x="0" y="0" width="434" height="856" id="Documentation" order="5" side_tool="true" visible="true" weight="0.32995737" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info active="true" anchor="bottom" id="Python Console" order="7" visible="true" weight="0.32897604" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19029851" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1945629" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="right" id="SciView" order="3" />
+      <window_info anchor="right" id="SciView" order="4" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
@@ -339,16 +366,78 @@
     <MESSAGE value="write initial at right time" />
     <MESSAGE value="read final" />
     <MESSAGE value="get final at right time" />
-    <option name="LAST_COMMIT_MESSAGE" value="get final at right time" />
+    <MESSAGE value="PEP8" />
+    <option name="LAST_COMMIT_MESSAGE" value="PEP8" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/align_bond_along_a.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="27" column="72" selection-start-line="27" selection-start-column="72" selection-end-line="27" selection-end-column="72" />
+          <folding>
+            <element signature="e#23#53#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/align_c_to_z.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/BACKUP_Make_Dos.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/band-gap.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cfg.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vasp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6715">
+          <caret line="407" selection-start-line="407" selection-end-line="407" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VTST_Custodian.sh.jinja2">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/align_bond_along_a.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="27" column="72" selection-start-line="27" selection-start-column="72" selection-end-line="27" selection-end-column="72" />
+          <folding>
+            <element signature="e#23#53#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/align_c_to_z.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/BACKUP_Make_Dos.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/band-gap.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cfg.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vasp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6919">
+          <caret line="407" lean-forward="true" selection-start-line="407" selection-end-line="407" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VTST_Custodian.sh.jinja2">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/GSM_Setup.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2482">
           <caret line="156" column="44" selection-start-line="156" selection-start-column="44" selection-end-line="156" selection-end-column="44" />
-          <folding>
-            <element signature="e#23#32#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -356,9 +445,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2652">
           <caret line="156" column="44" lean-forward="true" selection-start-line="156" selection-start-column="44" selection-end-line="156" selection-end-column="44" />
-          <folding>
-            <element signature="e#23#32#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -464,9 +550,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="544">
           <caret line="156" column="44" selection-start-line="156" selection-start-column="44" selection-end-line="156" selection-end-column="44" />
-          <folding>
-            <element signature="e#23#32#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -474,18 +557,58 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="741">
           <caret line="173" column="74" selection-start-line="173" selection-start-column="74" selection-end-line="173" selection-end-column="74" />
-          <folding>
-            <element signature="e#0#62#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/align_bond_along_a.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="45" column="12" lean-forward="true" selection-start-line="45" selection-start-column="12" selection-end-line="45" selection-end-column="12" />
+        <state relative-caret-position="459">
+          <caret line="27" column="72" selection-start-line="27" selection-start-column="72" selection-end-line="27" selection-end-column="72" />
           <folding>
             <element signature="e#23#53#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/align_c_to_z.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/BACKUP_Make_Dos.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/band-gap.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cfg.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vasp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6715">
+          <caret line="407" selection-start-line="407" selection-end-line="407" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VTST_Custodian.sh.jinja2">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes_Custodian.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="263" column="16" lean-forward="true" selection-start-line="263" selection-start-column="16" selection-end-line="263" selection-end-column="16" />
+          <folding>
+            <element signature="e#417#521#0" />
+            <element signature="e#570#1693#0" />
+            <element signature="e#1742#2955#0" />
+            <element signature="e#2997#3807#0" />
+            <element signature="e#3836#6618#0" />
+            <element signature="e#6649#9930#0" />
+            <element signature="e#10739#10776#0" />
+            <element signature="e#10830#12487#0" />
+            <element signature="e#12542#14321#0" />
+            <element signature="e#14375#16105#0" />
+            <element signature="e#16140#17995#0" />
+            <element signature="e#18070#19989#0" />
           </folding>
         </state>
       </provider>
