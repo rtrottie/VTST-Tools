@@ -286,6 +286,8 @@ def get_corresponding_atom_i(structure1, structure2, init_distance=0.5, same_ato
     return corresponding_atom_i
 
 fere_orbitals = {
+#2s
+    'Li' : ['1s', '2s'],
 #2p
     'O': ['2p', '2s'],
 #3s
@@ -315,11 +317,14 @@ fere_orbitals = {
 #5s
     'Sr': ['5s', '4s', '4p'],
 #4d
+
     'Y': ['4d', '5s', '4s', '4p'],
     'Zr': ['4s', '4p', '5s', '4d'],
+    'Nb' : ['4p', '5s', '4d'],
     'Cd' : ['4d', '5s', '5p'],
 #5p
-    'Sn': ['5s', '5p', '4d', '6s'],
+    'In': ['5s', '5p', '4d'],
+    'Sn': ['5s', '5p', '4d'],
     'Sb': ['5s', '5p'],
 #6s
     'Ba': ['6s', '5p', '5s'],
