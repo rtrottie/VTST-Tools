@@ -72,7 +72,7 @@ def get_vacancy_diffusion_pathways_from_cell(structure : Structure, atom_i : int
         structure.append('H', coords, True)
        # site_dir[tuple(np.round(coords))] = structure.index(edge['site']) # Use Tuple for indexing dict, need to round
         try:
-            site_dir[tuple(np.round(coords))] =  [list(x % 1) for x in np.round(structure.frac_coords % 1,2) ].index(list(np.round(edge['site'].frac_coords % 1, 2))) # Use Tuple for indexing dict, need to round
+            site_dir[tuple(np.round(coords))] =  [list(x % 1) for x in np.round(structure.frac_coords % 1,2) % 1].index(list(np.round(edge['site'].frac_coords % 1, 2) % 1)) # Use Tuple for indexing dict, need to round
         except ValueError:
             site_dir[tuple(np.round(coords))] = [list(x+0.1 % 1) for x in np.round(structure.frac_coords % 1, 2)].index(
                 list(np.round(edge['site'].frac_coords+0.1 % 1, 2)))  # Use Tuple for indexing dict, need to round
