@@ -23,7 +23,7 @@ def get_energy(i, structure: Structure, target=0.01):
          'action': {'_set': {'NSW': 5000,
                              'IOPT': 0,
                              'IBRION': 3,
-                             'EDIFFG': 1e-5,
+                             'EDIFFG': 1e-3,
                              'POTIM' : 0},
                     }}
     ]
