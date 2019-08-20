@@ -17,7 +17,7 @@ def get_energy(i, structure: Structure, target=0.01):
     :return: energy in eV
     """
     cwd = os.path.abspath('.')
-    handlers = [VaspErrorHandler('vasp.log'), PositiveEnergyErrorHandler(), NonConvergingErrorHandler(nionic_steps=10, change_algo=True)]
+    handlers = [VaspErrorHandler('vasp.log'), PositiveEnergyErrorHandler(), NonConvergingErrorHandler(nionic_steps=10)]
     settings = [
         {'dict': 'INCAR',
          'action': {'_set': {'NSW': 5000,
