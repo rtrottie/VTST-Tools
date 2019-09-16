@@ -71,7 +71,7 @@ def get_energy(i, structure: Structure, target=0.01):
             elif dir_i < i:
                 if below is None:
                     below = dir_i
-                elif dir_i - i < below - i:
+                elif abs(dir_i - i) < abs(below - i):
                     below = dir_i
 
             elif closest is None:
