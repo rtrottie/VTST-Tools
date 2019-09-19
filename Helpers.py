@@ -118,7 +118,9 @@ def get_smallest_expansion(structure : Structure, length : float):
         l = s.lattice
         expansion = [ ceil(length / vec) for vec in l.abc ]
         possible_structure = s * expansion
-        if best_structure == None or len(possible_structure) < len(best_structure):
+        if best_structure == None or \
+                (min(best_structure.lattice.angles) < 40 and min(possible_structure.lattice.angles) > min(best_structure.lattice.angles)) or \
+                len(possible_structure) < len(best_structure):
             best_structure = possible_structure
     if structure.site_properties and not best_structure.site_properties:
         def get_property(prop, atom):
