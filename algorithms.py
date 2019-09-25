@@ -92,6 +92,7 @@ def get_energy(i, structure: Structure, target=0.01):
             os.makedirs(os.path.join(folder, dir), exist_ok=True)
             if not os.path.exists(os.path.join(folder, dir, 'WAVECAR')):
                 try:
+                    logging.info('Copying from {} to {}'.format(dir_i, dir))
                     shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
                     shutil.copy(os.path.join(dir_i, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
                 except:
