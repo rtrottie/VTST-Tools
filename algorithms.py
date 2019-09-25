@@ -92,9 +92,9 @@ def get_energy(i, structure: Structure, target=0.01):
             os.makedirs(os.path.join(folder, dir), exist_ok=True)
             if not os.path.exists(os.path.join(folder, dir, 'WAVECAR')):
                 try:
-                    logging.info('Copying from {} to {}'.format(dir_i, dir))
                     shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
                     shutil.copy(os.path.join(dir_i, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
+                    logging.info('Copied from {} to {}'.format(dir_i, os.path.join(folder, dir)))
                 except:
                     if os.path.exists(os.path.join(dir_i, 'above', 'vasprun.xml')) and \
                             os.path.exists(os.path.join(dir_i, 'below', 'vasprun.xml')):
@@ -106,6 +106,7 @@ def get_energy(i, structure: Structure, target=0.01):
                             lowest_dir = 'below'
                         shutil.copy(os.path.join(dir_i, lowest_dir, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
                         shutil.copy(os.path.join(dir_i, lowest_dir, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
+                        logging.info('Copied from {} to {}'.format(os.path.join(dir_i, lowest_dir), os.path.join(folder, dir)))
                         if vasprun_above.final_energy - vasprun_below.final_energy < target:
                             same_wfxns += 1
 
