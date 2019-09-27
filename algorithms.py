@@ -94,7 +94,7 @@ def get_energy(i, structure: Structure, target=0.01):
                 try:
                     shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
                     shutil.copy(os.path.join(dir_i, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
-                    logging.info('Copied from {} to {}'.format(dir_i, os.path.join(folder, dir)))
+                    logging.info('Copied from {} to {} (in main dir)'.format(dir_i, os.path.join(folder, dir)))
                 except:
                     if os.path.exists(os.path.join(dir_i, 'above', 'vasprun.xml')) and \
                             os.path.exists(os.path.join(dir_i, 'below', 'vasprun.xml')):
