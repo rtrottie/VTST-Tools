@@ -2,6 +2,7 @@
 
 import csv
 import sys
+from pymatgen import Spin
 from pymatgen.io.vasp import *
 import numpy as np
 import argparse
