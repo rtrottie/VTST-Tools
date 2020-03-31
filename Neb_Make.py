@@ -84,7 +84,7 @@ def reorganize_structures(structure_1 : Structure, structure_2 : Structure, atom
 
 
 def nebmake(directory, start, final, images, tolerance=0,
-            ci=False, poscar_override=[], linear=False, write=True, start_i=0):
+            ci=False, poscar_override=[], linear=False, write=True, start_i=0, quickfail=False):
 
     if type(start) == str:
         start_POSCAR = os.path.join(start, 'CONTCAR') if os.path.exists(os.path.join(start, 'CONTCAR')) and os.path.getsize(os.path.join(start, 'CONTCAR')) > 0 else os.path.join(start, 'POSCAR')
@@ -107,6 +107,8 @@ def nebmake(directory, start, final, images, tolerance=0,
     try:
         structures = s1.interpolate(s2, images, autosort_tol=tolerance)
     except Exception as e:
+        if quickfail:
+            raise e
         a=input('Failed.  Type y to sort --> ')
         if a=='y':
             s1.sort()
