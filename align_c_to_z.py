@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+script to align the arbitrary c vector to the z axis.
+"""
 from Classes_Pymatgen import *
 from pymatgen.core.operations import *
 import numpy as np

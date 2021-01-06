@@ -13,7 +13,7 @@ def align_a_to_vector(structure: Structure, vector: list):
     aligns the a vector of the provided structure to the provided vector
     :param structure: structure to be aligned
     :param vector: vector to align to
-    :return:
+    :return: Strucutre aligned to given vector
     """
     s = structure.copy()  # type: Structure
     a = s.lattice.matrix[0]
@@ -36,7 +36,7 @@ def intersection(v, p, bv):
     :param v: vector starting at origin
     :param p: point for starting bounding vector
     :param bv: bounding vector
-    :return:
+    :return: the intersection point
     """
     a = bv[0]
     b = bv[1]
@@ -54,6 +54,12 @@ def intersection(v, p, bv):
 
 
 def set_vector_as_boundary(structure: Structure, vector: list):
+    """
+
+    :param structure: structure to be relaxed
+    :param vector: vector to restrain relaxation
+    :return: structure unable to relax along given vector
+    """
     s = structure.copy()  # type: Structure
     a = s.lattice.matrix[0]
     b = s.lattice.matrix[1]
@@ -67,21 +73,11 @@ def set_vector_as_boundary(structure: Structure, vector: list):
     as_a = intersection(plane_projection, a, b)
     as_b = intersection(plane_projection, b, a)
 
-    # plt.plot([0,a[0]],[0,a[1]],label='a')
-    # plt.plot([0,b[0]],[0,b[1]],label='b')
-    # plt.plot([b[0],a[0]+b[0]],[b[1],a[1]+b[1]],label='a from b')
-    # plt.plot([a[0],b[0]+a[0]],[a[1],b[1]+a[1]],label='b from a')
-    # #plt.plot([0, as_a[0]], [0, as_a[1]], label='as_a')
-    # plt.plot([0, as_b[0]], [0, as_b[1]], label='as_b')
-    # plt.legend()
-    # plt.show()
     if np.linalg.norm(as_a) < np.linalg.norm(as_b):
         lattice = Lattice([as_a, b, c])
     else:
         lattice = Lattice([a, as_b, c])
-    # angle = np.arctan2(np.dot(np.cross(plane_projection, a), normal), np.dot(plane_projection, a) )
-    # rot = SymmOp.from_origin_axis_angle([0,0,0], normal, angle, angle_in_radians=True)
-    # s.apply_operation(rot)
+
     return Structure(lattice, s.species, s.cart_coords, coords_are_cartesian=True, site_properties=s.site_properties)
 
 
@@ -96,11 +92,12 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--modecar', help='get vector from modecar (provide single atom)')
     args = parser.parse_args()
 
+    # Load files
     structure = Poscar.from_file(args.structure).structure
-    if args.modecar:
+    if args.modecar: # if constrained vector is provided (as MODECAR)
         with open(args.modecar) as modecar:
             vector = np.array([float(x) for x in modecar.readlines()[args.atoms[0]].split()])
-    else:
+    else: # otherwise make it from the structure
         vector = structure[args.atoms[0]].coords - structure[args.atoms[1]].coords
     structure = set_vector_as_boundary(structure, vector)
     Poscar(structure).write_file(args.output)

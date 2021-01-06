@@ -10,12 +10,15 @@ from custodian.vasp.handlers import *
 
 def get_energy(i, structure: Structure, target=0.01):
     """
+    get_energy finds the energy of the structure at location i along the interpolated pathway
 
-    :param i: folder for structure to be placed in
+    :param i: folder for structure to be placed in (i >=0 and i < 1000)
     :param structure: Structure
-    :param target: energy to converge to
+    :param target: energy convergence criteria
     :return: energy in eV
     """
+
+    # Setup Run
     cwd = os.path.abspath('.')
     handlers = [VaspErrorHandler('vasp.log'), PositiveEnergyErrorHandler(), NonConvergingErrorHandler(nionic_steps=10)]
     settings = [
@@ -28,37 +31,40 @@ def get_energy(i, structure: Structure, target=0.01):
                     }}
     ]
     folder = os.path.join(cwd, str(i).zfill(4))
-    if os.path.exists(folder):
+
+    # Check if Run has occured
+    if os.path.exists(folder): # if it has
         Poscar(structure).write_file(os.path.join(folder, 'POSCAR'))
-        try:
+        try: # attempt to get data from completed run
             vasprun_above = Vasprun(os.path.join(folder, 'above', 'vasprun.xml'))
             vasprun_below = Vasprun(os.path.join(folder, 'below', 'vasprun.xml'))
             if vasprun_above.converged and vasprun_below.converged:
-                # if vasprun_above.final_energy -  vasprun_below.final_energy < target:
-                #     for f in ['WAVECAR', 'CHGCAR', 'vasprun.xml', 'CONTCAR', 'POSCAR', 'INCAR', 'KPOINTS', 'POTCAR']
-                #         shutil.copy(os.path.join(folder, 'above', f), f
+
                 with open(os.path.join(folder, 'energy.txt'), 'w') as f:
                     f.write(str(min(vasprun_above.final_energy, vasprun_below.final_energy)))
                 return min(vasprun_above.final_energy, vasprun_below.final_energy)
-        except:
-            try:
+        except: # TODO: Determine errors to be caught here
+            try: # If run is not completed, see if override is provided
                 if os.path.exists(os.path.join(folder, 'energy.txt')):
                     with open(os.path.join(folder, 'energy.txt'), 'r') as f:
                         energy = float(f.read().split()[0])
                     return energy
-                else:
+                else: # see if simple run was performed and check for energy
                     shutil.copy('INCAR', os.path.join(folder, 'INCAR'))
                     vasprun = Vasprun(os.path.join(folder, 'vasprun.xml'))
                     with open(os.path.join(folder, 'energy.txt'), 'w') as f:
                         f.write(str(vasprun.final_energy))
                     return vasprun.final_energy
-            except:
+            except: # TODO: Determine errors to be caught here
                 pass
+    # If the run was not performed, restart calculation
     else:
         os.mkdir(folder)
     above = None
     below = None
-    for dir in [dir for dir in os.listdir(cwd) if os.path.isdir(os.path.join(cwd, dir))]:
+
+    # Initialize from previous runs
+    for dir in [dir for dir in os.listdir(cwd) if os.path.isdir(os.path.join(cwd, dir))]: # determine closest runs
         try:
             dir_i = int(dir)
             if i == dir_i:
@@ -82,20 +88,20 @@ def get_energy(i, structure: Structure, target=0.01):
             pass
     same_wfxns = 0
     for dir_i, dir in [(str(above).zfill(4), 'above'), (str(below).zfill(4), 'below')]:
-        try:
+        try: # Load vasprun and check if individual folders have converged
             vasprun = Vasprun(os.path.join(folder, dir, 'vasprun.xml'))
             if vasprun.converged:
                 pass
             else:
                 raise Exception('Not Converged')
-        except:
+        except: # if the run has not converged, setup a calculation
             os.makedirs(os.path.join(folder, dir), exist_ok=True)
-            if not os.path.exists(os.path.join(folder, dir, 'WAVECAR')):
-                try:
+            if not os.path.exists(os.path.join(folder, dir, 'WAVECAR')): # check if files exist to initialize run
+                try: # copy them if provided
                     shutil.copy(os.path.join(dir_i, 'WAVECAR'), os.path.join(folder, dir, 'WAVECAR'))
                     shutil.copy(os.path.join(dir_i, 'CHGCAR'), os.path.join(folder, dir, 'CHGCAR'))
                     logging.info('Copied from {} to {} (in main dir)'.format(dir_i, os.path.join(folder, dir)))
-                except:
+                except: # if not, see if initialization exists in other folders
                     if os.path.exists(os.path.join(dir_i, 'above', 'vasprun.xml')) and \
                             os.path.exists(os.path.join(dir_i, 'below', 'vasprun.xml')):
                         vasprun_above = Vasprun(os.path.join(dir_i, 'above', 'vasprun.xml'))
@@ -110,14 +116,14 @@ def get_energy(i, structure: Structure, target=0.01):
                         if vasprun_above.final_energy - vasprun_below.final_energy < target:
                             same_wfxns += 1
 
-            if same_wfxns == 2:
+            if same_wfxns == 2: # If above and below are the same, we do not need to do above and below differently:
                 logging.info('Wavefunctions are the same')
                 if os.path.exists(os.path.join(folder, 'below')):
                     shutil.rmtree(os.path.join(folder, 'below'))
                 shutil.copytree(os.path.join(folder, 'above'), os.path.join(folder, 'below'))
                 os.chdir(folder)
                 os.chdir(dir)
-            else:
+            else: # Otherwise don't copy anything between above and below
                 shutil.copy('INCAR', os.path.join(folder, dir, 'INCAR'))
                 shutil.copy('KPOINTS', os.path.join(folder, dir, 'KPOINTS'))
                 shutil.copy('POTCAR', os.path.join(folder, dir, 'POTCAR'))
@@ -142,8 +148,17 @@ def get_energy(i, structure: Structure, target=0.01):
 
 
 def get_ts(low, mp, high, target=0.01):
+    """
+    Find TS from string of structures using a ternary search
+    :param low: low end index
+    :param mp: midpoint index
+    :param high: high ened index
+    :param target: Convergence criteria
+    :return: ts Structure
+    """
     logging.info('Finding Max from locations : {} {} {}'.format(low, mp, high))
 
+    # Initialize the high and low points
     start_struct = Structure.from_file(os.path.join(str(low).zfill(4), 'POSCAR'))
     final_struct = Structure.from_file(os.path.join(str(high).zfill(4), 'POSCAR'))
     if os.path.exists(os.path.join(str(mp).zfill(4), 'POSCAR')):
@@ -151,20 +166,24 @@ def get_ts(low, mp, high, target=0.01):
     else:
         mp_struct = nebmake('.', start_struct, final_struct, 2, write=False)[1]
 
+    # Get energy of high and low structures
     low_e = get_energy(low, start_struct)
     high_e = get_energy(high, final_struct)
     logging.info('Converging Midpoint')
     mp_e = get_energy(mp, mp_struct)
+
+    # Check if converged due to lack of resolution
     if mp == low or mp == high:
         logging.info('Found Max at : {} with E= {:.10}'.format(mp, mp_e))
         return mp
-
+    # Check if converged due to reaching convergence criteria
     if abs(mp_e - high_e) < target and abs(mp_e - low_e) < target:
         logging.info('Found Max at : {} with E= {:.10}'.format(mp, mp_e))
         return mp
     q1_struct = nebmake('.', start_struct, mp_struct, 2, write=False)[1]
     q3_struct = nebmake('.', mp_struct, final_struct, 2, write=False)[1]
 
+    # If not eliminate highest energy quartile and search again
     q1 = int((low+mp)/2)
     q3 = int((high+mp)/2)
     logging.info('Converging Q1')
